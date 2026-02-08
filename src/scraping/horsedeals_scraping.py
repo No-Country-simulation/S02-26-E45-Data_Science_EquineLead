@@ -2,6 +2,10 @@ from playwright.sync_api import sync_playwright
 from bs4 import BeautifulSoup
 import pandas as pd
 from tqdm import tqdm
+from pathlib import Path
+
+PATH_OUTPUT = Path("./data/raw")
+PATH_OUTPUT.mkdir(parents=True, exist_ok=True)
 
 BASE = "https://www.horsedeals.com.au"
 FILTER_PATH = "/search/horses-for-sale?page={page}"
@@ -43,7 +47,7 @@ def scrape_listings(max_pages=2):
                 card_url = BASE + href
                 listing_urls.add(card_url)
 
-        for lurl in tqdm(listing_urls, total=len(listing_urls), desc="Horse Profiles", leave=False):
+        for lurl in tqdm(listing_urls, total=len(listing_urls), desc="Scraping Horse Profiles", leave=False):
             try:
                 lsoup = get_soup_from_page(page, lurl)
 
@@ -98,9 +102,10 @@ def scrape_listings(max_pages=2):
                 rows.append(data)
 
             except Exception as e:
-                print(f"❌ Error scraping {lurl}: {e}")
+                print(f"Error scraping {lurl}: {e}")
 
     return pd.DataFrame(rows)
 
-df = scrape_listings(max_pages=100)
-df.to_parquet("./data/raw/horsedeals_horses_listings.parquet", index=False)
+if __name__ == "__main__":
+    df = scrape_listings(max_pages=1)
+    df.to_parquet(PATH_OUTPUT / "horsedeals_horses_listings.parquet", index=False)

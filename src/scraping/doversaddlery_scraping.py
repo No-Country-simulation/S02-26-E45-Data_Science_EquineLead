@@ -1,9 +1,12 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-from urllib.parse import urlparse
 from time import sleep
 from tqdm import tqdm
+from pathlib import Path
+
+PATH_OUTPUT = Path("./data/raw")
+PATH_OUTPUT.mkdir(parents=True, exist_ok=True)
 
 BASE = "https://www.doversaddlery.com"
 
@@ -15,7 +18,7 @@ HEADERS = {
     )
 }
 
-def get_soup(url, sleep_seconds=5):
+def get_soup(url, sleep_seconds=4):
     resp = requests.get(url, headers=HEADERS, timeout=30)
     sleep(sleep_seconds)  # rate limit suave
     resp.raise_for_status()
@@ -39,7 +42,7 @@ def scrape_listings(pages_per_category=2, sleep_seconds=5):
 
     product_urls = set()
 
-    for category_url in categories_urls:
+    for category_url in tqdm(categories_urls, total=len(categories_urls), desc="Scraping Product Categories", leave=False, position=0):
         for page in range(1, pages_per_category+1):
             try:
                 cat_soup = get_soup(f"{category_url}?page={page}")
@@ -51,11 +54,12 @@ def scrape_listings(pages_per_category=2, sleep_seconds=5):
 
                     product_url = url + href
                     product_urls.add(product_url)
-
+                    break
             except Exception as e:
                 break  # salimos de esta categoría
+        break
 
-    for product_url in tqdm(product_urls, total=len(product_urls), desc="Horse Profiles", leave=False, position=0):
+    for product_url in tqdm(product_urls, total=len(product_urls), desc="Scraping Horse Profiles", leave=False, position=0):
         try:
             data = {}
 
@@ -116,5 +120,6 @@ def scrape_listings(pages_per_category=2, sleep_seconds=5):
     df = pd.DataFrame(rows)
     return df
 
-df = scrape_listings(pages_per_category=3)
-df.to_parquet("./data/raw/doversaddlery_products_listing.parquet", index=False)
+if __name__ == "__main__":
+    df = scrape_listings(pages_per_category=1)
+    df.to_parquet(PATH_OUTPUT / "doversaddlery_products_listing.parquet", index=False)

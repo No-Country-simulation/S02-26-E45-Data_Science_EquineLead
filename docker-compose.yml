@@ -1,0 +1,30 @@
+services:
+
+  prefect-server:
+    image: prefecthq/prefect:2-latest
+    container_name: prefect-server
+    command: prefect server start --host 0.0.0.0
+    ports:
+      - "4200:4200"
+    volumes:
+      - prefect-data:/root/.prefect
+
+  equinelead:
+    image: aletbm/equinelead-flow:latest
+    container_name: equinelead-flow
+    depends_on:
+      - prefect-server
+    environment:
+      PREFECT_API_URL: http://prefect-server:4200/api
+      PIPELINE_MODE: ingestion        # o clean
+      GOOGLE_APPLICATION_CREDENTIALS: /secrets/gcp-key.json
+    volumes:
+      - ./data:/app/data
+      - ${GOOGLE_APPLICATION_CREDENTIALS}:/secrets/gcp-key.json:ro
+      - prefect-data:/root/.prefect
+    restart: "no"
+
+volumes:
+  prefect-data:
+
+#docker-compose up --build

@@ -4,6 +4,10 @@ import pandas as pd
 from urllib.parse import urlparse
 from time import sleep
 from tqdm import tqdm
+from pathlib import Path
+
+PATH_OUTPUT = Path("./data/raw")
+PATH_OUTPUT.mkdir(parents=True, exist_ok=True)
 
 BASE = "https://www.equinenow.com"
 
@@ -33,20 +37,24 @@ def scrape_listings(max_pages=2):
     listing_urls = set()
 
     for page in tqdm(range(0, max_pages), total=max_pages, desc="Scraping Pages", leave=True, position=0):
-        url = f"{BASE}{FILTER_PATH.format(page=page)}"
-        soup = get_soup(url)
+        try:
+            url = f"{BASE}{FILTER_PATH.format(page=page)}"
+            soup = get_soup(url)
 
-        links = soup.select("a[href*='horse-ad'].btn.btn-details.btn-sm")
+            links = soup.select("a[href*='horse-ad'].btn.btn-details.btn-sm")
 
-        for a in links:
-            href = str(a.get("href"))
-            if not href:
-                continue
+            for a in links:
+                href = str(a.get("href"))
+                if not href:
+                    continue
 
-            # nos quedamos solo con el path /horse-ad-XXXX
-            parsed = urlparse(href)
-            clean_url = f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
-            listing_urls.add(clean_url)
+                # nos quedamos solo con el path /horse-ad-XXXX
+                parsed = urlparse(href)
+                clean_url = f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
+                listing_urls.add(clean_url)
+                
+        except Exception as e:
+            print(f"Error scraping {url}: {e}")
 
     for lurl in tqdm(listing_urls, total=len(listing_urls), desc="Scraping Horse Profiles", leave=False, position=0):
         try:
@@ -112,7 +120,7 @@ def scrape_listings(max_pages=2):
 
     df = pd.DataFrame(rows)
     return df
-
-df = scrape_listings(max_pages=400)
-df.to_parquet("./data/raw/equinenow_horses_listings.parquet", index=False)
+if __name__ == "__main__":
+    df = scrape_listings(max_pages=1)
+    df.to_parquet(PATH_OUTPUT / "equinenow_horses_listings.parquet", index=False)
 
