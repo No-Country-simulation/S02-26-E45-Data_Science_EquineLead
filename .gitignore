@@ -1,6 +1,3 @@
 .venv
 *.csv
 .ipynb_checkpoints
-entrypoint.sh
-src
-Dockerfile
