@@ -36,7 +36,7 @@ data/
 * `tracking/`: Archivos auxiliares que registran información de scraping o de localización de datos.
 
 ---
-#Diagrama Entidad-Relación (DER)
+# Diagrama Entidad-Relación (DER)
 
 ![DER](../assets/equinelead.svg)
 
