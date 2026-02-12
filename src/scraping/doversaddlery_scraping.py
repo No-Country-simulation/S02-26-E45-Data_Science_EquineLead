@@ -121,5 +121,5 @@ def scrape_listings(pages_per_category=2, sleep_seconds=5):
     return df
 
 if __name__ == "__main__":
-    df = scrape_listings(pages_per_category=1)
+    df = scrape_listings(pages_per_category=3)
     df.to_parquet(PATH_OUTPUT / "doversaddlery_products_listing.parquet", index=False)
