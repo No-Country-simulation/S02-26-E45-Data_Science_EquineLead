@@ -111,11 +111,11 @@ def equinelead_pipeline():
     prods_sessions = run_script.with_options(name="Users-Products Sessions Synthetizer").submit(SCRIPT_DIR_SYNTH / "tracking_users_products_simulator.py")
     prods_sessions.result()
 
-    #upload_to_gcs(DATA_DIR_CLEAN / "horses_listings_limpio.parquet", folder="clean")
-    #upload_to_gcs(DATA_DIR_CLEAN / "horses_sessions_info.parquet", folder="clean")
-    #upload_to_gcs(DATA_DIR_CLEAN / "prods_sessions_info.parquet", folder="clean")
-    #upload_to_gcs(DATA_DIR_CLEAN / "products_listing_limpio.parquet", folder="clean")
-    #upload_to_gcs(DATA_DIR_CLEAN / "users_info.parquet", folder="clean")
+    upload_to_gcs.with_options(name="Upload To GCS: Horses Listings")(DATA_DIR_CLEAN / "horses_listings_limpio.parquet", folder="clean")
+    upload_to_gcs.with_options(name="Upload To GCS: Products Listing")(DATA_DIR_CLEAN / "products_listing_limpio.parquet", folder="clean")
+    upload_to_gcs.with_options(name="Upload To GCS: Users-Horses Sessions")(DATA_DIR_CLEAN / "horses_sessions_info.parquet", folder="clean")
+    upload_to_gcs.with_options(name="Upload To GCS: Users-Prods Sessions")(DATA_DIR_CLEAN / "prods_sessions_info.parquet", folder="clean")
+    upload_to_gcs.with_options(name="Upload To GCS: Users")(DATA_DIR_CLEAN / "users_info.parquet", folder="clean")
 
 if __name__ == "__main__":
     equinelead_pipeline()
