@@ -9,14 +9,20 @@ services:
     volumes:
       - prefect-data:/root/.prefect
 
-  equinelead:
-    image: aletbm/equinelead-flow:latest
-    container_name: equinelead-flow
+  data-pipeline:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.data_pipeline
+    image: equinelead-data-pipeline:latest
+    container_name: equinelead-data-pipeline
+    profiles: ["pipeline"]
     depends_on:
       - prefect-server
     environment:
-      PREFECT_API_URL: http://prefect-server:4200/api
-      PIPELINE_MODE: ingestion        # o clean
+      PREFECT_API_KEY: ${PREFECT_API_KEY}
+      PREFECT_API_URL: ${PREFECT_API_URL}
+      PREFECT_WORK_POOL_NAME: equinelead-pool
+      DEBUG_GCS: "False"
       GOOGLE_APPLICATION_CREDENTIALS: /secrets/gcp-key.json
     volumes:
       - ./data:/app/data
@@ -27,4 +33,15 @@ services:
 volumes:
   prefect-data:
 
-#docker-compose up --build
+# INGESTA
+# docker compose --profile pipeline up --build
+
+# DESARROLLO
+# docker compose up prefect-server
+
+# PREFECT LOGIN
+# prefect cloud login
+
+
+# WORK POOL
+# prefect work-pool create equinelead-pool --type process

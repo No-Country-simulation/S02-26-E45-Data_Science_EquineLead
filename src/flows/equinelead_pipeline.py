@@ -7,8 +7,11 @@ import json
 from pathlib import Path
 from prefect.client import get_client
 
-DATA_DIR_RAW = Path("/app/data/raw")
 DATA_DIR_CLEAN = Path("/app/data/clean")
+
+SCRIPT_DIR_SCRAP = Path("/app/scraping")
+SCRIPT_DIR_CLEAN = Path("/app/cleaning/scripts")
+SCRIPT_DIR_SYNTH = Path("/app/synthetizing/scripts")
 
 GCS_BUCKET_NAME = "equinelead-datalake"
 GCS_BLOCK_NAME = "equinelead-datalake"
@@ -16,7 +19,7 @@ GCS_BLOCK_NAME = "equinelead-datalake"
 # ---------------- TASKS ---------------- #
 
 @task
-def run_scraper(script_name: str):
+def run_script(script_name: str):
     result = subprocess.run(
         ["python", script_name],
         capture_output=True,
@@ -26,8 +29,7 @@ def run_scraper(script_name: str):
     print("STDERR:\n", result.stderr)
 
     if result.returncode != 0:
-        raise RuntimeError(f"Scraper failed: {script_name}")
-
+        raise RuntimeError(f"Script failed: {script_name}")
 
 def get_gcs_bucket():
     """Carga el bloque GCS, o lo crea si no existe"""
@@ -68,7 +70,7 @@ def equinelead_pipeline():
     for i in range(20):  # hasta 20 reintentos (~60s)
         try:
             client.api_healthcheck()
-            print("Prefect Server listo ✅")
+            print("Prefect Server Listo ✅")
             break
         except Exception:
             print("Esperando a Prefect Server...")
@@ -77,36 +79,43 @@ def equinelead_pipeline():
         raise RuntimeError("Prefect Server no respondió después de 60s")
 
     # ---------- FLOW LOGIC ----------
-    mode = os.getenv("PIPELINE_MODE", "ingestion")
     debug = os.getenv("DEBUG_GCS", "False")
 
     if debug != "False":
         debug_gcs()
 
-    if mode == "ingestion":
-        # RUN SCRAPERS IN PARALLEL
-        equinenow = run_scraper.submit("./scraping/equinenow_scraping.py")
-        horsedeals = run_scraper.submit("./scraping/horsedeals_scraping.py")
-        dovers = run_scraper.submit("./scraping/doversaddlery_scraping.py")
+    # RUN SCRAPERS IN PARALLEL
+    equinenow = run_script.with_options(name="EquineNow Scraper").submit(SCRIPT_DIR_SCRAP / "equinenow_scraper.py")
+    horsedeals = run_script.with_options(name="HorseDeals Scraper").submit(SCRIPT_DIR_SCRAP / "horsedeals_scraper.py")
+    dovers = run_script.with_options(name="Doversaddlery Scraper").submit(SCRIPT_DIR_SCRAP / "doversaddlery_scraper.py")
 
-        # WAIT
-        equinenow.result()
-        horsedeals.result()
-        dovers.result()
+    # WAIT
+    equinenow.result()
+    horsedeals.result()
+    dovers.result()
 
-        # UPLOAD RAW DATA
-        upload_to_gcs(DATA_DIR_RAW / "equinenow_horses_listings.parquet", folder="raw")
-        upload_to_gcs(DATA_DIR_RAW / "horsedeals_horses_listings.parquet", folder="raw")
-        upload_to_gcs(DATA_DIR_RAW / "doversaddlery_products_listing.parquet", folder="raw")
+    # RUN CLEANERS IN PARALLEL
+    equinenow = run_script.with_options(name="EquineNow Cleaner").submit(SCRIPT_DIR_CLEAN / "equinenow_cleaner.py")
+    horsedeals = run_script.with_options(name="HorseDeals Cleaner").submit(SCRIPT_DIR_CLEAN / "horsedeals_cleaner.py")
+    dovers = run_script.with_options(name="Doversaddlery Cleaner").submit(SCRIPT_DIR_CLEAN / "doversaddlery_cleaner.py")
 
-    elif mode == "clean_upload":
-        upload_to_gcs(DATA_DIR_CLEAN / "equinenow_horses_listings_cl.parquet", folder="clean")
-        upload_to_gcs(DATA_DIR_CLEAN / "horsedeals_horses_listings_cl.parquet", folder="clean")
-        upload_to_gcs(DATA_DIR_CLEAN / "doversaddlery_products_listing_cl.parquet", folder="clean")
+    #WAIT   
+    equinenow.result()
+    horsedeals.result()
+    dovers.result()
 
-    else:
-        raise ValueError(f"Modo inválido: {mode}")
+    # RUN SYNTHETIZERS IN PARALLEL
+    horses_sessions = run_script.with_options(name="Users-Horses Sessions Synthetizer").submit(SCRIPT_DIR_SYNTH / "tracking_users_horses_simulator.py")
+    horses_sessions.result()
 
+    prods_sessions = run_script.with_options(name="Users-Products Sessions Synthetizer").submit(SCRIPT_DIR_SYNTH / "tracking_users_products_simulator.py")
+    prods_sessions.result()
+
+    #upload_to_gcs(DATA_DIR_CLEAN / "horses_listings_limpio.parquet", folder="clean")
+    #upload_to_gcs(DATA_DIR_CLEAN / "horses_sessions_info.parquet", folder="clean")
+    #upload_to_gcs(DATA_DIR_CLEAN / "prods_sessions_info.parquet", folder="clean")
+    #upload_to_gcs(DATA_DIR_CLEAN / "products_listing_limpio.parquet", folder="clean")
+    #upload_to_gcs(DATA_DIR_CLEAN / "users_info.parquet", folder="clean")
 
 if __name__ == "__main__":
     equinelead_pipeline()

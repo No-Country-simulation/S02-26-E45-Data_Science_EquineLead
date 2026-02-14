@@ -13,4 +13,4 @@ fi
 
 echo "✅ Usando credenciales GCP desde: $GOOGLE_APPLICATION_CREDENTIALS"
 
-exec uv run python flows/equinelead_pipeline.py
+exec uv run python ./flows/equinelead_pipeline.py

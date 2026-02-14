@@ -18,10 +18,12 @@ RUN uv sync --locked
 # Copiamos el código de los scrapers
 COPY ./src .
 
-COPY entrypoint.sh /entrypoint.sh
+COPY docker/entrypoints/data_pipeline.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh
-RUN mkdir -p /app/data/raw /app/data/clean
+RUN mkdir -p /app/data/raw /app/data/clean /app/data/tracking
+
+COPY ./data/tracking/*.txt /app/data/tracking/
 
 ENTRYPOINT ["/entrypoint.sh"]
 
