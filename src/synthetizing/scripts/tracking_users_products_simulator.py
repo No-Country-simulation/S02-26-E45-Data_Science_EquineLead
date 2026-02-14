@@ -152,8 +152,13 @@ def assign_products(df_sessions, df_products, seed=42):
         .to_dict()
     )
 
+    all_products = df_products["Item_ID"].dropna().to_numpy()
+
     def sample_prod(cat):
-        return rng.choice(prods_by_cat[cat])
+        if cat in prods_by_cat and len(prods_by_cat[cat]) > 0:
+            return rng.choice(prods_by_cat[cat])
+        else:
+            return rng.choice(all_products)
 
     df_sessions = df_sessions.copy()
     df_sessions["Item_ID"] = df_sessions["product_category"].map(sample_prod)

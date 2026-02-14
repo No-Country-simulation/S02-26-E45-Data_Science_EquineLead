@@ -121,6 +121,6 @@ def scrape_listings(max_pages=2):
     df = pd.DataFrame(rows)
     return df
 if __name__ == "__main__":
-    df = scrape_listings(max_pages=1)
+    df = scrape_listings(max_pages=400)
     df.to_parquet(PATH_OUTPUT / "equinenow_horses_listings.parquet", index=False)
 
