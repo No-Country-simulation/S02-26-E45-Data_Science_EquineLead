@@ -1,8 +1,18 @@
-[tool.black]
-line-length = 88
-target-version = ["py310"]
+[project]
+name = "equine-ds-project"
+version = "0.1.0"
+description = "Proyecto de Ciencia de Datos para leads ecuestres"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "fastparquet>=2025.12.0",
+    "matplotlib>=3.10.8",
+    "numpy>=2.2.6",
+    "pandas>=2.3.3",
+    "pyarrow>=23.0.0",
+    "scikit-learn>=1.7.2",
+    "seaborn>=0.13.2",
+]
 
-[tool.ruff]
-line-length = 88
-select = ["E", "F", "I"]
-ignore = ["E501"]
+[tool.uv]
+managed = true
