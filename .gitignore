@@ -3,3 +3,5 @@
 .ipynb_checkpoints
 *rees
 *testing.ipynb
+*tree.py
+.env

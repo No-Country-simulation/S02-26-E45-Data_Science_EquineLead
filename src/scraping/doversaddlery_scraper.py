@@ -54,10 +54,8 @@ def scrape_listings(pages_per_category=2, sleep_seconds=5):
 
                     product_url = url + href
                     product_urls.add(product_url)
-                    break
             except Exception as e:
                 break  # salimos de esta categoría
-        break
 
     for product_url in tqdm(product_urls, total=len(product_urls), desc="Scraping Horse Profiles", leave=False, position=0):
         try:
@@ -108,9 +106,9 @@ def scrape_listings(pages_per_category=2, sleep_seconds=5):
             data["Stock"] = stock
             data["Description"] = description
             data["Price"] = price
-            data["Category"] = category
             data["Images"] = img_urls
             data["URL"] = product_url
+            data["Category"] = category
 
             rows.append(data)
 
