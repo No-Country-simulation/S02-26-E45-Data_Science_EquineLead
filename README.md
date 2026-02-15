@@ -69,9 +69,11 @@ Para simular el comportamiento de usuario, se mapearon los eventos del dataset d
 + Transformación: Limpieza de strings, normalización de datos numericos y manejo de valores nulos en paralelo.
 + Storage: Los datos finales se serializan en Parquet para optimizar el peso y la velocidad de consulta, y se suben a un bucket de Google Cloud Storage.
 
-# Diagrama Entidad-Relación (DER)
+### Diagrama Entidad-Relación (DER)
 
 ![DER](./assets/equinelead.svg)
+
+---
 
 ## Guía de Ejecución (Quick Start)
 Este proyecto es totalmente reproducible y "Plug & Play".
