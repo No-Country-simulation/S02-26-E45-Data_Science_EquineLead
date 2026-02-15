@@ -86,7 +86,7 @@ Este proyecto es totalmente reproducible y "Plug & Play".
 git clone https://github.com/No-Country-simulation/S02-26-E45-Data_Science_EquineLead
 cd S02-26-E45-Data_Science_EquineLead
 ```
-+ Configurar variables de entorno:
+#### Configurar variables de entorno:
 Crea un archivo .env con tus credenciales de GCP y el API Key de Prefect.
 
 ```bash
@@ -94,13 +94,13 @@ PREFECT_API_URL="https://api.prefect.cloud/api/accounts/[ACCOUNT-ID]/workspaces/
 PREFECT_API_KEY="[API-KEY]"
 ```
 
-+ Loguearte en Prefect Cloud:
+#### Loguearte en Prefect Cloud:
 
 ```bash
 prefect cloud login
 ```
 
-+ Levantar la infraestructura:
+#### Levantar la infraestructura:
 
 ```bash
 docker compose --profile pipeline up --build
