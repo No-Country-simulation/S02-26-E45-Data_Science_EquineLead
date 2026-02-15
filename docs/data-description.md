@@ -106,6 +106,7 @@ Este dataset contiene información real sobre productos ecuestres disponibles en
 | Price       | Float        | Precio del producto en dólares estadounidenses (USD). |
 | Images      | URL / Text   | Enlaces a las imágenes del producto publicadas en la web. Puede contener uno o varios URLs. |
 | URL         | URL          | Enlace a la página del producto en Doversaddlery. |
+| Category.   | Text.        | Categoria del producto
 
 ## Notas
 
