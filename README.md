@@ -56,7 +56,7 @@ El proyecto está diseñado bajo principios de Modern Data Stack, priorizando la
 ### Ingesta y Scraping Paralelizado
 El pipeline ejecuta múltiples scrapers de forma concurrente dentro de contenedores Docker:
 + **Playwright**: Para la extracción de datos en sitios dinámicos de subastas y clasificados.
-+ **BeautifulSouo4 + lxml**: Para el procesamiento rápido de directorios estáticos de servicios y eventos.
++ **BeautifulSoup4 + lxml**: Para el procesamiento rápido de directorios estáticos de servicios y eventos.
 
 ### Generación de Datos Sintéticos (Behavioral Tracking)
 Para simular el comportamiento de usuario, se mapearon los eventos del dataset de Rees46 a un entorno ecuestre ficticio:
