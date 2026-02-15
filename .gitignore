@@ -5,10 +5,3 @@
 *testing.ipynb
 *tree.py
 .env
-
-tfplan
-*.tfvars
-*.tfvars.json
-*.tfstate
-*.tfstate.backup
-.terraform/
