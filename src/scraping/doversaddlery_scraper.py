@@ -84,7 +84,7 @@ def scrape_listings(pages_per_category=2, sleep_seconds=5):
             stock = el.get_text(strip=True) if el else None
 
             # Description
-            el = psoup.select_one("div.rte")
+            el = psoup.select_one("div.section-header--content > div.rte")
             description = el.get_text(separator="\n", strip=True) if el else None
 
             #Imagen
