@@ -22,13 +22,13 @@
 ## 📖 Tabla de Contenidos
 - [Definición del Problema](#definición-del-problema)
 - [Arquitectura y Stack](#arquitectura-del-sistema)
-- [Infraestructura (Terraform)](#-infraestructura-como-código-iac)
+- [Infraestructura (Terraform)](#infraestructura-como-código-iac)
 - [Pipeline de Datos](#pipeline-de-datos-etlelt)
 - [Guía de Ejecución Rápida](#guía-de-ejecución-quick-start)
 
 ---
 
-## Definición del Problema (Business Understanding)
+## Definición del Problema
 ### El Desafío
 La industria ecuestre opera en un ecosistema nicho, altamente fragmentado y con costos de adquisición (CAC) elevados. Actualmente, identificar a un comprador de un caballo de salto de $50,000 frente a un entusiasta casual es una tarea manual e ineficiente.
 
@@ -58,7 +58,7 @@ El proyecto está diseñado bajo principios de Modern Data Stack, priorizando la
 
 ---
 
-## 🏗️ Infraestructura como Código (IaC)
+## Infraestructura como Código (IaC)
 
 Para garantizar la reproducibilidad total, la infraestructura de la nube (Google Cloud Storage) se gestiona mediante **Terraform**. Esto permite levantar el Data Lake y configurar los permisos necesarios en segundos.
 
@@ -92,7 +92,7 @@ Una vez completado el `apply`, Terraform generará una Service Account Key. Extr
 ```powershell
 $rawKey = terraform -chdir=infra/terraform output -raw service_account_key
 [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($rawKey)) | Out-File -FilePath "./secrets/gcp-sa-key.json" -Encoding ascii
-
+```
 ---
 
 ## Pipeline de Datos (ETL/ELT)
