@@ -41,6 +41,3 @@ volumes:
 
 # PREFECT LOGIN
 # prefect cloud login
-
-# WORK POOL
-# prefect work-pool create equinelead-pool --type process
