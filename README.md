@@ -119,10 +119,10 @@ Para simular el comportamiento de usuario, se mapearon los eventos del dataset d
 
 ```mermaid
 erDiagram
-    users_info ||--o{ horses_session_info : ""
-    users_info ||--o{ product_session_info : ""   
-    horses_listings ||--o{ horses_session_info : ""
     products_listings ||--o{ product_session_info : ""
+    users_info ||--o{ product_session_info : ""
+    users_info ||--o{ horses_session_info : ""
+    horses_listings ||--o{ horses_session_info : ""
 
     users_info {
         uuid user_id PK
