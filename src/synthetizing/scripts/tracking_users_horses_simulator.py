@@ -240,12 +240,6 @@ def save_parquet(df: pd.DataFrame, path: Path):
     path.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(path, index=False)
 
-def build_horses_dataset(*paths: Path) -> pd.DataFrame:
-    dfs = [pd.read_parquet(p) for p in paths]
-    df = pd.concat(dfs, ignore_index=True)
-    df["Temperament"] = df["Temperament"].astype("string")
-    return df
-
 def load_locales(path: Path) -> list[tuple[str, str]]:
     locales = set()
     with open(path) as f:
@@ -362,11 +356,11 @@ def build_rees_sample(
 
 def build_and_save_horses(
     equinenow_path: Path,
-    horsedeals_path: Path,
     output_path: Path
 ) -> pd.DataFrame:
-
-    df = build_horses_dataset(equinenow_path, horsedeals_path)
+    
+    df = pd.read_parquet(equinenow_path)
+    df["Temperament"] = df["Temperament"].astype("string")
     save_parquet(df, output_path)
     return df
 
@@ -426,7 +420,6 @@ def main():
 
     df_horses = build_and_save_horses(
         equinenow_path=Path(DATA_DIR_CLEAN / "equinenow_horses_listings_limpio.parquet"),
-        horsedeals_path=Path(DATA_DIR_CLEAN / "horsedeals_horses_listings_limpio.parquet"),
         output_path=Path(DATA_DIR_CLEAN / "horses_listings_limpio.parquet")
     )
 
