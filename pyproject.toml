@@ -26,7 +26,7 @@ dependencies = [
     "protobuf==4.25.3",
     "setuptools>=80.10.2",
     "scikit-learn>=1.8.0",
-    "dvc>=3.66.1",
+    "dvc[gs]>=3.66.1",
 ]
 
 [dependency-groups]

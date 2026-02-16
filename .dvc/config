@@ -1,0 +1,7 @@
+[core]
+    remote = gcsremote
+['remote "origin"']
+    url = gs://equinelead-datalake/dvc
+['remote "gcsremote"']
+    url = gs://datalead-lake/dvc
+    credentialpath = C:\Users\Alexander\AppData\Roaming\gcloud\application_default_credentials.json

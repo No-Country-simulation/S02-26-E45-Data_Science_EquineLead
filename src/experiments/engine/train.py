@@ -3,7 +3,7 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
-from experiments.misc.config import init_mlflow, start_run, SEED, MLFLOW_EXPERIMENT_PRODUCTS_NAME
+from experiments.misc.config import init_mlflow, start_run, SEED, MLFLOW_EXPERIMENT_HORSES_NAME
 from experiments.misc.utils import load_dataset, log_dataset_metadata
 import mlflow
 from features import build_features
@@ -12,10 +12,8 @@ from metrics import evaluate
 import platform
 import datetime
 
-
 PATH_DATA = Path("./data/clean")
 DATASET_NAME = "dataset_name.parquet"
-
 
 # ==================================
 # DATA SCIENTIST PERSONAL CONFIG
@@ -63,7 +61,7 @@ STAGE="training"
 # Esta convención es obligatoria para mantener un registry limpio y deployable.
 
 def main():
-    init_mlflow(experiment_name=MLFLOW_EXPERIMENT_PRODUCTS_NAME)
+    init_mlflow(experiment_name=MLFLOW_EXPERIMENT_ENGINE_NAME)
 
     with start_run(
         run_name=RUN_NAME,
@@ -97,9 +95,9 @@ def main():
         # Dataset version
         # =====================
         log_dataset_metadata(
-            name="producst_listings",
+            name="horses_listings",
             version="v1.0.1",
-            path="/clean/products_listings_limpio.parquet",
+            path="/clean/horses_listings_limpio.parquet",
             n_rows=df.shape[0],
             n_cols=df.shape[1],
         )
@@ -127,8 +125,9 @@ def main():
         # =====================
         mlflow.sklearn.log_model(
             model,
-            artifact_path="model_leads_products"
+            artifact_path="model_leads_horses"
         )
+
 
 if __name__ == "__main__":
     main()
