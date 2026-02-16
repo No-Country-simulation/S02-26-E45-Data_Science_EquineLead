@@ -1,2 +1,6 @@
 /clean
 /raw
+
+dvc remote modify origin endpointurl https://dagshub.com/aletbm/S02-26-E45-Data_Science_EquineLead.s3
+dvc remote modify origin --local access_key_id bc3d1295b7a79dcdf170db6ae0bc6a6d480fb208
+dvc remote modify origin --local secret_access_key bc3d1295b7a79dcdf170db6ae0bc6a6d480fb208

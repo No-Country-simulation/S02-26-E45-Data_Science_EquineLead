@@ -1,0 +1,6 @@
+[core]
+    remote = gcsremote
+['remote "dagshub"']
+    url = https://dagshub.com/aletbm/S02-26-E45-Data_Science_EquineLead.dvc
+['remote "gcsremote"']
+    url = gs://equinelead-datalake/dvc
