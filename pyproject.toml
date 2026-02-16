@@ -25,6 +25,8 @@ dependencies = [
     "mlflow>=1.27.0",
     "protobuf==4.25.3",
     "setuptools>=80.10.2",
+    "scikit-learn>=1.8.0",
+    "dvc>=3.66.1",
 ]
 
 [dependency-groups]

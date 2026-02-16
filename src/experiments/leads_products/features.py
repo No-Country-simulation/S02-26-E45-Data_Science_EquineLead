@@ -1,7 +1,7 @@
 from typing import Tuple
 import pandas as pd
 from sklearn.model_selection import train_test_split
-
+import numpy as np
 
 def build_features(
     df: pd.DataFrame,
@@ -13,9 +13,11 @@ def build_features(
     """
 
     ## Ejemplo ####################################
-
     X = df.drop(columns=["target"])
     y = df["target"]
+
+    X["feature_1_squared"] = X["feature_1"] ** 2
+    X["feature_2_log"] = np.log1p(X["feature_2"])
 
     X_train, X_val, y_train, y_val = train_test_split(
         X,

@@ -1,6 +1,6 @@
 from typing import Dict
 import pandas as pd
-from sklearn.metrics import mean_squared_error, mean_absolute_error
+from sklearn.metrics import root_mean_squared_error, mean_absolute_error
 
 
 def evaluate(
@@ -16,6 +16,6 @@ def evaluate(
     preds = model.predict(X_val)
 
     return {
-        "rmse": mean_squared_error(y_val, preds, squared=False),
+        "rmse": root_mean_squared_error(y_val, preds),
         "mae": mean_absolute_error(y_val, preds),
     }

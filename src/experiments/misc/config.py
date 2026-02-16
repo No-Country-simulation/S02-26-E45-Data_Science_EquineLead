@@ -8,6 +8,9 @@ import dagshub
 
 DAGSHUB_REPO_OWNER = "aletbm"
 DAGSHUB_REPO_NAME = "S02-26-E45-Data_Science_EquineLead"
+MLFLOW_EXPERIMENT_HORSES_NAME = "equinelead-leads-horses"
+MLFLOW_EXPERIMENT_PRODUCTS_NAME = "equinelead-leads-horses"
+SEED = 42
 
 def init_mlflow(experiment_name: str):
     """

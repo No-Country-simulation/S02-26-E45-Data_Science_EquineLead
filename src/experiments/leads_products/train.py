@@ -1,23 +1,26 @@
-from mlflow.config import init_mlflow, start_run
-import mlflow
+import sys
+from pathlib import Path
 
+sys.path.append(str(Path(__file__).resolve().parents[2]))
+
+from experiments.misc.config import init_mlflow, start_run, SEED, MLFLOW_EXPERIMENT_PRODUCTS_NAME
+from experiments.misc.utils import load_dataset, log_dataset_metadata
+import mlflow
 from features import build_features
 from model import train_model
 from metrics import evaluate
+import platform
+import datetime
 
-from misc.utils import load_dataset, log_dataset_metadata
-from pathlib import Path
-import platform, sys
 
 PATH_DATA = Path("./data/clean")
 DATASET_NAME = "dataset_name.parquet"
-SEED = 42
-MLFLOW_EXPERIMENT_NAME = "equinelead-leads-products"    # Contenedor lógico de múltiples ejecuciones (runs)
+
 
 # ==================================
 # DATA SCIENTIST PERSONAL CONFIG
 # ==================================
-RUN_NAME="baseline_xgboost_v1"                          # Ejecución puntual dentro de un experimento
+RUN_NAME=f"baseline_xgboost_v1_{datetime.datetime.now():%Y%m%d_%H%M%S}"   # Ejecución puntual dentro de un experimento
 DS_NAME="Pepito_Pepin"
 STAGE="training"
 
@@ -60,7 +63,7 @@ STAGE="training"
 # Esta convención es obligatoria para mantener un registry limpio y deployable.
 
 def main():
-    init_mlflow(experiment_name=MLFLOW_EXPERIMENT_NAME)
+    init_mlflow(experiment_name=MLFLOW_EXPERIMENT_PRODUCTS_NAME)
 
     with start_run(
         run_name=RUN_NAME,
