@@ -53,7 +53,7 @@ El proyecto está diseñado bajo principios de Modern Data Stack, priorizando la
 + **Gestión de Entorno**: UV (Instalación de dependencias 70% más rápida que pip).
 + **Contenerización**: Docker & Docker-compose.
 + **Ingesta**: Playwright (Dinámico), BeautifulSoup4 (Estático)
-+ **Cloud Storage**: (Data Lake en formato Parquet)
++ **Cloud Storage**: Google Cloud Storage (Data Lake en formato Parquet)
 + **Data Synthesis**: Python Faker + Proyecciones de [Rees46 Dataset](https://www.kaggle.com/mkechinov/ecommerce-behavior-data-from-multi-category-store).
 
 ---
