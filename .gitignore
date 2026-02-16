@@ -14,3 +14,4 @@ tfplan
 *.tfstate
 *.tfstate.backup
 .terraform/
+/data-file.bin
