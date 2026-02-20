@@ -3,8 +3,8 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
-from experiments.misc.config import init_mlflow, start_run, SEED, MLFLOW_EXPERIMENT_ENGINE_NAME
-from experiments.misc.utils import load_dataset, log_dataset_metadata
+from misc.config import init_mlflow, start_run, SEED, MLFLOW_EXPERIMENT_ENGINE_NAME
+from misc.utils import load_dataset, log_dataset_metadata
 import mlflow
 from features import build_features
 from model import train_model
@@ -106,7 +106,7 @@ def main():
         # Reproducibility
         # =====================
         mlflow.log_param("random_state", SEED)
-        mlflow.log_param("cv_folds", 5)
+        mlflow.log_param("cv_folds", 5) # Si se usa cross-validation, es solo un ejemplo
 
         # =====================
         # Environment
@@ -125,9 +125,8 @@ def main():
         # =====================
         mlflow.sklearn.log_model(
             model,
-            artifact_path="model_leads_horses"
+            artifact_path="model_engine"
         )
-
 
 if __name__ == "__main__":
     main()

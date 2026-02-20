@@ -53,7 +53,7 @@ El proyecto está diseñado bajo principios de Modern Data Stack, priorizando la
 + **Gestión de Entorno**: UV (Instalación de dependencias 70% más rápida que pip).
 + **Contenerización**: Docker & Docker-compose.
 + **Ingesta**: Playwright (Dinámico), BeautifulSoup4 (Estático)
-+ **Cloud Storage**: (Data Lake en formato Parquet)
++ **Cloud Storage**: Google Cloud Storage (Data Lake en formato Parquet)
 + **Data Synthesis**: Python Faker + Proyecciones de [Rees46 Dataset](https://www.kaggle.com/mkechinov/ecommerce-behavior-data-from-multi-category-store).
 
 ---
@@ -117,7 +117,64 @@ Para simular el comportamiento de usuario, se mapearon los eventos del dataset d
 
 ### Diagrama Entidad-Relación (DER)
 
-![DER](./assets/equinelead.svg)
+```mermaid
+erDiagram
+    products_listings ||--o{ product_session_info : ""
+    users_info ||--o{ product_session_info : ""
+    users_info ||--o{ horses_session_info : ""
+    horses_listings ||--o{ horses_session_info : ""
+
+    users_info {
+        uuid user_id PK
+        varchar name
+        varchar gender
+        varchar country
+        varchar city
+        varchar address
+        varchar credit_card_info
+        varchar email
+        varchar phone_number
+        json job_info
+        varchar device_type
+        varchar traffic_source
+        date first_seen
+    }
+
+    horses_session_info {
+        uuid user_id FK
+        int horse_id FK
+        varchar event_type
+        datetime event_time
+    }
+
+    product_session_info {
+        uuid user_id FK
+        int Item_ID FK
+        varchar event_type
+        datetime event_time
+    }
+
+    horses_listings {
+        int Horse_ID PK
+        varchar Breed
+        varchar Name
+        varchar Gender
+        boolean In_Foal
+        float Height_hh
+        float Weight_lbs
+        varchar Temperament
+    }
+
+    products_listings {
+        int Item_ID PK
+        varchar Name
+        int Stock
+        text Description
+        float Price
+        varchar Images
+        varchar URL
+    }
+```
 
 ---
 

@@ -3,8 +3,8 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
-from experiments.misc.config import init_mlflow, start_run, SEED, MLFLOW_EXPERIMENT_PRODUCTS_NAME
-from experiments.misc.utils import load_dataset, log_dataset_metadata
+from misc.config import init_mlflow, start_run, SEED, MLFLOW_EXPERIMENT_PRODUCTS_NAME
+from misc.utils import load_dataset, log_dataset_metadata
 import mlflow
 from features import build_features
 from model import train_model

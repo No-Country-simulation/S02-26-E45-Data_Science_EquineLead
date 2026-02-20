@@ -9,10 +9,10 @@ lint:
 	pre-commit run --all-files
 
 run-data-pipeline:
-	docker compose --profile pipeline up --build
+	docker compose -f deployment/docker-compose.yml --profile pipeline up --build
 
 run-prefect:
-	docker compose up prefect-server
+	docker compose -f deployment/docker-compose.yml up prefect-server
 
 terraform-deploy:
 	terraform -chdir=$(PATH_INFRA) init
