@@ -7,8 +7,8 @@ requires-python = ">=3.12"
 dependencies = [
     "beautifulsoup4>=4.14.3",
     "lxml>=6.0.2",
-    "pandas>=3.0.0",
-    "pyarrow>=23.0.0",
+    "pandas==2.2",
+    "pyarrow==20",
     "requests>=2.32.5",
     "tqdm>=4.67.3",
     "prefect==2.20.18",
@@ -21,6 +21,12 @@ dependencies = [
     "pycountry>=24.6.1",
     "babel>=2.18.0",
     "fastparquet>=2025.12.0",
+    "dagshub>=0.6.5",
+    "mlflow==3",
+    "protobuf==4.25.3",
+    "setuptools>=80.10.2",
+    "scikit-learn>=1.8.0",
+    "dvc[gs]>=3.66.1",
 ]
 
 [dependency-groups]

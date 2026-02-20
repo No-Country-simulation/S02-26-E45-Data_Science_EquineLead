@@ -5,6 +5,7 @@
 *testing.ipynb
 *tree.py
 .env
+__pycache__
 *.pyc
 
 tfplan
