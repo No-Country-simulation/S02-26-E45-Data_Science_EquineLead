@@ -9,7 +9,7 @@ PATH_OUTPUT = Path("./data/raw")
 PATH_OUTPUT.mkdir(parents=True, exist_ok=True)
 
 BASE = "https://www.doversaddlery.com"
-FILTER_PRICE = ["100.00", "400.00", "300.00", "200.00", "300.00", "1300.00", "300.00", "200.00", "150.00", "100.00"]
+FILTER_PRICE = "500.00"
 
 HEADERS = {
     "User-Agent": (
@@ -46,7 +46,7 @@ def scrape_listings(pages_per_category=2, sleep_seconds=5):
     for category_url in tqdm(categories_urls, total=len(categories_urls), desc="Scraping Product Categories", leave=False, position=0):
         for i, page in enumerate(range(1, pages_per_category+1)):
             try:
-                cat_soup = get_soup(f"{category_url}?filter.v.price.gte={FILTER_PRICE[i]}&page={page}")
+                cat_soup = get_soup(f"{category_url}?filter.v.price.gte={FILTER_PRICE}&page={page}")
                 a_products = cat_soup.select("a.product-card-title")
                 for a in a_products:
                     href = str(a.get("href"))

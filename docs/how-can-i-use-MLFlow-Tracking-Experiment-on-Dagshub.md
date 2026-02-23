@@ -38,8 +38,7 @@ Los experimentos de ML están organizados en:
 ```text
 src/experiments/
 ├── engine/
-├── leads_horses/
-└── leads_products/
+└── leads/
 ```
 
 Cada carpeta representa **un experimento de negocio distinto**.

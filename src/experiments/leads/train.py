@@ -3,7 +3,7 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
-from misc.config import init_mlflow, start_run, SEED, MLFLOW_EXPERIMENT_PRODUCTS_NAME
+from misc.config import init_mlflow, start_run, SEED, MLFLOW_EXPERIMENT_LEADS
 from misc.utils import load_dataset, log_dataset_metadata
 import mlflow
 from features import build_features
@@ -63,7 +63,7 @@ STAGE="training"
 # Esta convención es obligatoria para mantener un registry limpio y deployable.
 
 def main():
-    init_mlflow(experiment_name=MLFLOW_EXPERIMENT_PRODUCTS_NAME)
+    init_mlflow(experiment_name=MLFLOW_EXPERIMENT_LEADS)
 
     with start_run(
         run_name=RUN_NAME,
@@ -127,7 +127,7 @@ def main():
         # =====================
         mlflow.sklearn.log_model(
             model,
-            artifact_path="model_leads_products"
+            artifact_path="model_leads"
         )
 
 if __name__ == "__main__":

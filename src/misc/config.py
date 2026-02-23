@@ -7,8 +7,7 @@ import dagshub
 
 DAGSHUB_REPO_OWNER = "aletbm"
 DAGSHUB_REPO_NAME = "S02-26-E45-Data_Science_EquineLead"
-MLFLOW_EXPERIMENT_HORSES_NAME = "equinelead-leads-horses"
-MLFLOW_EXPERIMENT_PRODUCTS_NAME = "equinelead-leads-products"
+MLFLOW_EXPERIMENT_LEADS = "equinelead-leads"
 MLFLOW_EXPERIMENT_ENGINE_NAME = "equinelead-recommendation-engine"
 SEED = 42
 
