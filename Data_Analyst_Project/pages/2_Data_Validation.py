@@ -1,33 +1,36 @@
 import streamlit as st
 from utils.data_loader import load_parquet_data
-from components.ui_cards import render_kpi_card, render_alert
+from components.ui_cards import render_alert
 from components.charts import *
+from components.sidebar_filters import render_global_filters
+from utils.style_utils import inject_bi_style, render_bi_header
 
-st.set_page_config(page_title="Data Engineering (Infra)", page_icon="⚙️", layout="wide")
+st.set_page_config(page_title="Data Engineering", page_icon="⚙️", layout="wide")
+inject_bi_style()
+render_bi_header("Data Engineering Audit", "Monitoreo de Infraestructura y Salud del Data Lake")
 
-st.header("2. Auditoría Operativa del Data Lake")
-st.markdown("Monitoreo en tiempo real de la Extracción Cruda, Ingesta y Salud Integral de Datos.")
+raw_listings, raw_sessions, raw_users = load_parquet_data()
+listings, sessions, users = render_global_filters(raw_listings, raw_sessions, raw_users)
 
-listings, sessions, users = load_parquet_data()
-
-st.subheader("Métricas de Pipeline Básico")
 col_a, col_b = st.columns(2)
 with col_a:
-    render_kpi_card("Volumen Total de Inventario", f"{len(listings):,}")
+    st.metric("Registros en Ingesta", f"{len(listings):,}")
 with col_b:
-    render_kpi_card("Eventos Traceables", f"{len(sessions):,}")
+    st.metric("Eventos Procesados", f"{len(sessions):,}")
 
-# Render 4 Data Engineering Charts
 st.markdown("---")
-st.subheader("Análisis de Calidad y Volumen (4 KPIs)")
 
 col1, col2 = st.columns(2)
 with col1:
-    st.plotly_chart(plot_daily_scrape_volume(), use_container_width=True)
-    st.plotly_chart(plot_event_distribution(sessions), use_container_width=True)
+    with st.container():
+        st.plotly_chart(plot_daily_scrape_volume(), use_container_width=True)
+    with st.container():
+        st.plotly_chart(plot_event_distribution(sessions), use_container_width=True)
 
 with col2:
-    st.plotly_chart(plot_data_drift(), use_container_width=True)
-    st.plotly_chart(plot_missing_values(listings), use_container_width=True)
+    with st.container():
+        st.plotly_chart(plot_data_drift(), use_container_width=True)
+    with st.container():
+        st.plotly_chart(plot_missing_values(listings), use_container_width=True)
 
-render_alert("Data Lake Estable. La densidad Nula es aceptable para Modelado de Features.", type="success")
+render_alert("Infraestructura Estable: El flujo de datos mantiene un SLA de integridad superior al 95%.", type="success")

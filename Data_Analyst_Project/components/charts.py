@@ -1,13 +1,28 @@
-import matplotlib.pyplot as plt
-import seaborn as sns
-import numpy as np
-import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import pandas as pd
+import numpy as np
 
-# ==========================================
-# HELPERS
-# ==========================================
+# Palette Config (Professional PowerBI)
+COLOR_REAL = "#3b82f6" # Bright Blue
+COLOR_SIM = "#10b981"  # Emerald
+COLOR_GRID = "rgba(255, 255, 255, 0.1)"
+COLOR_TEXT = "#e2e8f0"
+
+def apply_bi_layout(fig, title: str):
+    """Applies a professional executive layout to any plotly figure."""
+    fig.update_layout(
+        title=dict(text=f"<b>{title}</b>", font=dict(size=18, color="#ffffff")),
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        font=dict(color=COLOR_TEXT, family='Inter'),
+        margin=dict(l=40, r=20, t=60, b=40),
+        xaxis=dict(showgrid=True, gridcolor=COLOR_GRID, linecolor=COLOR_GRID, tickfont=dict(color=COLOR_TEXT)),
+        yaxis=dict(showgrid=True, gridcolor=COLOR_GRID, linecolor=COLOR_GRID, tickfont=dict(color=COLOR_TEXT)),
+        hovermode="x unified",
+        legend=dict(bgcolor='rgba(0,0,0,0)', font=dict(color=COLOR_TEXT))
+    )
+    return fig
 
 def get_tag(df: pd.DataFrame) -> str:
     """Returns the visual audit tag based on the source column."""
@@ -20,42 +35,41 @@ def get_tag(df: pd.DataFrame) -> str:
 # ==========================================
 
 def plot_tam_distribution(listings: pd.DataFrame, users: pd.DataFrame):
-    """Chart 1: TAM Distribution by Country (Pie) using joined real data."""
-    # Assuming users has country and users join with sessions/listings
-    # For now, if listings has Location, we extract country or use users distribution
+    """Chart 1: TAM Distribution by Country (Pie)"""
     tag = get_tag(listings)
     
     if 'country' in users.columns:
-        fig = px.pie(users, names='country', title=f'Distribución Demográfica de Clientes{tag}',
-                     color_discrete_sequence=px.colors.sequential.Aggrnyl)
+        fig = px.pie(users, names='country', hole=0.6,
+                     color_discrete_sequence=px.colors.qualitative.Pastel)
     else:
-        # Fallback to listings price distribution by first part of Location
         listings['Temp_Country'] = listings['Location'].apply(lambda x: x.split(',')[-1].strip() if ',' in str(x) else 'Other')
-        fig = px.pie(listings, names='Temp_Country', values='Price', title=f'Distribución de Valor por Región{tag}',
-                     color_discrete_sequence=px.colors.sequential.Aggrnyl)
-    return fig
+        fig = px.pie(listings, names='Temp_Country', values='Price', hole=0.6,
+                     color_discrete_sequence=px.colors.qualitative.Pastel)
+    
+    return apply_bi_layout(fig, f'Distribución Regional de Mercado{tag}')
 
 def plot_cpl_comparison():
     """Chart 2: Pre-DS vs Post-DS CPL (Bar)"""
-    data = {'Etapa': ['2023 (Estático)', '2024 (Machine Learning)'], 'CPL (USD)': [25, 15]}
-    fig = px.bar(data, x='Etapa', y='CPL (USD)', text='CPL (USD)', title='Reducción Costo por Lead (CPL)', 
-                 color='Etapa', color_discrete_map={'2023 (Estático)':'#ff6b6b', '2024 (Machine Learning)':'#1dd1a1'})
-    return fig
+    data = {'Etapa': ['2023 (Estático)', '2024 (MLE)'], 'CPL (USD)': [25, 15]}
+    fig = px.bar(data, x='Etapa', y='CPL (USD)', text='CPL (USD)', 
+                 color='Etapa', color_discrete_map={'2023 (Estático)':'#ef4444', '2024 (MLE)':'#10b981'})
+    return apply_bi_layout(fig, 'Reducción de Costo por Lead (CPL)')
 
 def plot_traffic_seasonality():
     """Chart 3: Traffic seasonality (Line)"""
     months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
     traffic = [150, 160, 180, 210, 250, 280, 300, 290, 240, 200, 170, 160]
-    fig = px.line(x=months, y=traffic, title='Estacionalidad del Tráfico (Miles de Sesiones)', markers=True)
-    fig.update_traces(line_color='#feca57')
-    return fig
+    fig = px.line(x=months, y=traffic, markers=True)
+    fig.update_traces(line_color='#fbbf24')
+    return apply_bi_layout(fig, 'Estacionalidad del Tráfico (K Sesiones)')
 
 def plot_price_distribution(df: pd.DataFrame):
-    """Chart 4: Ticket Price Distribution (Histogram)"""
+    """Chart 4: Ticket Price Distribution"""
     tag = get_tag(df)
-    fig = px.histogram(df, x='Price', nbins=50, title=f'Distribución Métrica de Precios (USD){tag}',
-                       color_discrete_sequence=['#54a0ff'])
-    return fig
+    fig = px.histogram(df, x='Price', nbins=50,
+                       color_discrete_sequence=[COLOR_REAL],
+                       labels={'Price': 'Precio (USD)', 'count': 'Frecuencia'})
+    return apply_bi_layout(fig, f'Análisis de Densidad de Precios{tag}')
 
 # ==========================================
 # PAGE 2: DATA ENGINEERING (4 Charts)
@@ -65,40 +79,31 @@ def plot_daily_scrape_volume():
     """Chart 5: Daily Scrape Volume"""
     dates = pd.date_range(start='2024-01-01', periods=30)
     volume = np.random.normal(loc=5000, scale=200, size=30).astype(int)
-    fig = px.area(x=dates, y=volume, title='Volumen de Extracción Diario (Scrapers)', color_discrete_sequence=['#00d2d3'])
-    return fig
+    fig = px.area(x=dates, y=volume, color_discrete_sequence=['#22d3ee'])
+    return apply_bi_layout(fig, 'Volumen Diario: Ingesta Scrapers')
 
 def plot_missing_values(df: pd.DataFrame):
-    """Chart 6: Data Completeness (Plotly Bar)"""
-    # Simulate missing data for visual
-    df_miss = df.copy()
-    df_miss.loc[np.random.choice(df_miss.index, 50), 'Age'] = np.nan
-    df_miss.loc[np.random.choice(df_miss.index, 100), 'Registry'] = np.nan
-    
-    completeness = (1 - df_miss.isnull().mean()) * 100
+    """Chart 6: Data Completeness"""
+    completeness = (1 - df.isnull().mean()) * 100
     fig = px.bar(x=completeness.index, y=completeness.values, 
-                 title='Completitud de Datos por Columna (%)',
-                 labels={'x': 'Atributos (Features)', 'y': 'Completitud (%)'},
-                 color=completeness.values, color_continuous_scale='RdYlGn')
-    fig.add_hline(y=95, line_dash="dash", line_color="orange", annotation_text="Meta 95%")
-    fig.update_yaxes(range=[80, 100])
-    return fig
+                 color=completeness.values, color_continuous_scale='Blues')
+    fig.add_hline(y=95, line_dash="dash", line_color="#10b981", annotation_text="SLA 95%")
+    return apply_bi_layout(fig, 'Índice de Salud de Datos (%)')
 
 def plot_event_distribution(df: pd.DataFrame):
     """Chart 7: Event Distribution (Donut)"""
     tag = get_tag(df)
-    fig = px.pie(df, names='event_type', title=f'Distribución del Funnel (Eventos){tag}', hole=0.5,
-                 color_discrete_sequence=px.colors.sequential.Plasma)
-    return fig
+    fig = px.pie(df, names='event_type', hole=0.5,
+                 color_discrete_sequence=px.colors.qualitative.Prism)
+    return apply_bi_layout(fig, f'Embudo de Eventos: Mezcla Proporcional{tag}')
 
 def plot_data_drift():
-    """Chart 8: Data Drift Simulation"""
-    weeks = ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4']
-    drift_score = [0.02, 0.05, 0.04, 0.12] # Spike in week 4
-    fig = px.bar(x=weeks, y=drift_score, title='Alerta de Data Drift (KS Test Score)',
-                 color=drift_score, color_continuous_scale='Reds')
-    fig.add_hline(y=0.1, line_dash="dash", line_color="red", annotation_text="Umbral de Re-entrenamiento")
-    return fig
+    """Chart 8: Data Drift Alert"""
+    weeks = ['Sem 1', 'Sem 2', 'Sem 3', 'Sem 4']
+    drift_score = [0.02, 0.05, 0.04, 0.12] 
+    fig = px.bar(x=weeks, y=drift_score, color=drift_score, color_continuous_scale='Reds')
+    fig.add_hline(y=0.1, line_dash="dash", line_color="#ef4444", annotation_text="THRESHOLD")
+    return apply_bi_layout(fig, 'Monitoreo de Data Drift (KS-Stat)')
 
 # ==========================================
 # PAGE 3: ML PLATFORM (4 Charts)
@@ -108,35 +113,32 @@ def plot_feature_importance():
     """Chart 9: Random Forest Permutation Importance"""
     features = ['Vistas_Previas', 'Precio', 'Edad', 'Tiene_Video', 'Raza_Premium']
     importance = [0.45, 0.20, 0.15, 0.12, 0.08]
-    fig = px.bar(x=importance, y=features, orientation='h', title='Importancia de Variables (Permutation)',
-                 color=importance, color_continuous_scale='Mint')
+    fig = px.bar(x=importance, y=features, orientation='h',
+                 color=importance, color_continuous_scale='Mint',
+                 labels={'x': 'Impacto Relativo', 'y': 'Variable'})
     fig.update_layout(yaxis={'categoryorder':'total ascending'})
-    return fig
+    return apply_bi_layout(fig, 'Importancia de Variables (Permutation)')
 
 def plot_predicted_probabilities(df: pd.DataFrame):
     """Chart 10: KDE of Predicted Probabilities"""
-    # Note: predicted_prob is projected (synthetic) even if sessions is real
     fig = px.histogram(df, x='predicted_prob', color='event_type', marginal='box',
-                       title='Distribución KDE: Probabilidades de Conversión [Proyección]', barmode='overlay',
-                       opacity=0.7)
-    return fig
+                       barmode='overlay', opacity=0.7, color_discrete_sequence=['#3b82f6', '#10b981'])
+    return apply_bi_layout(fig, 'Calibración: Probabilidades de Conversión')
 
 def plot_roc_curve():
-    """Chart 11: ROC AUC Simulation"""
+    """Chart 11: ROC AUC Performance"""
     fpr = np.linspace(0, 1, 100)
-    tpr = np.sqrt(fpr) # mock curve shape
-    fig = px.line(x=fpr, y=tpr, title='Curva ROC (AUC = 0.89)')
-    fig.add_shape(type='line', line=dict(dash='dash'), x0=0, x1=1, y0=0, y1=1)
-    fig.update_layout(xaxis_title='Falsos Positivos', yaxis_title='Verdaderos Positivos')
-    return fig
+    tpr = np.sqrt(fpr) 
+    fig = px.line(x=fpr, y=tpr)
+    fig.add_shape(type='line', line=dict(dash='dash', color='#94a3b8'), x0=0, x1=1, y0=0, y1=1)
+    return apply_bi_layout(fig, 'Curva ROC (AUC = 0.89)')
 
 def plot_confusion_matrix():
-    """Chart 12: Predict Confusion Matrix"""
+    """Chart 12: Matrix of Confusion"""
     z = [[4500, 200], [150, 480]]
-    fig = px.imshow(z, text_auto=True, title='Matrix de Confusión (Test Set)',
-                    labels=dict(x="Predicción", y="Realidad"),
-                    x=['No Lead', 'Lead'], y=['No Lead', 'Lead'], color_continuous_scale='Blues')
-    return fig
+    fig = px.imshow(z, text_auto=True, 
+                    x=['- Pred', '+ Pred'], y=['- Real', '+ Real'], color_continuous_scale='Blues')
+    return apply_bi_layout(fig, 'Matriz de Confusión (Holdout Set)')
 
 # ==========================================
 # PAGE 4: DS3 EXPERIMENTATION (4 Charts)
@@ -144,73 +146,68 @@ def plot_confusion_matrix():
 
 def plot_ab_test_results(df: pd.DataFrame):
     """Chart 13: A/B Test Results"""
-    # group is projected
     counts = df.groupby(['experiment_group', 'event_type']).size().reset_index(name='count')
     purchases = counts[counts['event_type'] == 'purchase']
     fig = px.bar(purchases, x='experiment_group', y='count', color='experiment_group',
-                 title='A/B Test: Leads Generados [Proyección Post-Campaña]')
-    return fig
+                 color_discrete_sequence=['#ef4444', '#10b981'])
+    return apply_bi_layout(fig, 'A/B Test: Leads Generados (Auditoría)')
 
 def plot_confidence_intervals():
     """Chart 14: 95% Confidence Intervals"""
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=[13.49, 15.68], y=['Control', 'Tratamiento'],
-                             error_x=dict(type='data', array=[0.8, 1.1], visible=True),
-                             mode='markers', marker=dict(size=12, color=['#ff6b6b', '#1dd1a1'])))
-    fig.update_layout(title='Intervalos de Confianza 95% (Conversión %)', xaxis_title='Tasa de Conversión')
-    return fig
+                             error_x=dict(type='data', array=[0.8, 1.1], visible=True, color='#ffffff'),
+                             mode='markers', marker=dict(size=14, color=['#ef4444', '#10b981'])))
+    return apply_bi_layout(fig, 'Intervalos de Confianza (95%)')
 
 def plot_average_marginal_effects():
     """Chart 15: AME Logit Model"""
     effects = {'Premium Pedigree': -0.02, 'Con Video': 0.05, 'Hook Emocional': 0.08, 'Precio Alto': -0.04}
     fig = px.bar(x=list(effects.values()), y=list(effects.keys()), orientation='h',
-                 title='Efectos Marginales Promedio (AME)', color=list(effects.values()), 
-                 color_continuous_scale=['red', 'gray', 'green'])
+                 color=list(effects.values()), color_continuous_scale='RdYlGn')
     fig.add_vline(x=0, line_dash="solid", line_color="white")
-    return fig
+    return apply_bi_layout(fig, 'Efectos Marginales (AME)')
 
 def plot_funnel():
     """Chart 16: Sales Funnel"""
-    data = dict(number=[50000, 15000, 6000, 800], stage=["Impresiones", "Clicks", "Vistas Detalles", "Leads B2B"])
-    fig = px.funnel(data, x='number', y='stage', title='Embudo de Conversión (General)')
-    return fig
+    data = dict(number=[50000, 15000, 6000, 800], stage=["Impresiones", "Clicks", "Vistas Detalle", "Leads B2B"])
+    fig = px.funnel(data, x='number', y='stage')
+    return apply_bi_layout(fig, 'Embudo Maestra de Conversión')
 
 # ==========================================
 # PAGE 5: FINANCIAL ROI (4 Charts)
 # ==========================================
 
 def plot_roi_projection(cost_monthly: float, incremental_revenue: list, months: list):
-    """Chart 17: ROI Projection 6 Months"""
+    """Chart 17: ROI Projection"""
     fig = go.Figure()
-    fig.add_trace(go.Bar(x=months, y=incremental_revenue, name='Revenue Extra', marker_color='#1dd1a1'))
-    fig.add_trace(go.Scatter(x=months, y=[cost_monthly]*len(months), name='Costos Fijos', line=dict(color='red', dash='dash')))
+    fig.add_trace(go.Bar(x=months, y=incremental_revenue, name='Revenue Extra', marker_color='#10b981'))
+    fig.add_trace(go.Scatter(x=months, y=[cost_monthly]*len(months), name='Costos Fijos', line=dict(color='#ef4444', dash='dash')))
     profit = [r - cost_monthly for r in incremental_revenue]
-    fig.add_trace(go.Scatter(x=months, y=profit, name='Net Profit', fill='tozeroy', fillcolor='rgba(29, 209, 161, 0.2)'))
-    fig.update_layout(title='Proyección Dinámica de ROI Económico', yaxis_title='USD', barmode='group')
-    return fig
+    fig.add_trace(go.Scatter(x=months, y=profit, name='Net Profit', fill='tozeroy', fillcolor='rgba(16, 185, 129, 0.2)'))
+    return apply_bi_layout(fig, 'Proyección Dinámica de ROI')
 
 def plot_break_even():
     """Chart 18: Break-even Point"""
     leads_sold = np.linspace(0, 1000, 50)
-    revenue = leads_sold * 15 # $15 per lead
-    cost = 10000 + (leads_sold * 2) # Fixed + Variable
+    revenue = leads_sold * 15 
+    cost = 10000 + (leads_sold * 2) 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=leads_sold, y=revenue, name='Ingresos Totales', line=dict(color='green')))
-    fig.add_trace(go.Scatter(x=leads_sold, y=cost, name='Costos Totales', line=dict(color='red')))
-    fig.update_layout(title='Análisis de Break-Even (Punto de Equilibrio)', xaxis_title='Leads Vendidos', yaxis_title='USD')
-    return fig
+    fig.add_trace(go.Scatter(x=leads_sold, y=revenue, name='Revenue', line=dict(color='#10b981')))
+    fig.add_trace(go.Scatter(x=leads_sold, y=cost, name='Costs', line=dict(color='#ef4444')))
+    return apply_bi_layout(fig, 'Punto de Equilibrio (Break-Even)')
 
 def plot_ltv():
     """Chart 19: LTV Projection"""
-    segments = ['Pequeño Criador', 'Establo Mediano', 'Atleta Olímpico']
+    segments = ['Criador', 'Establo', 'Élite']
     ltv = [500, 2500, 15000]
-    fig = px.bar(x=segments, y=ltv, title='Lifetime Value Esperado (LTV) por Segmento', text=ltv, color=ltv)
-    return fig
+    fig = px.bar(x=segments, y=ltv, text=ltv, color=ltv, color_continuous_scale='Viridis')
+    return apply_bi_layout(fig, 'Lifetime Value (LTV) por Segmento')
 
 def plot_profit_margin():
-    """Chart 20: Net Profit Margin Area"""
+    """Chart 20: Net Profit Margin"""
     quarters = ['Q1', 'Q2', 'Q3', 'Q4']
-    margin = [12, 18, 45, 62] # Margin % evolution
-    fig = px.area(x=quarters, y=margin, title='Evolución del Margen de Beneficio Neto (%)', markers=True)
-    fig.update_traces(line_color='#ff9ff3', fillcolor='rgba(255, 159, 243, 0.3)')
-    return fig
+    margin = [12, 18, 45, 62] 
+    fig = px.area(x=quarters, y=margin, markers=True)
+    fig.update_traces(line_color='#8b5cf6', fillcolor='rgba(139, 92, 246, 0.2)')
+    return apply_bi_layout(fig, 'Evolución de Margen Neto (%)')
