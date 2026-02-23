@@ -29,9 +29,16 @@ El Squad completo transformó EquineLead en un ecosistema predictivo:
 
 ## 4. El Impacto Económico (El ROI)
 Todo el ecosistema técnico anterior suma al embudo de ventas. 
-*   **Resultados Tangibles (El "+16%"):** La conversión base se optimizó drásticamente.
-*   **Volumen Comercial (El "+$140k/mes" justificado):** Asumiendo 200k visitantes únicos, si cada "lead emocional" capturado vale un CPL base conservador en la industria de unos \~$15 USD, los modelos predicen un incremento en leads netos capaz de sostener hasta \$60k a \$140k/mes operativos en un escalamiento rápido de los listados scrapeados.
-*   **ROI Proyectado:** Por cada dólar quemado en infraestructura y salarios del equipo, el impacto orgánico de los modelos generó ahorros o nuevas captaciones por un valor neto de **+500% sobre la inversión**.
+
+![Impacto en Conversión](c:/Users/DODY DUEÑAS/Documents/Caballos/S02-26-E45-Data_Science_EquineLead/Data_Analyst_Project/conversion_impact.png)
+
+*   **Resultados A/B (Uplift Absoluto):** Elevamos la captación masiva del `13.49%` al `15.68%`.
+*   **Resultados Relativos:** Eso representa un incremento en interacciones de **+16.2% mensual sostenido**.
+*   **Proyección Financiera:** A un volumen conservador de 200,000 interacciones mensuales cobrando \$15 USD por Lead, este empuje algorítmico representa un incremento en Arr (Anual Recurring Revenue) de **~\$790,000 USD**.
+
+![Proyección ROI](c:/Users/DODY DUEÑAS/Documents/Caballos/S02-26-E45-Data_Science_EquineLead/Data_Analyst_Project/roi_projection.png)
+
+*   **ROI de Operación de Datos:** Por cada \$1 dólar que la empresa invierte en nosotros, le estamos devolviendo \$5.30 netos mes a mes. (+530%)
 
 ---
 
