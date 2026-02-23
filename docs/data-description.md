@@ -22,7 +22,6 @@ data/
 ├───raw
 │       doversaddlery_products_listing.parquet  # Dataset original de productos reales de Doversaddlery
 │       equinenow_horses_listings.parquet       # Dataset original de anuncios de caballos de EquineNow
-│       horsedeals_horses_listings.parquet     # Dataset original de anuncios de caballos de HorseDeals
 │
 └───tracking
         equestrian_jobs.txt   # Listado de trabajos ecuestres extraído de la web
@@ -46,9 +45,9 @@ data/
 
 Archivo: `data/clean/horses_listings_limpio.parquet`
 
-Este dataset contiene información estructurada y textual sobre anuncios de caballos publicados en plataformas de compra/venta (**EquineNow** y **HorseDeals**). Cada fila representa un caballo único identificado por un anuncio.
+Este dataset contiene información estructurada y textual sobre anuncios de caballos publicados en plataformas de compra/venta (**EquineNow**). Cada fila representa un caballo único identificado por un anuncio.
 
-> ⚠️ Todos los datos fueron extraídos de las webs EquineNow y HorseDeals. El uso debe respetar derechos de autor, términos de uso del sitio y buenas prácticas de web scraping.
+> ⚠️ Todos los datos fueron extraídos de la web de EquineNow. El uso debe respetar derechos de autor, términos de uso del sitio y buenas prácticas de web scraping.
 
 ## Descripción de Features
 
@@ -106,7 +105,7 @@ Este dataset contiene información real sobre productos ecuestres disponibles en
 | Price       | Float        | Precio del producto en dólares estadounidenses (USD). |
 | Images      | URL / Text   | Enlaces a las imágenes del producto publicadas en la web. Puede contener uno o varios URLs. |
 | URL         | URL          | Enlace a la página del producto en Doversaddlery. |
-| Category   | Text        | Categoria del producto. |
+| Category    | Text         | Categoria del producto. |
 
 ## Notas
 
