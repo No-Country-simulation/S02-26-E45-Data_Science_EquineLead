@@ -1,77 +1,90 @@
 import streamlit as st
 
 def inject_bi_style():
-    """Injects high-fidelity glassmorphic CSS for an executive PowerBI look."""
+    """Injects ultra-premium 'Deep Glass' CSS for a full executive experience."""
     st.markdown("""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
         
+        /* Immersive Mode: Hide Streamlit standard elements */
+        header {visibility: hidden;}
+        #MainMenu {visibility: hidden;}
+        footer {visibility: hidden;}
+        
         html, body, [data-testid="stAppViewContainer"] {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background: radial-gradient(circle at top left, #1e293b 0%, #0f172a 100%);
             color: #f8fafc;
         }
 
         /* PowerBI-style Canvas */
         .main {
             background-color: transparent;
+            padding-top: 0rem !important;
         }
 
-        /* Glassmorphic Cards for Charts */
+        /* Ultra-Premium Glass Cards */
         div[data-testid="stVerticalBlock"] > div:has(div.stPlotlyChart) {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px) saturate(180%);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-            margin-bottom: 30px;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            margin-bottom: 35px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        
+        div[data-testid="stVerticalBlock"] > div:has(div.stPlotlyChart):hover {
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateY(-5px);
         }
 
-        /* Professional Metric Styling */
+        /* Metrics with Glass & Glow */
         div[data-testid="stMetric"] {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px 20px;
-            border-radius: 12px;
-            border-left: 5px solid #3b82f6;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(5px);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-left: 6px solid #3b82f6;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
         
         div[data-testid="stMetricLabel"] {
             color: #94a3b8 !important;
-            font-size: 0.9rem !important;
+            font-size: 0.85rem !important;
+            font-weight: 600 !important;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
         }
 
         div[data-testid="stMetricValue"] {
             color: #ffffff !important;
-            font-size: 2.1rem !important;
-            font-weight: 700 !important;
+            font-size: 2.3rem !important;
+            font-weight: 800 !important;
         }
 
-        /* Sidebar Glassmorphism */
+        /* Immersive Sidebar */
         section[data-testid="stSidebar"] {
-            background: rgba(15, 23, 42, 0.95) !important;
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(15, 23, 42, 0.98) !important;
+            border-right: 1px solid rgba(59, 130, 246, 0.2);
+            box-shadow: 10px 0 30px -15px rgba(0, 0, 0, 0.5);
         }
 
-        /* Titles and Typography */
-        h1, h2, h3 {
-            color: #f1f5f9 !important;
-            font-weight: 700 !important;
+        /* Smooth Page Transitions */
+        .stApp {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
         }
 
-        /* Scrollbar styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0f172a;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 10px;
-        }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
     """, unsafe_allow_html=True)
 

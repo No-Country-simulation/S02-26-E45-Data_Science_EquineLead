@@ -3,50 +3,51 @@ import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 
-# Palette Config (Professional PowerBI)
-COLOR_REAL = "#3b82f6" # Bright Blue
-COLOR_SIM = "#10b981"  # Emerald
-COLOR_GRID = "rgba(255, 255, 255, 0.1)"
-COLOR_TEXT = "#e2e8f0"
-
-def apply_bi_layout(fig, title: str):
-    """Applies a professional executive layout to any plotly figure."""
-    fig.update_layout(
-        title=dict(text=f"<b>{title}</b>", font=dict(size=18, color="#ffffff")),
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        font=dict(color=COLOR_TEXT, family='Inter'),
-        margin=dict(l=40, r=20, t=60, b=40),
-        xaxis=dict(showgrid=True, gridcolor=COLOR_GRID, linecolor=COLOR_GRID, tickfont=dict(color=COLOR_TEXT)),
-        yaxis=dict(showgrid=True, gridcolor=COLOR_GRID, linecolor=COLOR_GRID, tickfont=dict(color=COLOR_TEXT)),
-        hovermode="x unified",
-        legend=dict(bgcolor='rgba(0,0,0,0)', font=dict(color=COLOR_TEXT))
-    )
-    return fig
-
 def get_tag(df: pd.DataFrame) -> str:
     """Returns the visual audit tag based on the source column."""
     if 'source' in df.columns and 'Real' in df['source'].values:
         return " [Auditoría Real]"
     return " [Proyección Directiva]"
 
-# ==========================================
-# PAGE 1: MARKET OVERVIEW (4 Charts)
-# ==========================================
+def apply_bi_layout(fig, title: str):
+    """Applies an ultra-premium executive layout to any plotly figure."""
+    fig.update_layout(
+        title=dict(text=f"<b>{title}</b>", font=dict(size=18, color="#ffffff")),
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        font=dict(color=COLOR_TEXT, family='Inter'),
+        margin=dict(l=50, r=30, t=70, b=50),
+        xaxis=dict(showgrid=True, gridcolor=COLOR_GRID, linecolor=COLOR_GRID, 
+                   tickfont=dict(color=COLOR_TEXT, size=11), title_font=dict(color=COLOR_TEXT)),
+        yaxis=dict(showgrid=True, gridcolor=COLOR_GRID, linecolor=COLOR_GRID, 
+                   tickfont=dict(color=COLOR_TEXT, size=11), title_font=dict(color=COLOR_TEXT)),
+        hovermode="x unified",
+        legend=dict(bgcolor='rgba(0,0,0,0)', font=dict(color=COLOR_TEXT), 
+                    orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        hoverlabel=dict(bgcolor="rgba(15, 23, 42, 0.9)", font_size=13, font_family="Inter", font_color="white",
+                        bordercolor="rgba(59, 130, 246, 0.5)")
+    )
+    return fig
 
 def plot_tam_distribution(listings: pd.DataFrame, users: pd.DataFrame):
-    """Chart 1: TAM Distribution by Country (Pie)"""
+    """Chart 1: TAM Distribution by Country (Pie) with Luxury Grouping"""
     tag = get_tag(listings)
     
-    if 'country' in users.columns:
-        fig = px.pie(users, names='country', hole=0.6,
-                     color_discrete_sequence=px.colors.qualitative.Pastel)
-    else:
+    col = 'country' if 'country' in users.columns else 'Temp_Country'
+    if col == 'Temp_Country':
         listings['Temp_Country'] = listings['Location'].apply(lambda x: x.split(',')[-1].strip() if ',' in str(x) else 'Other')
-        fig = px.pie(listings, names='Temp_Country', values='Price', hole=0.6,
-                     color_discrete_sequence=px.colors.qualitative.Pastel)
     
-    return apply_bi_layout(fig, f'Distribución Regional de Mercado{tag}')
+    df_plot = users if col == 'country' else listings
+    counts = df_plot[col].value_counts(normalize=True)
+    top_n = counts[counts > 0.05].index.tolist()
+    
+    df_plot['Clean_Country'] = df_plot[col].apply(lambda x: x if x in top_n else 'Otras Regiones')
+    
+    fig = px.pie(df_plot, names='Clean_Country', hole=0.7,
+                 color_discrete_sequence=px.colors.qualitative.Bold)
+    fig.update_traces(textposition='outside', textinfo='percent+label')
+    
+    return apply_bi_layout(fig, f'Segmentación Geográfica Premium{tag}')
 
 def plot_cpl_comparison():
     """Chart 2: Pre-DS vs Post-DS CPL (Bar)"""
@@ -56,11 +57,12 @@ def plot_cpl_comparison():
     return apply_bi_layout(fig, 'Reducción de Costo por Lead (CPL)')
 
 def plot_traffic_seasonality():
-    """Chart 3: Traffic seasonality (Line)"""
+    """Chart 3: Traffic seasonality (Line with Luxe Gradient)"""
     months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
     traffic = [150, 160, 180, 210, 250, 280, 300, 290, 240, 200, 170, 160]
     fig = px.line(x=months, y=traffic, markers=True)
-    fig.update_traces(line_color='#fbbf24')
+    fig.update_traces(line_color='#3b82f6', fill='tozeroy', 
+                      fillcolor='rgba(59, 130, 246, 0.1)', line_width=4)
     return apply_bi_layout(fig, 'Estacionalidad del Tráfico (K Sesiones)')
 
 def plot_price_distribution(df: pd.DataFrame):
@@ -76,10 +78,11 @@ def plot_price_distribution(df: pd.DataFrame):
 # ==========================================
 
 def plot_daily_scrape_volume():
-    """Chart 5: Daily Scrape Volume"""
+    """Chart 5: Daily Scrape Volume (Area)"""
     dates = pd.date_range(start='2024-01-01', periods=30)
     volume = np.random.normal(loc=5000, scale=200, size=30).astype(int)
     fig = px.area(x=dates, y=volume, color_discrete_sequence=['#22d3ee'])
+    fig.update_traces(fillcolor='rgba(34, 211, 238, 0.1)', line_width=3)
     return apply_bi_layout(fig, 'Volumen Diario: Ingesta Scrapers')
 
 def plot_missing_values(df: pd.DataFrame):
@@ -130,6 +133,7 @@ def plot_roc_curve():
     fpr = np.linspace(0, 1, 100)
     tpr = np.sqrt(fpr) 
     fig = px.line(x=fpr, y=tpr)
+    fig.update_traces(line_color='#3b82f6', fill='tozeroy', fillcolor='rgba(59, 130, 246, 0.05)', line_width=4)
     fig.add_shape(type='line', line=dict(dash='dash', color='#94a3b8'), x0=0, x1=1, y0=0, y1=1)
     return apply_bi_layout(fig, 'Curva ROC (AUC = 0.89)')
 
@@ -181,10 +185,13 @@ def plot_funnel():
 def plot_roi_projection(cost_monthly: float, incremental_revenue: list, months: list):
     """Chart 17: ROI Projection"""
     fig = go.Figure()
-    fig.add_trace(go.Bar(x=months, y=incremental_revenue, name='Revenue Extra', marker_color='#10b981'))
-    fig.add_trace(go.Scatter(x=months, y=[cost_monthly]*len(months), name='Costos Fijos', line=dict(color='#ef4444', dash='dash')))
+    fig.add_trace(go.Bar(x=months, y=incremental_revenue, name='Revenue Extra', 
+                         marker=dict(color='#10b981', line=dict(color='rgba(255,255,255,0.1)', width=1))))
+    fig.add_trace(go.Scatter(x=months, y=[cost_monthly]*len(months), name='Costos Fijos', 
+                             line=dict(color='#ef4444', dash='dash', width=2)))
     profit = [r - cost_monthly for r in incremental_revenue]
-    fig.add_trace(go.Scatter(x=months, y=profit, name='Net Profit', fill='tozeroy', fillcolor='rgba(16, 185, 129, 0.2)'))
+    fig.add_trace(go.Scatter(x=months, y=profit, name='Net Profit', fill='tozeroy', 
+                             fillcolor='rgba(16, 185, 129, 0.15)', line=dict(color='#10b981', width=4)))
     return apply_bi_layout(fig, 'Proyección Dinámica de ROI')
 
 def plot_break_even():
@@ -193,8 +200,9 @@ def plot_break_even():
     revenue = leads_sold * 15 
     cost = 10000 + (leads_sold * 2) 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=leads_sold, y=revenue, name='Revenue', line=dict(color='#10b981')))
-    fig.add_trace(go.Scatter(x=leads_sold, y=cost, name='Costs', line=dict(color='#ef4444')))
+    fig.add_trace(go.Scatter(x=leads_sold, y=revenue, name='Revenue', line=dict(color='#10b981', width=3),
+                             fill='tonexty', fillcolor='rgba(16, 185, 129, 0.05)'))
+    fig.add_trace(go.Scatter(x=leads_sold, y=cost, name='Costs', line=dict(color='#ef4444', width=3)))
     return apply_bi_layout(fig, 'Punto de Equilibrio (Break-Even)')
 
 def plot_ltv():
