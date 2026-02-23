@@ -14,14 +14,14 @@ Antes de la implementación de EquineLead, el mercado online presentaba ineficie
 - **Invisibilidad del segmento VIP:** Caballos con pedigrí premium perdidos en búsquedas de usuarios recreacionales.
 """)
 
-listings, sessions = load_parquet_data()
+listings, sessions, users = load_parquet_data()
 
 st.subheader("Análisis Macro-Económico (4 KPIs)")
 # Render 4 Charts from charts.py
 col1, col2 = st.columns(2)
 
 with col1:
-    st.plotly_chart(plot_tam_distribution(listings), use_container_width=True)
+    st.plotly_chart(plot_tam_distribution(listings, users), use_container_width=True)
     st.plotly_chart(plot_traffic_seasonality(), use_container_width=True)
 
 with col2:

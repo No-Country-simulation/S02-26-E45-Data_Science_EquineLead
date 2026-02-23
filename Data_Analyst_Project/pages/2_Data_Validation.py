@@ -8,7 +8,7 @@ st.set_page_config(page_title="Data Engineering (Infra)", page_icon="⚙️", la
 st.header("2. Auditoría Operativa del Data Lake")
 st.markdown("Monitoreo en tiempo real de la Extracción Cruda, Ingesta y Salud Integral de Datos.")
 
-listings, sessions = load_parquet_data()
+listings, sessions, users = load_parquet_data()
 
 st.subheader("Métricas de Pipeline Básico")
 col_a, col_b = st.columns(2)
