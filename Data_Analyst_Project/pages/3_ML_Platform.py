@@ -26,14 +26,14 @@ st.markdown("---")
 col1, col2 = st.columns(2)
 with col1:
     with st.container():
-        st.plotly_chart(plot_feature_importance(), use_container_width=True)
+        st.plotly_chart(plot_feature_importance(algo), use_container_width=True)
     with st.container():
-        st.plotly_chart(plot_roc_curve(), use_container_width=True)
+        st.plotly_chart(plot_roc_curve(algo), use_container_width=True)
 
 with col2:
     with st.container():
         st.plotly_chart(plot_predicted_probabilities(sessions), use_container_width=True)
     with st.container():
-        st.plotly_chart(plot_confusion_matrix(), use_container_width=True)
+        st.plotly_chart(plot_confusion_matrix(threshold), use_container_width=True)
 
 render_alert("Comportamiento Algorítmico: El modelo de propensión demuestra estabilidad ante el ruido de datos reales.", type="info")

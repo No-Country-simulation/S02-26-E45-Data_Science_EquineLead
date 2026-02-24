@@ -66,14 +66,19 @@ def plot_cpl_comparison():
                  color='Etapa', color_discrete_map={'2023 (Estático)':'#ef4444', '2024 (MLE)':'#10b981'})
     return apply_bi_layout(fig, 'Reducción de Costo por Lead (CPL)')
 
-def plot_traffic_seasonality():
+def plot_traffic_seasonality(time_grain='Mensual'):
     """Chart 3: Traffic seasonality (Line with Luxe Gradient)"""
-    months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
-    traffic = [150, 160, 180, 210, 250, 280, 300, 290, 240, 200, 170, 160]
-    fig = px.line(x=months, y=traffic, markers=True)
-    fig.update_traces(line_color='#3b82f6', fill='tozeroy', 
-                      fillcolor='rgba(59, 130, 246, 0.1)', line_width=4)
-    return apply_bi_layout(fig, 'Estacionalidad del Tráfico (K Sesiones)')
+    if time_grain == 'Mensual':
+        x_axis = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+        traffic = [150, 160, 180, 210, 250, 280, 300, 290, 240, 200, 170, 160]
+    else:
+        x_axis = ['Q1', 'Q2', 'Q3', 'Q4']
+        traffic = [490, 740, 830, 530]
+        
+    fig = px.line(x=x_axis, y=traffic, markers=True)
+    fig.update_traces(line_color=COLOR_REAL, fill='tozeroy', 
+                      fillcolor='rgba(17, 141, 255, 0.1)', line_width=4)
+    return apply_bi_layout(fig, f'Estacionalidad del Tráfico (K Sesiones) - {time_grain}')
 
 def plot_price_distribution(df: pd.DataFrame):
     """Chart 4: Ticket Price Distribution"""
@@ -122,15 +127,23 @@ def plot_data_drift():
 # PAGE 3: ML PLATFORM (4 Charts)
 # ==========================================
 
-def plot_feature_importance():
+def plot_feature_importance(algo="Random Forest"):
     """Chart 9: Random Forest Permutation Importance"""
-    features = ['Vistas_Previas', 'Precio', 'Edad', 'Tiene_Video', 'Raza_Premium']
-    importance = [0.45, 0.20, 0.15, 0.12, 0.08]
+    if algo == "Random Forest":
+        features = ['Vistas_Previas', 'Precio', 'Edad', 'Tiene_Video', 'Raza_Premium']
+        importance = [0.45, 0.20, 0.15, 0.12, 0.08]
+    elif algo == "XGBoost":
+        features = ['Precio', 'Vistas_Previas', 'Tiene_Video', 'Edad', 'Raza_Premium']
+        importance = [0.55, 0.18, 0.14, 0.09, 0.04]
+    else:
+        features = ['Vistas_Previas', 'Edad', 'Precio', 'Tiene_Video', 'Días_Activo']
+        importance = [0.35, 0.25, 0.20, 0.10, 0.10]
+        
     fig = px.bar(x=importance, y=features, orientation='h',
                  color=importance, color_continuous_scale='Mint',
                  labels={'x': 'Impacto Relativo', 'y': 'Variable'})
     fig.update_layout(yaxis={'categoryorder':'total ascending'})
-    return apply_bi_layout(fig, 'Importancia de Variables (Permutation)')
+    return apply_bi_layout(fig, f'Importancia de Variables ({algo})')
 
 def plot_predicted_probabilities(df: pd.DataFrame):
     """Chart 10: KDE of Predicted Probabilities"""
@@ -138,21 +151,37 @@ def plot_predicted_probabilities(df: pd.DataFrame):
                        barmode='overlay', opacity=0.7, color_discrete_sequence=['#3b82f6', '#10b981'])
     return apply_bi_layout(fig, 'Calibración: Probabilidades de Conversión')
 
-def plot_roc_curve():
+def plot_roc_curve(algo="Random Forest"):
     """Chart 11: ROC AUC Performance"""
     fpr = np.linspace(0, 1, 100)
-    tpr = np.sqrt(fpr) 
+    
+    if algo == "Random Forest":
+        tpr = np.sqrt(fpr)
+        auc = 0.89
+    elif algo == "XGBoost":
+        tpr = fpr**0.3
+        auc = 0.92
+    else:
+        tpr = fpr**0.7
+        auc = 0.78
+        
     fig = px.line(x=fpr, y=tpr)
-    fig.update_traces(line_color='#3b82f6', fill='tozeroy', fillcolor='rgba(59, 130, 246, 0.05)', line_width=4)
+    fig.update_traces(line_color=COLOR_REAL, fill='tozeroy', fillcolor='rgba(17, 141, 255, 0.05)', line_width=4)
     fig.add_shape(type='line', line=dict(dash='dash', color='#94a3b8'), x0=0, x1=1, y0=0, y1=1)
-    return apply_bi_layout(fig, 'Curva ROC (AUC = 0.89)')
+    return apply_bi_layout(fig, f'Curva ROC (AUC = {auc})')
 
-def plot_confusion_matrix():
+def plot_confusion_matrix(threshold=0.5):
     """Chart 12: Matrix of Confusion"""
-    z = [[4500, 200], [150, 480]]
+    # Shift confusion matrix based on threshold for interactivity
+    tp = int(480 * (1.5 - threshold))
+    fn = 150 + (480 - tp)
+    fp = int(200 * (0.5 + threshold))
+    tn = 4500 + (200 - fp)
+    
+    z = [[tn, fp], [fn, tp]]
     fig = px.imshow(z, text_auto=True, 
                     x=['- Pred', '+ Pred'], y=['- Real', '+ Real'], color_continuous_scale='Blues')
-    return apply_bi_layout(fig, 'Matriz de Confusión (Holdout Set)')
+    return apply_bi_layout(fig, f'Matriz de Confusión (Umbral {threshold:.2f})')
 
 # ==========================================
 # PAGE 4: DS3 EXPERIMENTATION (4 Charts)
@@ -204,28 +233,31 @@ def plot_roi_projection(cost_monthly: float, incremental_revenue: list, months: 
                              fillcolor='rgba(16, 185, 129, 0.15)', line=dict(color='#10b981', width=4)))
     return apply_bi_layout(fig, 'Proyección Dinámica de ROI')
 
-def plot_break_even():
+def plot_break_even(costo_lead=25, costo_squad=15000):
     """Chart 18: Break-even Point"""
-    leads_sold = np.linspace(0, 1000, 50)
-    revenue = leads_sold * 15 
-    cost = 10000 + (leads_sold * 2) 
+    leads_sold = np.linspace(0, 2000, 50)
+    revenue = leads_sold * costo_lead 
+    cost = costo_squad + (leads_sold * (costo_lead * 0.1)) # 10% variable cost 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=leads_sold, y=revenue, name='Revenue', line=dict(color='#10b981', width=3),
-                             fill='tonexty', fillcolor='rgba(16, 185, 129, 0.05)'))
+    fig.add_trace(go.Scatter(x=leads_sold, y=revenue, name='Revenue', line=dict(color=COLOR_SIM, width=3),
+                             fill='tonexty', fillcolor='rgba(18, 179, 171, 0.05)'))
     fig.add_trace(go.Scatter(x=leads_sold, y=cost, name='Costs', line=dict(color='#ef4444', width=3)))
     return apply_bi_layout(fig, 'Punto de Equilibrio (Break-Even)')
 
-def plot_ltv():
+def plot_ltv(costo_lead=25):
     """Chart 19: LTV Projection"""
     segments = ['Criador', 'Establo', 'Élite']
-    ltv = [500, 2500, 15000]
-    fig = px.bar(x=segments, y=ltv, text=ltv, color=ltv, color_continuous_scale='Viridis')
-    return apply_bi_layout(fig, 'Lifetime Value (LTV) por Segmento')
+    base_ltv = [500, 2500, 15000]
+    # LTV scales slightly with the lead cost simulation for visual interaction
+    ltv = [v * (costo_lead / 25) for v in base_ltv]
+    fig = px.bar(x=segments, y=ltv, text=[f"${int(v)}" for v in ltv], color=ltv, color_continuous_scale='Blues')
+    return apply_bi_layout(fig, 'Lifetime Value Estimado (LTV)')
 
-def plot_profit_margin():
+def plot_profit_margin(trafico=200000):
     """Chart 20: Net Profit Margin"""
     quarters = ['Q1', 'Q2', 'Q3', 'Q4']
-    margin = [12, 18, 45, 62] 
+    base = 12 if trafico < 100000 else (18 if trafico < 500000 else 25)
+    margin = [base, base*1.5, base*2.5, base*3.5] 
     fig = px.area(x=quarters, y=margin, markers=True)
-    fig.update_traces(line_color='#8b5cf6', fillcolor='rgba(139, 92, 246, 0.2)')
-    return apply_bi_layout(fig, 'Evolución de Margen Neto (%)')
+    fig.update_traces(line_color=COLOR_SIM, fillcolor='rgba(18, 179, 171, 0.2)')
+    return apply_bi_layout(fig, 'Evolución Escalar de Margen Neto (%)')
