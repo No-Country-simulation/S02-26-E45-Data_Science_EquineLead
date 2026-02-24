@@ -23,6 +23,27 @@ with scol3:
 
 st.markdown("---")
 
+# Dynamic Metrics based on Algorithm and Primary Metric
+if algo == "Random Forest":
+    auc, prec, rec, f1 = 0.89, 0.82, 0.78, 0.79
+elif algo == "XGBoost":
+    auc, prec, rec, f1 = 0.92, 0.85, 0.81, 0.83
+else:
+    auc, prec, rec, f1 = 0.78, 0.71, 0.65, 0.68
+
+m_col1, m_col2, m_col3, m_col4 = st.columns(4)
+with m_col1:
+    metric_map = dict(zip(['ROC AUC', 'Precision', 'Recall', 'F1 Score'], ['auc', 'prec', 'rec', 'f1']))
+    st.metric(f"🏆 {metric}", f"{locals()[metric_map[metric]] * 100:.1f}%")
+with m_col2:
+    st.metric("Curva ROC (AUC)", f"{auc:.2f}")
+with m_col3:
+    st.metric("Precisión (Falsos +)", f"{prec:.2f}")
+with m_col4:
+    st.metric("Recall (Captura Real)", f"{rec:.2f}")
+
+st.markdown("---")
+
 col1, col2 = st.columns(2)
 with col1:
     with st.container():
