@@ -23,30 +23,30 @@ col1, col2, col3 = st.columns(3)
 
 with col1:
     st.markdown("""
-    <div style="background: rgba(59, 130, 246, 0.1); padding: 20px; border-radius: 12px; border: 1px solid #3b82f6;">
-        <h3 style="color: #60a5fa;">📈 Market Oversight</h3>
-        <p style="color: #94a3b8;">Análisis de valor real del inventario y segmentación demográfica auditada bajo estándares de BI.</p>
+    <div style="background: #ffffff; padding: 20px; border-radius: 4px; border: 1px solid #e1dfdd; box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);">
+        <h3 style="color: #118DFF; margin-top: 0;">📈 Market Oversight</h3>
+        <p style="color: #605e5c;">Análisis de valor real del inventario y segmentación demográfica auditada bajo estándares de BI.</p>
     </div>
     """, unsafe_allow_html=True)
 
 with col2:
     st.markdown("""
-    <div style="background: rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 12px; border: 1px solid #10b981;">
-        <h3 style="color: #34d399;">🤖 ML Engine</h3>
-        <p style="color: #94a3b8;">Lead Scoring predictivo con un ROC-AUC de 0.89 validado sobre el Data Lake de producción.</p>
+    <div style="background: #ffffff; padding: 20px; border-radius: 4px; border: 1px solid #e1dfdd; box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);">
+        <h3 style="color: #12B3AB; margin-top: 0;">🤖 ML Engine</h3>
+        <p style="color: #605e5c;">Lead Scoring predictivo con un ROC-AUC de 0.89 validado sobre el Data Lake de producción.</p>
     </div>
     """, unsafe_allow_html=True)
 
 with col3:
     st.markdown("""
-    <div style="background: rgba(251, 191, 36, 0.1); padding: 20px; border-radius: 12px; border: 1px solid #fbbf24;">
-        <h3 style="color: #fbbf24;">💸 ROI Simulator</h3>
-        <p style="color: #94a3b8;">Simulación financiera dinámica del impacto directo en el Revenue Corporativo escalable.</p>
+    <div style="background: #ffffff; padding: 20px; border-radius: 4px; border: 1px solid #e1dfdd; box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);">
+        <h3 style="color: #F2C80F; margin-top: 0;">💸 ROI Simulator</h3>
+        <p style="color: #605e5c;">Simulación financiera dinámica del impacto directo en el Revenue Corporativo escalable.</p>
     </div>
     """, unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
-render_alert("Estado de Plataforma: Ecosistema Midnight Glass activo. Datos auditados en tiempo real.", type="info")
+render_alert("Estado de Plataforma: Ecosistema Light/Dark BI activo. Datos auditados en tiempo real.", type="info")
 
 st.sidebar.markdown("---")
 st.sidebar.info("Navegación Ejecutiva Activa")
