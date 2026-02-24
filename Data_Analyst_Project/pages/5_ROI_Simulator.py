@@ -12,12 +12,15 @@ render_bi_header("ROI & Financial Impact", "Simulador de Retorno Económico y Es
 raw_listings, raw_sessions, raw_users = load_parquet_data()
 listings, sessions, users = render_global_filters(raw_listings, raw_sessions, raw_users)
 
-# Sliders para simulacion de negocio
-st.sidebar.markdown("---")
-st.sidebar.markdown("### Parámetros de Simulación")
-tráfico = st.sidebar.slider("Tráfico Base Sesiones", 50000, 1000000, 200000, step=50000)
-costo_lead = st.sidebar.slider("USD / Lead Generado", 5, 100, 25, step=5)
-costo_squad = st.sidebar.slider("Opex Squad (Mensual)", 5000, 50000, 15000, step=5000)
+# Local Slicers / Parámetros de Simulación en Gráficas
+st.markdown("### 🎛️ Segmentadores de Proyección ROI")
+scol1, scol2, scol3 = st.columns(3)
+with scol1:
+    tráfico = st.slider("🌐 Tráfico Base Sesiones", 50000, 1000000, 200000, step=50000)
+with scol2:
+    costo_lead = st.slider("💵 USD / Lead Generado", 5, 100, 25, step=5)
+with scol3:
+    costo_squad = st.slider("👥 Opex Squad (Mensual)", 5000, 50000, 15000, step=5000)
 
 conv_base = 0.1349
 conv_optimizada = 0.1568

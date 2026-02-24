@@ -52,9 +52,9 @@ def inject_bi_style():
         }
         
         div[data-testid="stMetricLabel"] {
-            color: #94a3b8 !important;
-            font-size: 0.85rem !important;
-            font-weight: 600 !important;
+            color: #cbd5e1 !important; /* Brighter grey for visibility */
+            font-size: 0.95rem !important;
+            font-weight: 700 !important;
             text-transform: uppercase;
             letter-spacing: 1.5px;
         }
@@ -71,22 +71,28 @@ def inject_bi_style():
             border-right: 1px solid rgba(59, 130, 246, 0.2);
             box-shadow: 10px 0 30px -15px rgba(0, 0, 0, 0.5);
         }
-        [data-testid="stSidebarNav"] span {
-            color: #f8fafc !important;
-            font-weight: 600;
+        
+        /* Force Sidebar Text to be White */
+        [data-testid="stSidebarNav"] span, 
+        [data-testid="stSidebarNav"] a, 
+        .st-emotion-cache-16txtl3 p {
+            color: #ffffff !important;
+            font-weight: 600 !important;
         }
 
         /* Segmentadores (Slicers) Dark Theme */
-        div.stSelectbox > label {
-            color: #94a3b8 !important;
-            font-weight: 600 !important;
+        div.stSelectbox > label, div.stSlider > label {
+            color: #f8fafc !important; /* Pure white for segmentador titles */
+            font-weight: 700 !important;
+            font-size: 1.1rem !important;
             letter-spacing: 0.5px;
         }
         div[data-baseweb="select"] > div {
-            background-color: rgba(30, 41, 59, 0.8) !important;
+            background-color: rgba(30, 41, 59, 1) !important;
             color: #ffffff !important;
-            border: 1px solid rgba(59, 130, 246, 0.3) !important;
+            border: 2px solid rgba(59, 130, 246, 0.5) !important;
             border-radius: 8px !important;
+            box-shadow: 0 0 10px rgba(59,130,246, 0.2);
         }
         div[data-baseweb="popover"] ul {
             background-color: #0f172a !important;
