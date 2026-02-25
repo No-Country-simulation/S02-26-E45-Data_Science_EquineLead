@@ -23,16 +23,14 @@ def apply_bi_layout(fig, title: str):
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
         font=dict(color=COLOR_TEXT, family='Segoe UI'),
-        margin=dict(l=50, r=30, t=70, b=70), # Increased bottom margin for legend
+        margin=dict(l=50, r=30, t=80, b=50), # Increased top margin for legend
         xaxis=dict(showgrid=True, gridcolor=COLOR_GRID, linecolor=COLOR_GRID, 
-                   tickfont=dict(color=COLOR_TEXT, size=11), title_font=dict(color=COLOR_TEXT),
-                   automargin=True),
+                   tickfont=dict(color=COLOR_TEXT, size=11), title_font=dict(color=COLOR_TEXT)),
         yaxis=dict(showgrid=True, gridcolor=COLOR_GRID, linecolor=COLOR_GRID, 
-                   tickfont=dict(color=COLOR_TEXT, size=11), title_font=dict(color=COLOR_TEXT),
-                   automargin=True),
+                   tickfont=dict(color=COLOR_TEXT, size=11), title_font=dict(color=COLOR_TEXT)),
         hovermode="x unified",
         legend=dict(bgcolor='rgba(0,0,0,0)', font=dict(color=COLOR_TEXT), 
-                    orientation="h", yanchor="top", y=-0.15, xanchor="center", x=0.5), # Moved legend below chart
+                    orientation="h", yanchor="bottom", y=1.10, xanchor="right", x=1),
         hoverlabel=dict(bgcolor="#ffffff", font_size=13, font_family="Segoe UI", font_color=COLOR_TEXT,
                         bordercolor="#e1dfdd")
     )
@@ -66,8 +64,6 @@ def plot_cpl_comparison():
     data = {'Etapa': ['2023 (Estático)', '2024 (MLE)'], 'CPL (USD)': [25, 15]}
     fig = px.bar(data, x='Etapa', y='CPL (USD)', text='CPL (USD)', 
                  color='Etapa', color_discrete_map={'2023 (Estático)':'#ef4444', '2024 (MLE)':'#10b981'})
-    fig.update_traces(textposition='outside', cliponaxis=False, textfont=dict(color=COLOR_TEXT, size=12))
-    fig.update_layout(showlegend=False) # Legend is redundant here
     return apply_bi_layout(fig, 'Reducción de Costo por Lead (CPL)')
 
 def plot_traffic_seasonality(time_grain='Mensual'):
@@ -117,7 +113,6 @@ def plot_event_distribution(df: pd.DataFrame):
     tag = get_tag(df)
     fig = px.pie(df, names='event_type', hole=0.5,
                  color_discrete_sequence=px.colors.qualitative.Prism)
-    fig.update_traces(textposition='outside', textinfo='percent+label')
     return apply_bi_layout(fig, f'Embudo de Eventos: Mezcla Proporcional{tag}')
 
 def plot_data_drift():
@@ -144,11 +139,10 @@ def plot_feature_importance(algo="Random Forest"):
         features = ['Vistas_Previas', 'Edad', 'Precio', 'Tiene_Video', 'Días_Activo']
         importance = [0.35, 0.25, 0.20, 0.10, 0.10]
         
-    fig = px.bar(x=importance, y=features, orientation='h', text=importance,
+    fig = px.bar(x=importance, y=features, orientation='h',
                  color=importance, color_continuous_scale='Mint',
                  labels={'x': 'Impacto Relativo', 'y': 'Variable'})
-    fig.update_traces(textposition='outside', texttemplate='%{text:.2f}', cliponaxis=False)
-    fig.update_layout(yaxis={'categoryorder':'total ascending'}, showlegend=False)
+    fig.update_layout(yaxis={'categoryorder':'total ascending'})
     return apply_bi_layout(fig, f'Importancia de Variables ({algo})')
 
 def plot_predicted_probabilities(df: pd.DataFrame):
@@ -256,9 +250,7 @@ def plot_ltv(costo_lead=25):
     base_ltv = [500, 2500, 15000]
     # LTV scales slightly with the lead cost simulation for visual interaction
     ltv = [v * (costo_lead / 25) for v in base_ltv]
-    fig = px.bar(x=segments, y=ltv, text=[f"${int(v):,}" for v in ltv], color=ltv, color_continuous_scale='Blues')
-    fig.update_traces(textposition='outside', cliponaxis=False, textfont=dict(color=COLOR_TEXT, size=12))
-    fig.update_layout(showlegend=False)
+    fig = px.bar(x=segments, y=ltv, text=[f"${int(v)}" for v in ltv], color=ltv, color_continuous_scale='Blues')
     return apply_bi_layout(fig, 'Lifetime Value Estimado (LTV)')
 
 def plot_profit_margin(trafico=200000):
