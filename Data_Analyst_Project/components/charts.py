@@ -18,42 +18,38 @@ def get_tag(df: pd.DataFrame) -> str:
 def apply_bi_layout(fig, title: str):
     """Applies an ultra-premium executive layout to any plotly figure."""
     fig.update_layout(
-        height=380, # Force compact size to avoid oversized charts
         title=dict(text=f"<b>{title}</b>", font=dict(size=18, color="#ffffff")),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
         font=dict(color=COLOR_TEXT, family='Inter'),
-        margin=dict(l=50, r=30, t=80, b=50), # Increased top margin for legend
+        margin=dict(l=50, r=30, t=70, b=50),
         xaxis=dict(showgrid=True, gridcolor=COLOR_GRID, linecolor=COLOR_GRID, 
                    tickfont=dict(color=COLOR_TEXT, size=11), title_font=dict(color=COLOR_TEXT)),
         yaxis=dict(showgrid=True, gridcolor=COLOR_GRID, linecolor=COLOR_GRID, 
                    tickfont=dict(color=COLOR_TEXT, size=11), title_font=dict(color=COLOR_TEXT)),
         hovermode="x unified",
-        legend=dict(bgcolor='rgba(0,0,0,0)', font=dict(color="#ffffff"), 
-                    orientation="h", yanchor="bottom", y=1.10, xanchor="right", x=1),
-        hoverlabel=dict(bgcolor="rgba(15, 23, 42, 0.95)", font_size=13, font_family="Inter", font_color="white",
-                        bordercolor="rgba(59, 130, 246, 0.6)")
+        legend=dict(bgcolor='rgba(0,0,0,0)', font=dict(color=COLOR_TEXT), 
+                    orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        hoverlabel=dict(bgcolor="rgba(15, 23, 42, 0.9)", font_size=13, font_family="Inter", font_color="white",
+                        bordercolor="rgba(59, 130, 246, 0.5)")
     )
     return fig
 
-# ==========================================
-# PAGE 1: MARKET OVERVIEW (4 Charts)
-# ==========================================
-
-def plot_tam_distribution(df: pd.DataFrame):
+def plot_tam_distribution(listings: pd.DataFrame, users: pd.DataFrame):
     """Chart 1: TAM Distribution by Country (Pie) with Luxury Grouping"""
-    tag = get_tag(df)
+    tag = get_tag(listings)
     
-    col = 'country' if 'country' in df.columns else 'Temp_Country'
+    col = 'country' if 'country' in users.columns else 'Temp_Country'
     if col == 'Temp_Country':
-        df['Temp_Country'] = df['Location'].apply(lambda x: x.split(',')[-1].strip() if ',' in str(x) else 'Other')
+        listings['Temp_Country'] = listings['Location'].apply(lambda x: x.split(',')[-1].strip() if ',' in str(x) else 'Other')
     
-    counts = df[col].value_counts(normalize=True)
+    df_plot = users if col == 'country' else listings
+    counts = df_plot[col].value_counts(normalize=True)
     top_n = counts[counts > 0.05].index.tolist()
     
-    df['Clean_Country'] = df[col].apply(lambda x: x if x in top_n else 'Otras Regiones')
+    df_plot['Clean_Country'] = df_plot[col].apply(lambda x: x if x in top_n else 'Otras Regiones')
     
-    fig = px.pie(df, names='Clean_Country', hole=0.7,
+    fig = px.pie(df_plot, names='Clean_Country', hole=0.7,
                  color_discrete_sequence=px.colors.qualitative.Bold)
     fig.update_traces(textposition='outside', textinfo='percent+label')
     

@@ -12,17 +12,6 @@ render_bi_header("ML & Lead Scoring", "Auditoría Predictiva y Performance de Al
 raw_listings, raw_sessions, raw_users = load_parquet_data()
 listings, sessions, users = render_global_filters(raw_listings, raw_sessions, raw_users)
 
-st.markdown("### 🎛️ Parámetros del Modelo")
-scol1, scol2, scol3 = st.columns(3)
-with scol1:
-    st.selectbox("🧠 Algoritmo Benchmark", ["Random Forest", "XGBoost", "Logistic Regression"])
-with scol2:
-    st.slider("📏 Umbral de Probabilidad", 0.1, 0.9, 0.5, step=0.05)
-with scol3:
-    st.selectbox("🎯 Métrica de Evaluación Primaria", ["ROC AUC", "Precision", "Recall", "F1 Score"])
-
-st.markdown("---")
-
 col1, col2 = st.columns(2)
 with col1:
     with st.container():

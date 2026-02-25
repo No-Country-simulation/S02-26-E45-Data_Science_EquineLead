@@ -30,33 +30,18 @@ with col_m4:
 
 st.markdown("---")
 
-# Visual Insights (Con Segmentadores Locales en las Gráficas)
-st.markdown("### 📊 Tablero Interactivo de Mercado")
-
-# Local Slicers right above charts
-scol1, scol2, scol3 = st.columns(3)
-with scol1:
-    chart_view = st.selectbox("📍 [Segmentador de Gráfica] Nivel Geográfico", ["Global", "Top 5 Regiones"])
-with scol2:
-    price_filter = st.slider("💰 [Segmentador de Gráfica] Rango de Precio Visual", int(listings['Price'].min()), int(listings['Price'].max()), (int(listings['Price'].min()), int(listings['Price'].max())))
-with scol3:
-    time_grain = st.selectbox("⏱️ [Segmentador de Gráfica] Vista Temporal", ["Mensual", "Trimestral"])
-
-# Apply local chart slicers
-filtered_local = listings[(listings['Price'] >= price_filter[0]) & (listings['Price'] <= price_filter[1])]
-users_local = users if chart_view == "Global" else users.head(int(len(users)*0.5))
-
+# Visual Insights
 col1, col2 = st.columns([1, 1])
 
 with col1:
     with st.container():
-        st.plotly_chart(plot_tam_distribution(users_local), use_container_width=True)
+        st.plotly_chart(plot_tam_distribution(listings, users), use_container_width=True)
     with st.container():
         st.plotly_chart(plot_traffic_seasonality(), use_container_width=True)
 
 with col2:
     with st.container():
-        st.plotly_chart(plot_price_distribution(filtered_local), use_container_width=True)
+        st.plotly_chart(plot_price_distribution(listings), use_container_width=True)
     with st.container():
         st.plotly_chart(plot_cpl_comparison(), use_container_width=True)
 
