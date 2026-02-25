@@ -2,27 +2,26 @@ import streamlit as st
 from utils.data_loader import load_parquet_data
 from components.ui_cards import render_alert
 from components.charts import *
-from components.sidebar_filters import render_global_filters
-from utils.style_utils import inject_bi_style, render_bi_header
+from utils.data_loader import load_parquet_data
 
-st.set_page_config(page_title="Experimentation", page_icon="🧪", layout="wide")
-inject_bi_style()
-render_bi_header("Inteligencia Causal", "Testeo A/B y Optimización de Conversión (DS3)")
+st.set_page_config(page_title="DS3 Experimentation", page_icon="🧪", layout="wide")
 
-raw_listings, raw_sessions, raw_users = load_parquet_data()
-listings, sessions, users = render_global_filters(raw_listings, raw_sessions, raw_users)
+st.header("4. Inteligencia Causal y Crecimiento Estratégico")
+st.markdown("Aislamiento estadístico riguroso para medir el impacto real de nuevos features sobre el comportamiento de compra.")
+render_alert("Integrando el **+16.2% de uplift predictivo** para calcular el impacto en el Gross Revenue Corporativo.")
+
+listings, sessions, users = load_parquet_data(page="experimentation")
+
+st.subheader("Resultados del Test A/B: Hook Emocional vs Catálogo Estático (4 KPIs)")
+st.markdown("---")
 
 col1, col2 = st.columns(2)
 with col1:
-    with st.container():
-        st.plotly_chart(plot_ab_test_results(sessions), use_container_width=True)
-    with st.container():
-        st.plotly_chart(plot_average_marginal_effects(), use_container_width=True)
+    st.plotly_chart(plot_ab_test_results(sessions), use_container_width=True)
+    st.plotly_chart(plot_average_marginal_effects(), use_container_width=True)
 
 with col2:
-    with st.container():
-        st.plotly_chart(plot_confidence_intervals(), use_container_width=True)
-    with st.container():
-        st.plotly_chart(plot_funnel(), use_container_width=True)
+    st.plotly_chart(plot_confidence_intervals(), use_container_width=True)
+    st.plotly_chart(plot_funnel(), use_container_width=True)
 
-render_alert("Impacto Causal: Se confirma estadísticamente que el feature de 'Video' es el principal driver de leads calificados.", type="success")
+render_alert("El Hook Emocional demuestra un uplift causal absoluto robusto (Z-Test > 1.96). La regresión logística (AME) confirma que el video es el feature causal más alto.", type="success")
