@@ -79,24 +79,17 @@ def inject_bi_style():
         }
 
         /* Segmentadores (Slicers) Power BI Theme (Light inside main body) */
-        div.stSelectbox > label, div.stMultiSelect > label, div.stSlider > label {
+        div.stSelectbox > label, div.stSlider > label {
             color: #323130 !important; 
             font-weight: 600 !important;
             font-size: 0.95rem !important;
         }
-        
-        /* Slicers and Texts in sidebar need white labels */
+        /* Slicers in sidebar need white labels */
         section[data-testid="stSidebar"] div.stSelectbox > label, 
-        section[data-testid="stSidebar"] div.stMultiSelect > label,
-        section[data-testid="stSidebar"] div.stSlider > label,
-        section[data-testid="stSidebar"] p,
-        section[data-testid="stSidebar"] h1,
-        section[data-testid="stSidebar"] h2,
-        section[data-testid="stSidebar"] h3 {
+        section[data-testid="stSidebar"] div.stSlider > label {
             color: #ffffff !important; 
         }
 
-        /* Multiselect / Selectbox inner standard inputs */
         div[data-baseweb="select"] > div {
             background-color: #ffffff !important;
             color: #323130 !important;
