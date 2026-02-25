@@ -15,11 +15,11 @@ listings, sessions, users = render_global_filters(raw_listings, raw_sessions, ra
 st.markdown("### 🎛️ Parámetros del Modelo")
 scol1, scol2, scol3 = st.columns(3)
 with scol1:
-    algo = st.selectbox("🧠 Algoritmo Benchmark", ["Random Forest", "XGBoost", "Logistic Regression"])
+    st.selectbox("🧠 Algoritmo Benchmark", ["Random Forest", "XGBoost", "Logistic Regression"])
 with scol2:
-    threshold = st.slider("📏 Umbral de Probabilidad", 0.1, 0.9, 0.5, step=0.05)
+    st.slider("📏 Umbral de Probabilidad", 0.1, 0.9, 0.5, step=0.05)
 with scol3:
-    metric = st.selectbox("🎯 Métrica de Evaluación Primaria", ["ROC AUC", "Precision", "Recall", "F1 Score"])
+    st.selectbox("🎯 Métrica de Evaluación Primaria", ["ROC AUC", "Precision", "Recall", "F1 Score"])
 
 st.markdown("---")
 
