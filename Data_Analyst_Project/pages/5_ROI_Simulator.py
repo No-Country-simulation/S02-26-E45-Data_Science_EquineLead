@@ -48,12 +48,12 @@ with col_a:
                     (leads_extra * costo_lead), (leads_extra * 1.1 * costo_lead)]
         st.plotly_chart(plot_roi_projection(costo_squad, ingresos, meses), use_container_width=True)
     with st.container():
-        st.plotly_chart(plot_break_even(costo_lead, costo_squad), use_container_width=True)
+        st.plotly_chart(plot_break_even(), use_container_width=True)
 
 with col_b:
     with st.container():
-        st.plotly_chart(plot_ltv(costo_lead), use_container_width=True)
+        st.plotly_chart(plot_ltv(), use_container_width=True)
     with st.container():
-        st.plotly_chart(plot_profit_margin(tráfico), use_container_width=True)
+        st.plotly_chart(plot_profit_margin(), use_container_width=True)
 
 st.success("🎉 Pitch Final: El sistema demuestra viabilidad económica inmediata bajo datos reales filtrados.")

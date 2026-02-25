@@ -52,7 +52,7 @@ with col1:
     with st.container():
         st.plotly_chart(plot_tam_distribution(users_local), use_container_width=True)
     with st.container():
-        st.plotly_chart(plot_traffic_seasonality(time_grain), use_container_width=True)
+        st.plotly_chart(plot_traffic_seasonality(), use_container_width=True)
 
 with col2:
     with st.container():
