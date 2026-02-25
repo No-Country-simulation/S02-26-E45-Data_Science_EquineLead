@@ -9,7 +9,7 @@ st.set_page_config(page_title="Machine Learning", page_icon="🤖", layout="wide
 st.header("3. Motor Predictivo de Inteligencia Artificial")
 st.markdown("Auditoría estadística del Algoritmo de Lead Scoring y su capacidad de generalización productiva.")
 
-listings, sessions, users = load_parquet_data()
+listings, sessions = load_parquet_data()
 
 st.subheader("Performance del Modelo Predictivo (4 Gráficos)")
 st.markdown("---")

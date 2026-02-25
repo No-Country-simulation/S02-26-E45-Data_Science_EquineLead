@@ -2,15 +2,13 @@ import streamlit as st
 from utils.data_loader import load_parquet_data
 from components.ui_cards import render_alert
 from components.charts import *
-from utils.data_loader import load_parquet_data
 
 st.set_page_config(page_title="DS3 Experimentation", page_icon="🧪", layout="wide")
 
 st.header("4. Inteligencia Causal y Crecimiento Estratégico")
 st.markdown("Aislamiento estadístico riguroso para medir el impacto real de nuevos features sobre el comportamiento de compra.")
-render_alert("Integrando el **+16.2% de uplift predictivo** para calcular el impacto en el Gross Revenue Corporativo.")
 
-listings, sessions, users = load_parquet_data(page="experimentation")
+listings, sessions = load_parquet_data()
 
 st.subheader("Resultados del Test A/B: Hook Emocional vs Catálogo Estático (4 KPIs)")
 st.markdown("---")

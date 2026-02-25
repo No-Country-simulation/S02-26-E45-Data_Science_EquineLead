@@ -6,33 +6,13 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 # ==========================================
-# HELPERS
-# ==========================================
-
-def get_tag(df: pd.DataFrame) -> str:
-    """Returns the visual audit tag based on the source column."""
-    if 'source' in df.columns and 'Real' in df['source'].values:
-        return " [Auditoría Real]"
-    return " [Proyección Directiva]"
-
-# ==========================================
 # PAGE 1: MARKET OVERVIEW (4 Charts)
 # ==========================================
 
-def plot_tam_distribution(listings: pd.DataFrame, users: pd.DataFrame):
-    """Chart 1: TAM Distribution by Country (Pie) using joined real data."""
-    # Assuming users has country and users join with sessions/listings
-    # For now, if listings has Location, we extract country or use users distribution
-    tag = get_tag(listings)
-    
-    if 'country' in users.columns:
-        fig = px.pie(users, names='country', title=f'Distribución Demográfica de Clientes{tag}',
-                     color_discrete_sequence=px.colors.sequential.Aggrnyl)
-    else:
-        # Fallback to listings price distribution by first part of Location
-        listings['Temp_Country'] = listings['Location'].apply(lambda x: x.split(',')[-1].strip() if ',' in str(x) else 'Other')
-        fig = px.pie(listings, names='Temp_Country', values='Price', title=f'Distribución de Valor por Región{tag}',
-                     color_discrete_sequence=px.colors.sequential.Aggrnyl)
+def plot_tam_distribution(df: pd.DataFrame):
+    """Chart 1: TAM Distribution by Country (Pie)"""
+    fig = px.pie(df, names='Country', values='Price', title='Distribución de Valor por País',
+                 color_discrete_sequence=px.colors.sequential.Aggrnyl)
     return fig
 
 def plot_cpl_comparison():
@@ -52,8 +32,7 @@ def plot_traffic_seasonality():
 
 def plot_price_distribution(df: pd.DataFrame):
     """Chart 4: Ticket Price Distribution (Histogram)"""
-    tag = get_tag(df)
-    fig = px.histogram(df, x='Price', nbins=50, title=f'Distribución Métrica de Precios (USD){tag}',
+    fig = px.histogram(df, x='Price', nbins=50, title='Distribución Métrica de Precios (USD)',
                        color_discrete_sequence=['#54a0ff'])
     return fig
 
@@ -86,8 +65,7 @@ def plot_missing_values(df: pd.DataFrame):
 
 def plot_event_distribution(df: pd.DataFrame):
     """Chart 7: Event Distribution (Donut)"""
-    tag = get_tag(df)
-    fig = px.pie(df, names='event_type', title=f'Distribución del Funnel (Eventos){tag}', hole=0.5,
+    fig = px.pie(df, names='event_type', title='Distribución del Funnel (Eventos)', hole=0.5,
                  color_discrete_sequence=px.colors.sequential.Plasma)
     return fig
 
@@ -115,9 +93,8 @@ def plot_feature_importance():
 
 def plot_predicted_probabilities(df: pd.DataFrame):
     """Chart 10: KDE of Predicted Probabilities"""
-    # Note: predicted_prob is projected (synthetic) even if sessions is real
     fig = px.histogram(df, x='predicted_prob', color='event_type', marginal='box',
-                       title='Distribución KDE: Probabilidades de Conversión [Proyección]', barmode='overlay',
+                       title='Distribución KDE: Probabilidades de Conversión', barmode='overlay',
                        opacity=0.7)
     return fig
 
@@ -144,11 +121,10 @@ def plot_confusion_matrix():
 
 def plot_ab_test_results(df: pd.DataFrame):
     """Chart 13: A/B Test Results"""
-    # group is projected
     counts = df.groupby(['experiment_group', 'event_type']).size().reset_index(name='count')
     purchases = counts[counts['event_type'] == 'purchase']
     fig = px.bar(purchases, x='experiment_group', y='count', color='experiment_group',
-                 title='A/B Test: Leads Generados [Proyección Post-Campaña]')
+                 title='A/B Test: Leads Generados (Absolute Uplift)')
     return fig
 
 def plot_confidence_intervals():
