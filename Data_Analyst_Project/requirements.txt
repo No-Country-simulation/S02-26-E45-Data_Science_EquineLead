@@ -1,7 +1,0 @@
-streamlit
-pandas
-numpy
-matplotlib
-seaborn
-pyarrow
-fastparquet
