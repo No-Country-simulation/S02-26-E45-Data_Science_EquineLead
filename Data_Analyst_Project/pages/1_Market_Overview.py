@@ -1,32 +1,28 @@
 import streamlit as st
-from utils.data_loader import load_parquet_data
 from components.ui_cards import render_kpi_card, render_alert
-from components.charts import *
 
-st.set_page_config(page_title="Mercado Ecuestre", page_icon="📈", layout="wide")
+st.set_page_config(page_title="Mercado Ecuestre", page_icon="📈")
 
-st.header("1. Valor de Negocio y Mercado Ecuestre (Core Business)")
+st.header("1. Valor de Negocio y Mercado Ecuestre")
 
 st.subheader("El Problema Inicial")
 st.markdown("""
 Antes de la implementación de EquineLead, el mercado online presentaba ineficiencias críticas:
 - **Demasiado ruido:** Usuarios navegando cientos de listados técnicos monótonos, generando poco contacto (Conversión del 13.5%).
-- **Invisibilidad del segmento VIP:** Caballos con pedigrí premium perdidos en búsquedas de usuarios recreacionales.
+- **Invisibilidad del segmento VIP:** Caballos con *pedigrí premium* perdidos en búsquedas de usuarios recreacionales.
+- **Publicaciones a ciegas:** Se subían listings sin evidencia estadística de qué captaba al comprador.
 """)
 
-listings, sessions = load_parquet_data()
+st.subheader("El Total Addressable Market (TAM)")
+render_alert("El mercado global ecuestre está valorado en más de **$300 Billones USD** anuales (American Horse Council).")
 
-st.subheader("Análisis Macro-Económico (4 KPIs)")
-# Render 4 Charts from charts.py
 col1, col2 = st.columns(2)
-
 with col1:
-    st.plotly_chart(plot_tam_distribution(listings), use_container_width=True)
-    st.plotly_chart(plot_traffic_seasonality(), use_container_width=True)
-
+    render_kpi_card(title="Ticket Promedio (Venta de Caballo)", value="$10,000 USD", help_text="Promedio conservador para caballos deportivos web.")
 with col2:
-    st.plotly_chart(plot_cpl_comparison(), use_container_width=True)
-    st.plotly_chart(plot_price_distribution(listings), use_container_width=True)
-
-st.markdown("---")
-render_alert("Modelo de Negocio validado: Transición de cobro por Suscripción Estática a cobro dinámico por Leads Calificados impulsados por ML.")
+    render_kpi_card(title="Valor del Lead B2B", value="~$15 USD", delta="CPL Estimado", help_text="Lo que EquineLead cobra al establo.")
+    
+st.markdown("""
+### Modelo de Negocio (EquineLead)
+Cobramos a los dueños de establos (Criadores) por proporcionarles **Leads Calificados** impulsados por machine learning, a diferencia de los portales antiguos que cobran mensualidades rasas por exhibir clasificados estáticos.
+""")
