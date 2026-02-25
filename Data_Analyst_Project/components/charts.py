@@ -3,12 +3,6 @@ import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 
-# Palette Config (Ultra-Premium Deep Glass)
-COLOR_REAL = "#3b82f6" 
-COLOR_SIM = "#10b981"  
-COLOR_GRID = "rgba(255, 255, 255, 0.08)"
-COLOR_TEXT = "#e2e8f0"
-
 def get_tag(df: pd.DataFrame) -> str:
     """Returns the visual audit tag based on the source column."""
     if 'source' in df.columns and 'Real' in df['source'].values:

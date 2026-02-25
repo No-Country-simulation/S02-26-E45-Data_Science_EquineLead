@@ -71,27 +71,6 @@ def inject_bi_style():
             border-right: 1px solid rgba(59, 130, 246, 0.2);
             box-shadow: 10px 0 30px -15px rgba(0, 0, 0, 0.5);
         }
-        [data-testid="stSidebarNav"] span {
-            color: #f8fafc !important;
-            font-weight: 600;
-        }
-
-        /* Segmentadores (Slicers) Dark Theme */
-        div.stSelectbox > label {
-            color: #94a3b8 !important;
-            font-weight: 600 !important;
-            letter-spacing: 0.5px;
-        }
-        div[data-baseweb="select"] > div {
-            background-color: rgba(30, 41, 59, 0.8) !important;
-            color: #ffffff !important;
-            border: 1px solid rgba(59, 130, 246, 0.3) !important;
-            border-radius: 8px !important;
-        }
-        div[data-baseweb="popover"] ul {
-            background-color: #0f172a !important;
-            color: #ffffff !important;
-        }
 
         /* Smooth Page Transitions */
         .stApp {
