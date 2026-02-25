@@ -3,7 +3,7 @@ import seaborn as sns
 import numpy as np
 
 def plot_roi_projection(cost_monthly: float, incremental_revenue: list, months: list):
-    """Plots the ROI Projection"""
+    \"\"\"Plots the ROI Projection\"\"\"
     fig, ax2 = plt.subplots(figsize=(10, 6))
     plt.style.use('dark_background')
     
@@ -25,7 +25,7 @@ def plot_roi_projection(cost_monthly: float, incremental_revenue: list, months: 
     return fig
 
 def plot_conversion_impact(conv_base: float, conv_optimizada: float):
-    """Plots A/B Test Results"""
+    \"\"\"Plots A/B Test Results\"\"\"
     fig, ax = plt.subplots(figsize=(8, 6))
     plt.style.use('dark_background')
     
