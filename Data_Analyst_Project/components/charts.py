@@ -3,11 +3,11 @@ import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 
-# Palette Config (Power BI Classic Light)
-COLOR_REAL = "#118DFF" 
-COLOR_SIM = "#12B3AB"  
-COLOR_GRID = "#e1dfdd"
-COLOR_TEXT = "#323130"
+# Palette Config (Ultra-Premium Deep Glass)
+COLOR_REAL = "#3b82f6" 
+COLOR_SIM = "#10b981"  
+COLOR_GRID = "rgba(255, 255, 255, 0.08)"
+COLOR_TEXT = "#e2e8f0"
 
 def get_tag(df: pd.DataFrame) -> str:
     """Returns the visual audit tag based on the source column."""
@@ -16,23 +16,23 @@ def get_tag(df: pd.DataFrame) -> str:
     return " [Proyección Directiva]"
 
 def apply_bi_layout(fig, title: str):
-    """Applies an authentic Power BI executive layout to any plotly figure."""
+    """Applies an ultra-premium executive layout to any plotly figure."""
     fig.update_layout(
         height=380, # Force compact size to avoid oversized charts
-        title=dict(text=f"<b>{title}</b>", font=dict(size=18, color=COLOR_TEXT)),
+        title=dict(text=f"<b>{title}</b>", font=dict(size=18, color="#ffffff")),
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
-        font=dict(color=COLOR_TEXT, family='Segoe UI'),
+        font=dict(color=COLOR_TEXT, family='Inter'),
         margin=dict(l=50, r=30, t=80, b=50), # Increased top margin for legend
         xaxis=dict(showgrid=True, gridcolor=COLOR_GRID, linecolor=COLOR_GRID, 
                    tickfont=dict(color=COLOR_TEXT, size=11), title_font=dict(color=COLOR_TEXT)),
         yaxis=dict(showgrid=True, gridcolor=COLOR_GRID, linecolor=COLOR_GRID, 
                    tickfont=dict(color=COLOR_TEXT, size=11), title_font=dict(color=COLOR_TEXT)),
         hovermode="x unified",
-        legend=dict(bgcolor='rgba(0,0,0,0)', font=dict(color=COLOR_TEXT), 
+        legend=dict(bgcolor='rgba(0,0,0,0)', font=dict(color="#ffffff"), 
                     orientation="h", yanchor="bottom", y=1.10, xanchor="right", x=1),
-        hoverlabel=dict(bgcolor="#ffffff", font_size=13, font_family="Segoe UI", font_color=COLOR_TEXT,
-                        bordercolor="#e1dfdd")
+        hoverlabel=dict(bgcolor="rgba(15, 23, 42, 0.95)", font_size=13, font_family="Inter", font_color="white",
+                        bordercolor="rgba(59, 130, 246, 0.6)")
     )
     return fig
 

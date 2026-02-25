@@ -4,7 +4,7 @@ def inject_bi_style():
     """Injects ultra-premium 'Deep Glass' CSS for a full executive experience."""
     st.markdown("""
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
         
         /* Immersive Mode: Hide Streamlit standard elements */
         header {visibility: hidden;}
@@ -12,9 +12,9 @@ def inject_bi_style():
         footer {visibility: hidden;}
         
         html, body, [data-testid="stAppViewContainer"] {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f3f2f1; /* Power BI classic light grey */
-            color: #323130; /* Power BI classic dark grey */
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top left, #1e293b 0%, #0f172a 100%);
+            color: #f8fafc;
         }
 
         /* PowerBI-style Canvas */
@@ -23,51 +23,53 @@ def inject_bi_style():
             padding-top: 0rem !important;
         }
 
-        /* PowerBI Solid White Cards */
+        /* Ultra-Premium Glass Cards */
         div[data-testid="stVerticalBlock"] > div:has(div.stPlotlyChart) {
-            background: #ffffff;
-            border: 1px solid #e1dfdd;
-            border-radius: 4px;
-            padding: 20px;
-            box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
-            margin-bottom: 25px;
-            transition: box-shadow 0.2s ease;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            margin-bottom: 35px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
         }
         
         div[data-testid="stVerticalBlock"] > div:has(div.stPlotlyChart):hover {
-            box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateY(-5px);
         }
 
-        /* PowerBI Solid Metrics */
+        /* Metrics with Glass & Glow */
         div[data-testid="stMetric"] {
-            background: #ffffff;
-            padding: 15px 20px;
-            border-radius: 4px;
-            border: 1px solid #e1dfdd;
-            border-left: 4px solid #118DFF; /* Power BI Blue Accent */
-            box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(5px);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-left: 6px solid #3b82f6;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
         
         div[data-testid="stMetricLabel"] {
-            color: #605e5c !important; /* Secondary grey */
-            font-size: 0.90rem !important;
-            font-weight: 600 !important;
+            color: #cbd5e1 !important; /* Brighter grey for visibility */
+            font-size: 0.95rem !important;
+            font-weight: 700 !important;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1.5px;
         }
 
         div[data-testid="stMetricValue"] {
-            color: #323130 !important;
-            font-size: 2.1rem !important;
-            font-weight: 700 !important;
-            font-family: 'Segoe UI', sans-serif;
+            color: #ffffff !important;
+            font-size: 2.3rem !important;
+            font-weight: 800 !important;
         }
 
-        /* Immersive Sidebar - Dark */
+        /* Immersive Sidebar */
         section[data-testid="stSidebar"] {
-            background: #252423 !important; /* Authentic dark grey sidebar */
-            border-right: 1px solid #323130;
-            color: #ffffff !important;
+            background: rgba(15, 23, 42, 0.98) !important;
+            border-right: 1px solid rgba(59, 130, 246, 0.2);
+            box-shadow: 10px 0 30px -15px rgba(0, 0, 0, 0.5);
         }
         
         /* Force Sidebar Text to be White */
@@ -75,47 +77,41 @@ def inject_bi_style():
         [data-testid="stSidebarNav"] a, 
         .st-emotion-cache-16txtl3 p {
             color: #ffffff !important;
-            font-weight: 400 !important;
-        }
-
-        /* Segmentadores (Slicers) Power BI Theme (Light inside main body) */
-        div.stSelectbox > label, div.stSlider > label {
-            color: #323130 !important; 
             font-weight: 600 !important;
-            font-size: 0.95rem !important;
-        }
-        /* Slicers in sidebar need white labels */
-        section[data-testid="stSidebar"] div.stSelectbox > label, 
-        section[data-testid="stSidebar"] div.stSlider > label {
-            color: #ffffff !important; 
         }
 
+        /* Segmentadores (Slicers) Dark Theme */
+        div.stSelectbox > label, div.stSlider > label {
+            color: #f8fafc !important; /* Pure white for segmentador titles */
+            font-weight: 700 !important;
+            font-size: 1.1rem !important;
+            letter-spacing: 0.5px;
+        }
         div[data-baseweb="select"] > div {
-            background-color: #ffffff !important;
-            color: #323130 !important;
-            border: 1px solid #8a8886 !important;
-            border-radius: 2px !important;
-            box-shadow: none !important;
+            background-color: rgba(30, 41, 59, 1) !important;
+            color: #ffffff !important;
+            border: 2px solid rgba(59, 130, 246, 0.5) !important;
+            border-radius: 8px !important;
+            box-shadow: 0 0 10px rgba(59,130,246, 0.2);
         }
         div[data-baseweb="popover"] ul {
-            background-color: #ffffff !important;
-            color: #323130 !important;
-            border: 1px solid #e1dfdd !important;
+            background-color: #0f172a !important;
+            color: #ffffff !important;
         }
 
         /* Smooth Page Transitions */
         .stApp {
-            animation: fadeIn 0.4s ease-in-out;
+            animation: fadeIn 0.8s ease-in-out;
         }
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f3f2f1; }
-        ::-webkit-scrollbar-thumb { background: #c8c6c4; border-radius: 4px; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
     """, unsafe_allow_html=True)
 
