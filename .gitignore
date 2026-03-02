@@ -1,0 +1,16 @@
+.venv
+*.csv
+.ipynb_checkpoints
+*rees
+*test.ipynb
+*tree.py
+.env
+__pycache__
+*.pyc
+
+tfplan
+*.tfvars
+*.tfvars.json
+*.tfstate
+*.tfstate.backup
+.terraform/
