@@ -2,4 +2,15 @@
 *.csv
 .ipynb_checkpoints
 *rees
-*testing.ipynb
+*test.ipynb
+*tree.py
+.env
+__pycache__
+*.pyc
+
+tfplan
+*.tfvars
+*.tfvars.json
+*.tfstate
+*.tfstate.backup
+.terraform/
