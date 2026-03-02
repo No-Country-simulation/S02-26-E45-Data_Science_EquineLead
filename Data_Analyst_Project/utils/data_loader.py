@@ -57,9 +57,21 @@ def load_parquet_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         
         if all(os.path.exists(p) for p in [path_listings, path_sessions, path_users]):
             st.sidebar.success("Auditoría Real: Datasets Conectados ✅")
-            listings = pd.read_parquet(path_listings)
-            sessions = pd.read_parquet(path_sessions)
-            users = pd.read_parquet(path_users)
+            # Specific robust loader for cloud environments (PyArrow with mmap fallback)
+            def robust_read(p):
+                try:
+                    # Try default pyarrow
+                    return pd.read_parquet(p, engine='pyarrow')
+                except Exception as e:
+                    if "Errno 22" in str(e) or "Invalid argument" in str(e):
+                        # Fallback: Disable memory mapping which often causes Errno 22 on some cloud mounts 
+                        # (e.g. Streamlit Cloud / POSIX with large files)
+                        return pd.read_parquet(p, engine='pyarrow', memory_map=False)
+                    raise e
+
+            listings = robust_read(path_listings)
+            sessions = robust_read(path_sessions)
+            users = robust_read(path_users)
             
             # Enrich Listings with source tag
             listings['source'] = 'Real'
