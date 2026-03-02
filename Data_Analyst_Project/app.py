@@ -614,4 +614,4 @@ elif page == "🧠 6. AI Subsystem (Dagshub)":
                         else:
                             st.caption("No plot artifacts found.")
                 st.markdown("<hr style='border: 1px solid #2D3748;'>", unsafe_allow_html=True)
->>>>>>> develop
+
