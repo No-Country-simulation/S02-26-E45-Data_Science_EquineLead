@@ -14,104 +14,66 @@ st.set_page_config(page_title="EquineLead Analytics PRO", layout="wide", page_ic
 # Advanced CSS for PowerBI / Tableau dark theme look
 st.markdown("""
 <style>
-    /* Main Background */
-    .stApp {
-        background-color: #0E1117;
-        color: #FFFFFF;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Force Global Theme Colors */
+    [data-testid="stAppViewContainer"] {
+        background-color: #0E1117 !important;
+        color: #FAFAFA !important;
+    }
+
+    /* Sidebar Professional Dark Theme */
+    [data-testid="stSidebar"] {
+        background-color: #1A1C23 !important;
+        border-right: 1px solid #2D3748 !important;
     }
     
-    /* Top padding removal */
-    .block-container {
-        padding-top: 2rem !important;
-        padding-bottom: 2rem !important;
+    [data-testid="stSidebar"] * {
+        color: #FAFAFA !important;
+    }
+    
+    /* Make the sidebar text pop */
+    [data-testid="stSidebarNav"] span {
+        color: #FAFAFA !important;
     }
 
     /* KPI Cards Styling (Power BI style) */
     div[data-testid="metric-container"] {
-        background-color: #1A1C24;
-        border-left: 5px solid #00B8D9;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        padding: 15px;
-        border-radius: 4px;
-        margin-bottom: 1rem;
+        background-color: #1A1C24 !important;
+        border-left: 5px solid #D4AF37 !important; /* Golden Accent */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+        padding: 20px !important;
+        border-radius: 8px !important;
+        margin-bottom: 1rem !important;
     }
-    div[data-testid="stMetricLabel"] {
-        font-size: 1rem !important;
-        color: #919EAB !important;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
+    
     div[data-testid="stMetricValue"] {
         font-size: 2.2rem !important;
         font-weight: 700 !important;
-        color: #FFFFFF !important;
-    }
-    div[data-testid="stMetricDelta"] > div {
-        font-size: 1rem !important;
+        color: #D4AF37 !important; /* Gold */
     }
 
-    /* Expander Styling */
-    .streamlit-expanderHeader {
-        background-color: #1A1C24 !important;
-        color: #FFFFFF !important;
-        border-radius: 4px;
-        font-weight: bold;
-    }
-    
-    /* Global Toggles and Buttons */
-    .stButton > button {
-        background-color: #3366FF !important;
-        color: white !important;
-        border-radius: 4px;
-        border: none;
-        padding: 0.5rem 1rem;
-        font-weight: 600;
-        width: 100%;
-        transition: all 0.3s;
-    }
-    .stButton > button:hover {
-        background-color: #254EDB !important;
-        box-shadow: 0 4px 12px rgba(51, 102, 255, 0.4);
-    }
-    
-    /* Headers */
-    h1 {
-        font-weight: 800 !important;
-        color: #E2E8F0 !important;
-        margin-bottom: 0.5rem !important;
-        letter-spacing: -0.5px;
-    }
-    h2, h3 {
-        color: #CBD5E1 !important;
-        font-weight: 600 !important;
-    }
-    
-    hr {
-        border-color: #2D3748;
-        margin-top: 0.5rem;
-        margin-bottom: 1.5rem;
-    }
-    
-    /* Hide only the Deploy button and right-side Actions, keep everything else intact */
-    [data-testid="stAppDeployButton"], .stDeployButton {
+    /* Hide only the Deploy button and right-side Actions */
+    [data-testid="stAppDeployButton"], .stDeployButton, .stToolbarActions, #MainMenu, footer {
         display: none !important;
     }
-    .stToolbarActions {
-        display: none !important;
-    }
-
-    /* Specifically hide the main menu and footer */
-    #MainMenu {visibility: hidden !important;}
-    footer {display: none !important;}
     
-    /* Ensure the sidebar toggle button is ALWAYS visible */
+    /* Ensure the sidebar toggle button is ALWAYS visible and contrasting */
     [data-testid="collapsedControl"] {
         display: flex !important;
         visibility: visible !important;
+        background-color: #D4AF37 !important; /* Make the arrow standout */
+        border-radius: 0 5px 5px 0 !important;
+        color: black !important;
     }
-    header {background-color: transparent !important; box-shadow: none !important;}
+    
+    header {
+        background-color: transparent !important;
+        box-shadow: none !important;
+    }
+    
+    /* Global Typography */
+    h1, h2, h3, p, span {
+        color: #FAFAFA !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
