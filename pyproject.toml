@@ -3,29 +3,12 @@ name = "equine-ds-project"
 version = "0.1.0"
 description = "Proyecto de Ciencia de Datos para leads ecuestres"
 readme = "README.md"
-requires-python = ">=3.10"
-dependencies = [
-    "fastparquet>=2025.12.0",
-    "matplotlib>=3.10.8",
-    "numpy>=2.2.6",
-    "pandas>=2.3.3",
-    "pyarrow>=23.0.0",
-    "scikit-learn>=1.7.2",
-    "seaborn>=0.13.2",
-]
-
-[tool.uv]
-managed = true
-name = "s02-26-e45-data-science-equinelead"
-version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 dependencies = [
     "beautifulsoup4>=4.14.3",
     "lxml>=6.0.2",
-    "pandas==2.2",
-    "pyarrow==20",
+    "pandas>=2.2",
+    "pyarrow>=20",
     "requests>=2.32.5",
     "tqdm>=4.67.3",
     "prefect==2.20.18",
@@ -44,7 +27,12 @@ dependencies = [
     "setuptools>=80.10.2",
     "scikit-learn>=1.8.0",
     "dvc[gs]>=3.66.1",
+    "numpy>=2.2.6",
+    "seaborn>=0.13.2",
 ]
+
+[tool.uv]
+managed = true
 
 [dependency-groups]
 dev = [
