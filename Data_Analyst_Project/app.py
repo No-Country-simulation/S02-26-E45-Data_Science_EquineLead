@@ -124,8 +124,16 @@ def load_data(filename, cols=None, sample=False):
     path = os.path.join(data_dir, filename)
     if os.path.exists(path):
         try:
-            # Optimized pandas read: only fetch necessary columns
-            df = pd.read_parquet(path, columns=cols, engine='fastparquet')
+            # We use pyarrow with a fallback for memory_map=False to fix Errno 22 (Invalid argument)
+            try:
+                df = pd.read_parquet(path, columns=cols, engine='pyarrow')
+            except Exception as e:
+                if "Errno 22" in str(e) or "Invalid argument" in str(e):
+                    # Fallback disabling mmap for large files on cloud filesystems
+                    df = pd.read_parquet(path, columns=cols, engine='pyarrow', memory_map=False)
+                else:
+                    raise e
+            
             if sample and not df.empty and len(df) > 5000:
                 # hard cap large tables to 10k rows for Streamlit memory limits
                 df = df.sample(n=min(10000, len(df)), random_state=42)
