@@ -22,13 +22,13 @@ def limpieza_extrema(valor):
         parte = texto.split("/")[0].strip()
         try:
             return float(parte)
-        except:
+        except (ValueError, TypeError):
             return np.nan_to_num
     try:
         solo_num = "".join(filter(str.isdigit, texto))
         return float(solo_num) if solo_num else np.nan
-    except:
-        return np.nan
+    except (ValueError, TypeError):
+        return np.nan_to_num
 
 
 def clean_data(df_final: pd.DataFrame) -> pd.DataFrame:
