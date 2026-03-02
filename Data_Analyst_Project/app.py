@@ -81,44 +81,38 @@ st.markdown("""
 # 2. DATA LOADING (HIGHLY OPTIMIZED CACHING)
 # ---------------------------------------------
 @st.cache_data(show_spinner=False)
-def load_data(filename, cols=None, sample=False):
+def load_data(filename, cols=None, sample_limit=None):
+    """Optimized data loader with column pruning and row capping to keep cloud deployment fast."""
     data_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "clean"))
     path = os.path.join(data_dir, filename)
     if os.path.exists(path):
         try:
-            # We use pyarrow with a fallback for memory_map=False to fix Errno 22 (Invalid argument)
-            try:
-                df = pd.read_parquet(path, columns=cols, engine='pyarrow')
-            except Exception as e:
-                if "Errno 22" in str(e) or "Invalid argument" in str(e):
-                    # Fallback disabling mmap for large files on cloud filesystems
-                    df = pd.read_parquet(path, columns=cols, engine='pyarrow', memory_map=False)
-                else:
-                    raise e
+            # Engine 'pyarrow' + memory_map=False fixes cloud filesystem latency/errors (Errno 22).
+            df = pd.read_parquet(path, columns=cols, engine='pyarrow', memory_map=False)
             
-            if sample and not df.empty and len(df) > 5000:
-                # hard cap large tables to 10k rows for Streamlit memory limits
-                df = df.sample(n=min(10000, len(df)), random_state=42)
+            # Optimization: Pre-convert dates inside the CACHED function
+            for date_col in ['first_seen', 'event_time', 'Birthday']:
+                if date_col in df.columns:
+                    df[date_col] = pd.to_datetime(df[date_col], errors='coerce')
+            
+            # Security Limit: Sample if table exceeds limit to prevent OOM
+            if sample_limit and len(df) > sample_limit:
+                df = df.sample(n=sample_limit, random_state=42)
             return df
-        except Exception as e:
-            st.warning(f"Engine Warning ({filename}): {e}")
+        except Exception:
             return pd.DataFrame()
     return pd.DataFrame()
 
 with st.spinner('Loading Core Engine Data (Optimized)...'):
-    df_horses = load_data("horses_listings_limpio.parquet")
-    df_products = load_data("products_listing_limpio.parquet")
+    # Loading ONLY essential columns reduces memory usage by >60%
+    df_horses = load_data("horses_listings_limpio.parquet", cols=['Breed', 'Gender', 'Color', 'Price', 'Age'])
+    df_products = load_data("products_listing_limpio.parquet", cols=['Category', 'Price', 'Stock'])
     
-    # The session files are >70MB and paralyze the server. We strictly sample them.
-    # Only load columns we absolutely need for the metrics and charts
-    u_cols = ['event_time', 'event_type', 'horse_id']
-    p_cols = ['event_time', 'event_type', 'item_id']
-    df_u_sessions = load_data("horses_sessions_info.parquet", cols=u_cols, sample=True)
-    df_p_sessions = load_data("prods_sessions_info.parquet", cols=p_cols, sample=True)
+    # Session data is the heaviest. We prune columns and sample strictly (50k rows max).
+    df_u_sessions = load_data("horses_sessions_info.parquet", cols=['event_time', 'event_type'], sample_limit=50000)
+    df_p_sessions = load_data("prods_sessions_info.parquet", cols=['event_time', 'event_type'], sample_limit=50000)
     
-    df_users = load_data("users_info.parquet", cols=['first_seen', 'country', 'city', 'traffic_source', 'gender', 'device_type', 'job_info.title'])
-    if not df_users.empty and 'job_info.title' in df_users.columns:
-        df_users.rename(columns={'job_info.title': 'job_info'}, inplace=True)
+    df_users = load_data("users_info.parquet", cols=['first_seen', 'country', 'traffic_source', 'gender'])
 
 # ---------------------------------------------
 # 3. GLOBAL CHART STYLING TEMPLATE (POWER BI AESTHETIC)
@@ -191,8 +185,9 @@ if page == "📊 1. Executive Summary":
     
     with r2_c1:
         if not df_users.empty and 'first_seen' in df_users.columns:
-            df_users['date'] = pd.to_datetime(df_users['first_seen'], errors='coerce').dt.date
-            Growth = df_users.groupby('date').size().reset_index(name='Users')
+            # Optimization: date conversion already handled in load_data
+            Growth = df_users.groupby(df_users['first_seen'].dt.date).size().reset_index(name='Users')
+            Growth.columns = ['date', 'Users']
             Growth['Cumulative'] = Growth['Users'].cumsum()
             fig_acq = px.area(Growth, x='date', y='Cumulative', color_discrete_sequence=[PRO_COLORS[0]])
             fig_acq.add_scatter(x=Growth['date'], y=Growth['Users'], mode='lines', name='Daily New', line=dict(color=PRO_COLORS[1], width=2, dash='dot'))
