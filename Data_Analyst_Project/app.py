@@ -112,11 +112,12 @@ with st.spinner('Loading Core Engine Data (Optimized)...'):
     df_u_sessions = load_data("horses_sessions_info.parquet", cols=['event_time', 'event_type', 'horse_id'], sample_limit=50000)
     df_p_sessions = load_data("prods_sessions_info.parquet", cols=['event_time', 'event_type', 'item_id'], sample_limit=50000)
     
-    # Full audience telemetry restored
-    u_cols = ['first_seen', 'country', 'city', 'traffic_source', 'gender', 'device_type', 'job_info.title']
+    # Full audience telemetry restored with dictionary handling for job_info
+    u_cols = ['first_seen', 'country', 'city', 'traffic_source', 'gender', 'device_type', 'job_info']
     df_users = load_data("users_info.parquet", cols=u_cols)
-    if not df_users.empty and 'job_info.title' in df_users.columns:
-        df_users.rename(columns={'job_info.title': 'job_info'}, inplace=True)
+    if not df_users.empty and 'job_info' in df_users.columns:
+        # Check if column is dictionary (nested) and extract title
+        df_users['job_info'] = df_users['job_info'].apply(lambda x: x.get('title') if isinstance(x, dict) else x)
 
 # ---------------------------------------------
 # 3. GLOBAL CHART STYLING TEMPLATE (POWER BI AESTHETIC)
