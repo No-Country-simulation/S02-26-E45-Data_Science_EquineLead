@@ -156,6 +156,7 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 name = "altair"
 version = "6.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -172,6 +173,8 @@ wheels = [
 ]
 
 [[package]]
+=======
+>>>>>>> develop
 name = "amqp"
 version = "5.3.1"
 source = { registry = "https://pypi.org/simple" }
@@ -3290,6 +3293,7 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 name = "narwhals"
 version = "2.17.0"
 source = { registry = "https://pypi.org/simple" }
@@ -3299,6 +3303,8 @@ wheels = [
 ]
 
 [[package]]
+=======
+>>>>>>> develop
 name = "nbclient"
 version = "0.10.4"
 source = { registry = "https://pypi.org/simple" }
@@ -3749,6 +3755,7 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 name = "plotly"
 version = "6.5.2"
 source = { registry = "https://pypi.org/simple" }
@@ -3762,6 +3769,8 @@ wheels = [
 ]
 
 [[package]]
+=======
+>>>>>>> develop
 name = "prefect"
 version = "2.20.18"
 source = { registry = "https://pypi.org/simple" }
@@ -4241,6 +4250,7 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 name = "pydeck"
 version = "0.9.1"
 source = { registry = "https://pypi.org/simple" }
@@ -4254,6 +4264,8 @@ wheels = [
 ]
 
 [[package]]
+=======
+>>>>>>> develop
 name = "pydot"
 version = "4.0.1"
 source = { registry = "https://pypi.org/simple" }
@@ -4851,10 +4863,15 @@ dependencies = [
     { name = "lxml" },
     { name = "matplotlib" },
     { name = "mlflow" },
+<<<<<<< HEAD
     { name = "numpy" },
     { name = "pandas" },
     { name = "playwright" },
     { name = "plotly" },
+=======
+    { name = "pandas" },
+    { name = "playwright" },
+>>>>>>> develop
     { name = "prefect" },
     { name = "prefect-docker" },
     { name = "prefect-gcp", version = "0.5.11", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.14'" },
@@ -4865,9 +4882,13 @@ dependencies = [
     { name = "requests" },
     { name = "scikit-learn" },
     { name = "scipy" },
+<<<<<<< HEAD
     { name = "seaborn" },
     { name = "setuptools" },
     { name = "streamlit" },
+=======
+    { name = "setuptools" },
+>>>>>>> develop
     { name = "tqdm" },
 ]
 
@@ -4891,10 +4912,15 @@ requires-dist = [
     { name = "lxml", specifier = ">=6.0.2" },
     { name = "matplotlib", specifier = ">=3.10.8" },
     { name = "mlflow", specifier = "==3" },
+<<<<<<< HEAD
     { name = "numpy", specifier = ">=1.26.4" },
     { name = "pandas", specifier = "==2.2" },
     { name = "playwright", specifier = ">=1.58.0" },
     { name = "plotly", specifier = ">=6.5.2" },
+=======
+    { name = "pandas", specifier = "==2.2" },
+    { name = "playwright", specifier = ">=1.58.0" },
+>>>>>>> develop
     { name = "prefect", specifier = "==2.20.18" },
     { name = "prefect-docker" },
     { name = "prefect-gcp" },
@@ -4904,9 +4930,13 @@ requires-dist = [
     { name = "requests", specifier = ">=2.32.5" },
     { name = "scikit-learn", specifier = ">=1.8.0" },
     { name = "scipy", specifier = ">=1.17.0" },
+<<<<<<< HEAD
     { name = "seaborn", specifier = ">=0.13.2" },
     { name = "setuptools", specifier = ">=80.10.2" },
     { name = "streamlit", specifier = ">=1.54.0" },
+=======
+    { name = "setuptools", specifier = ">=80.10.2" },
+>>>>>>> develop
     { name = "tqdm", specifier = ">=4.67.3" },
 ]
 
@@ -5058,6 +5088,7 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 name = "seaborn"
 version = "0.13.2"
 source = { registry = "https://pypi.org/simple" }
@@ -5072,6 +5103,8 @@ wheels = [
 ]
 
 [[package]]
+=======
+>>>>>>> develop
 name = "semver"
 version = "3.0.4"
 source = { registry = "https://pypi.org/simple" }
@@ -5238,6 +5271,7 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 name = "streamlit"
 version = "1.54.0"
 source = { registry = "https://pypi.org/simple" }
@@ -5267,6 +5301,8 @@ wheels = [
 ]
 
 [[package]]
+=======
+>>>>>>> develop
 name = "tabulate"
 version = "0.9.0"
 source = { registry = "https://pypi.org/simple" }
@@ -5588,6 +5624,7 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 name = "watchdog"
 version = "6.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -5606,6 +5643,8 @@ wheels = [
 ]
 
 [[package]]
+=======
+>>>>>>> develop
 name = "wcwidth"
 version = "0.5.3"
 source = { registry = "https://pypi.org/simple" }

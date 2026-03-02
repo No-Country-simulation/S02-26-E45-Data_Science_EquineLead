@@ -1,9 +1,9 @@
+.venv/
+venv/
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.venv/
-venv/
 .env
 .streamlit/
 .DS_Store
@@ -11,3 +11,14 @@ venv/
 uv.lock.bak
 pyproject_develop.toml
 uv_develop.lock
+*.csv
+.ipynb_checkpoints
+*rees
+*testing.ipynb
+*tree.py
+tfplan
+*.tfvars
+*.tfvars.json
+*.tfstate
+*.tfstate.backup
+.terraform/

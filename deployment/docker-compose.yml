@@ -1,0 +1,43 @@
+services:
+
+  prefect-server:
+    image: prefecthq/prefect:2-latest
+    container_name: prefect-server
+    command: prefect server start --host 0.0.0.0
+    ports:
+      - "4200:4200"
+    volumes:
+      - prefect-data:/root/.prefect
+
+  data-pipeline:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.data_pipeline
+    image: equinelead-data-pipeline:latest
+    container_name: equinelead-data-pipeline
+    profiles: ["pipeline"]
+    depends_on:
+      - prefect-server
+    environment:
+      PREFECT_API_KEY: ${PREFECT_API_KEY}
+      PREFECT_API_URL: ${PREFECT_API_URL}
+      PREFECT_WORK_POOL_NAME: equinelead-pool
+      DEBUG_GCS: "False"
+      GOOGLE_APPLICATION_CREDENTIALS: /secrets/gcp-key.json
+    volumes:
+      - ./data:/app/data
+      - ${GOOGLE_APPLICATION_CREDENTIALS}:/secrets/gcp-key.json:ro
+      - prefect-data:/root/.prefect
+    restart: "no"
+
+volumes:
+  prefect-data:
+
+# INGESTA
+# docker compose -f deployment/docker-compose.yml --profile pipeline up --build
+
+# DESARROLLO
+# docker compose -f deployment/docker-compose.yml up prefect-server
+
+# PREFECT LOGIN
+# prefect cloud login
