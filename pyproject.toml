@@ -36,9 +36,11 @@ managed = true
 
 [dependency-groups]
 dev = [
+    "black>=24.0.0",
     "google-cloud-storage>=3.9.0",
     "ipykernel>=7.1.0",
     "ipywidgets>=8.1.8",
     "jupyterlab>=4.5.3",
     "notebook>=7.5.3",
+    "ruff>=0.15.4",
 ]

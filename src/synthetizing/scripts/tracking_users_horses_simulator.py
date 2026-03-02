@@ -21,12 +21,15 @@ from datetime import datetime, timedelta
 DATA_DIR_CLEAN = Path("./data/clean")
 DATA_DIR_TRACKING = Path("./data/tracking")
 
+
 def download_and_prepare(
     url: str,
     download_path: str,
     extract_dir: str | None = None,
     chunk_size: int = 8192,
-    mode: Literal["download", "extract", "download_and_extract"] = "download_and_extract",
+    mode: Literal[
+        "download", "extract", "download_and_extract"
+    ] = "download_and_extract",
 ) -> None:
     """
     Descarga y/o extrae un archivo desde una URL.
@@ -72,8 +75,7 @@ def download_and_prepare(
 
     if not download_path.exists():
         raise FileNotFoundError(
-            f"No existe el archivo {download_path}. "
-            "No se puede extraer."
+            f"No existe el archivo {download_path}. " "No se puede extraer."
         )
 
     is_zip = zipfile.is_zipfile(download_path)
@@ -118,14 +120,16 @@ def download_and_prepare(
     print("Archivo descomprimido correctamente.")
     return
 
+
 class EquestrianJobProvider(BaseProvider):
     def equestrian_job(self):
         equestrian_jobs = []
         with open(DATA_DIR_TRACKING / "equestrian_jobs.txt") as f:
             for line in f:
-                if not line.startswith('#'):
+                if not line.startswith("#"):
                     equestrian_jobs.append(line.strip())
         return random.choice(equestrian_jobs)
+
 
 def user_info_for_country(country):
     faker = COUNTRY_TO_LOCALE.get(country)
@@ -152,10 +156,11 @@ def user_info_for_country(country):
     job = {
         "title": faker.equestrian_job(),
         "company": faker.company(),
-        "suffix": faker.company_suffix()
+        "suffix": faker.company_suffix(),
     }
 
     return name, gender, email, phone, city, address, credit_card, job
+
 
 def country_from_locale(locale_str: str):
     locale = Locale.parse(locale_str)
@@ -166,6 +171,7 @@ def country_from_locale(locale_str: str):
 
     country = pycountry.countries.get(alpha_2=country_code)
     return country.name if country else None
+
 
 def generate_users(n_users: int, locales: list):
     devices = ["mobile", "desktop"]
@@ -179,24 +185,29 @@ def generate_users(n_users: int, locales: list):
         first_seen = base_date - timedelta(days=X)
         country_id = np.random.choice(len(locales))
         country, _ = locales[country_id]
-        name, gender, email, phone, city, address, credit_card, job = user_info_for_country(country)
-        users.append({
-            "user_id": user_id,
-            "name": name,
-            "gender": gender,
-            "country": country, 
-            "city": city,
-            "addres": address, 
-            "credit_card_info": credit_card, 
-            "email": email, 
-            "phone_number": phone,
-            "job_info": job,
-            "device_type": np.random.choice(devices, p=[0.6, 0.4]),
-            "traffic_source": np.random.choice(sources, p=[0.7, 0.2, 0.1]),
-            "first_seen": first_seen.date()
-        })
+        name, gender, email, phone, city, address, credit_card, job = (
+            user_info_for_country(country)
+        )
+        users.append(
+            {
+                "user_id": user_id,
+                "name": name,
+                "gender": gender,
+                "country": country,
+                "city": city,
+                "addres": address,
+                "credit_card_info": credit_card,
+                "email": email,
+                "phone_number": phone,
+                "job_info": job,
+                "device_type": np.random.choice(devices, p=[0.6, 0.4]),
+                "traffic_source": np.random.choice(sources, p=[0.7, 0.2, 0.1]),
+                "first_seen": first_seen.date(),
+            }
+        )
 
     return pd.DataFrame(users)
+
 
 def assign_sessions_to_users(df_sessions, users_ids, seed=42):
     rng = np.random.default_rng(seed)
@@ -208,21 +219,17 @@ def assign_sessions_to_users(df_sessions, users_ids, seed=42):
     rng.shuffle(sessions)
     rng.shuffle(users_ids)
 
-    session_to_user = dict(zip(sessions, users_ids[:len(sessions)]))
+    session_to_user = dict(zip(sessions, users_ids[: len(sessions)]))
     df_sessions["user_id"] = df_sessions["user_session"].map(session_to_user)
 
     return df_sessions
+
 
 def assign_horses(df_sessions, df_horses, seed=42):
     rng = np.random.default_rng(seed)
 
     # Breed -> Horse_IDs
-    horses_by_breed = (
-        df_horses
-        .groupby("Breed")["Horse_ID"]
-        .apply(np.array)
-        .to_dict()
-    )
+    horses_by_breed = df_horses.groupby("Breed")["Horse_ID"].apply(np.array).to_dict()
 
     # Para cada fila, samplear un Horse_ID válido
     def sample_horse(breed):
@@ -233,12 +240,15 @@ def assign_horses(df_sessions, df_horses, seed=42):
 
     return df_sessions
 
+
 def load_parquet(path: Path) -> pd.DataFrame:
     return pd.read_parquet(path)
+
 
 def save_parquet(df: pd.DataFrame, path: Path):
     path.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(path, index=False)
+
 
 def load_locales(path: Path) -> list[tuple[str, str]]:
     locales = set()
@@ -249,25 +259,26 @@ def load_locales(path: Path) -> list[tuple[str, str]]:
             locales.add((country, locale))
     return list(locales)
 
+
 def build_country_locale_map(locales: list[tuple[str, str]]) -> dict:
     return {country: Faker(locale) for country, locale in locales}
+
 
 def build_users(n_users: int, locales: list[tuple[str, str]]) -> pd.DataFrame:
     return generate_users(n_users=n_users, locales=locales)
 
+
 def align_product_to_horse_categories(
-    df_sessions: pd.DataFrame,
-    df_horses: pd.DataFrame
+    df_sessions: pd.DataFrame, df_horses: pd.DataFrame
 ) -> pd.DataFrame:
 
     product_dist = df_sessions.category_code.value_counts(normalize=True)
     horse_dist = df_horses.Breed.value_counts(normalize=True)
 
     product_cats = product_dist.index.tolist()[: len(horse_dist) - 1]
-    df_sessions.loc[
-        ~df_sessions.category_code.isin(product_cats),
-        "category_code"
-    ] = "nc"
+    df_sessions.loc[~df_sessions.category_code.isin(product_cats), "category_code"] = (
+        "nc"
+    )
 
     product_cats = df_sessions.category_code.value_counts(normalize=True).index.tolist()
     horse_cats = horse_dist.index.tolist()
@@ -277,11 +288,12 @@ def align_product_to_horse_categories(
 
     return df_sessions
 
+
 def build_horse_sessions(
     df_sessions: pd.DataFrame,
     df_users: pd.DataFrame,
     df_horses: pd.DataFrame,
-    seed: int = 42
+    seed: int = 42,
 ) -> pd.DataFrame:
 
     user_ids = df_users["user_id"].astype(str).tolist()
@@ -296,13 +308,14 @@ def build_horse_sessions(
 
     return df_sessions
 
+
 def build_rees_sample(
     source_csv: Path,
     output_parquet: Path,
     col: str,
     chunksize: int,
     target: int,
-    random_state: int
+    random_state: int,
 ) -> pd.DataFrame:
 
     if output_parquet.exists():
@@ -342,9 +355,7 @@ def build_rees_sample(
             sampled = rows.sample(n=take, random_state=random_state)
             selected[cls].append(sampled)
 
-        total_selected = sum(
-            sum(len(x) for x in v) for v in selected.values()
-        )
+        total_selected = sum(sum(len(x) for x in v) for v in selected.values())
 
         if total_selected >= target:
             break
@@ -354,73 +365,75 @@ def build_rees_sample(
 
     return df
 
-def build_and_save_horses(
-    equinenow_path: Path,
-    output_path: Path
-) -> pd.DataFrame:
-    
+
+def build_and_save_horses(equinenow_path: Path, output_path: Path) -> pd.DataFrame:
+
     df = pd.read_parquet(equinenow_path)
     df["Temperament"] = df["Temperament"].astype("string")
     save_parquet(df, output_path)
     return df
+
 
 def build_locales_and_fakers(locale_file: Path) -> tuple[list, dict]:
     locales = load_locales(locale_file)
     faker_map = build_country_locale_map(locales)
     return locales, faker_map
 
+
 def set_country_to_locale(faker_map: dict):
     global COUNTRY_TO_LOCALE
     COUNTRY_TO_LOCALE = faker_map
 
+
 def build_and_save_users(
-    n_users: int,
-    locales: list,
-    output_path: Path
+    n_users: int, locales: list, output_path: Path
 ) -> pd.DataFrame:
 
     df = generate_users(n_users=n_users, locales=locales)
     save_parquet(df, output_path)
     return df
 
+
 def build_and_save_horse_sessions(
     df_sessions: pd.DataFrame,
     df_users: pd.DataFrame,
     df_horses: pd.DataFrame,
     output_path: Path,
-    seed: int = 42
+    seed: int = 42,
 ) -> pd.DataFrame:
 
     df = build_horse_sessions(
-        df_sessions=df_sessions,
-        df_users=df_users,
-        df_horses=df_horses,
-        seed=seed
+        df_sessions=df_sessions, df_users=df_users, df_horses=df_horses, seed=seed
     )
 
     save_parquet(df, output_path)
     return df
+
 
 def main():
     download_and_prepare(
         url="https://data.rees46.com/datasets/marketplace/2020-Apr.csv.gz",
         download_path=DATA_DIR_TRACKING / "rees/2020-Apr.csv.gz",
         extract_dir=DATA_DIR_TRACKING / "rees/extracted",
-        mode="extract"
+        mode="extract",
     )
 
     df_sessions = build_rees_sample(
         source_csv=Path(DATA_DIR_TRACKING / "rees/extracted/2020-Apr.csv"),
-        output_parquet=Path(DATA_DIR_TRACKING / "rees/extracted/2020-Apr_sample.parquet"),
+        output_parquet=Path(
+            DATA_DIR_TRACKING / "rees/extracted/2020-Apr_sample.parquet"
+        ),
         col="event_type",
         chunksize=200_000,
         target=1_000_000,
-        random_state=42
+        random_state=42,
     )
 
     df_horses = build_and_save_horses(
-        equinenow_path=Path(DATA_DIR_CLEAN / "equinenow_horses_listings_limpio.parquet"),
-        output_path=Path(DATA_DIR_CLEAN / "horses_listings_limpio.parquet")
+        equinenow_path=Path(
+            DATA_DIR_CLEAN / "equinenow_horses_listings_limpio.parquet"
+        ),
+        output_path=Path(DATA_DIR_CLEAN / "horses_listings_limpio.parquet"),
     )
 
     locales, faker_map = build_locales_and_fakers(
@@ -431,15 +444,16 @@ def main():
     df_users = build_and_save_users(
         n_users=200_000,
         locales=locales,
-        output_path=Path(DATA_DIR_CLEAN / "users_info.parquet")
+        output_path=Path(DATA_DIR_CLEAN / "users_info.parquet"),
     )
 
     build_and_save_horse_sessions(
         df_sessions=df_sessions,
         df_users=df_users,
         df_horses=df_horses,
-        output_path=Path(DATA_DIR_CLEAN / "horses_sessions_info.parquet")
+        output_path=Path(DATA_DIR_CLEAN / "horses_sessions_info.parquet"),
     )
+
 
 if __name__ == "__main__":
     main()

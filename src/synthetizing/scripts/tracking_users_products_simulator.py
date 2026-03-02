@@ -6,12 +6,12 @@ import numpy as np
 DATA_DIR_CLEAN = Path("./data/clean")
 DATA_DIR_TRACKING = Path("./data/tracking")
 
-SOURCE_CSV=Path(DATA_DIR_TRACKING / "rees/extracted/2020-Apr.csv")
-SAMPLE_PARQUET=Path(DATA_DIR_TRACKING / "rees/extracted/2020-Apr_sample.parquet")
+SOURCE_CSV = Path(DATA_DIR_TRACKING / "rees/extracted/2020-Apr.csv")
+SAMPLE_PARQUET = Path(DATA_DIR_TRACKING / "rees/extracted/2020-Apr_sample.parquet")
 
-USERS_PARQUET=Path(DATA_DIR_CLEAN / "users_info.parquet")
-PRODUCTS_PARQUET=Path(DATA_DIR_CLEAN / "products_listing_limpio.parquet")
-OUTPUT_PARQUET=Path(DATA_DIR_CLEAN / "prods_sessions_info.parquet")
+USERS_PARQUET = Path(DATA_DIR_CLEAN / "users_info.parquet")
+PRODUCTS_PARQUET = Path(DATA_DIR_CLEAN / "products_listing_limpio.parquet")
+OUTPUT_PARQUET = Path(DATA_DIR_CLEAN / "prods_sessions_info.parquet")
 
 SEARCH_WEIGHTS = {
     "horse care": 0.22,
@@ -27,15 +27,11 @@ SEARCH_WEIGHTS = {
     "farm dog gear": 0.015,
 }
 
+
 def assign_prods(df_sessions, df_prods, seed=42):
     rng = np.random.default_rng(seed)
 
-    prods_by_cat = (
-        df_prods
-        .groupby("Category")["Item_ID"]
-        .apply(np.array)
-        .to_dict()
-    )
+    prods_by_cat = df_prods.groupby("Category")["Item_ID"].apply(np.array).to_dict()
 
     def sample_prod(cat):
         return rng.choice(prods_by_cat[cat])
@@ -45,18 +41,19 @@ def assign_prods(df_sessions, df_prods, seed=42):
 
     return df_sessions
 
+
 def build_rees_sample(
     source_csv: Path,
     output_parquet: Path,
     col: str,
     chunksize: int,
     target: int,
-    random_state: int
+    random_state: int,
 ) -> pd.DataFrame:
 
     counts = Counter()
     total = 0
-    
+
     for chunk in pd.read_csv(source_csv, chunksize=chunksize):
         counts.update(chunk[col].value_counts().to_dict())
         total += len(chunk)
@@ -88,9 +85,7 @@ def build_rees_sample(
             sampled = rows.sample(n=take, random_state=random_state)
             selected[cls].append(sampled)
 
-        total_selected = sum(
-            sum(len(x) for x in v) for v in selected.values()
-        )
+        total_selected = sum(sum(len(x) for x in v) for v in selected.values())
 
         if total_selected >= target:
             break
@@ -99,6 +94,7 @@ def build_rees_sample(
     df.to_parquet(output_parquet, index=False)
 
     return df
+
 
 def assign_sessions_to_users(df_sessions, users_ids, seed=42):
     rng = np.random.default_rng(seed)
@@ -110,13 +106,12 @@ def assign_sessions_to_users(df_sessions, users_ids, seed=42):
     rng.shuffle(sessions)
     rng.shuffle(users_ids)
 
-    session_to_user = dict(zip(sessions, users_ids[:len(sessions)]))
+    session_to_user = dict(zip(sessions, users_ids[: len(sessions)]))
 
     df_sessions = df_sessions.copy()
     df_sessions["user_id"] = df_sessions["user_session"].map(session_to_user)
 
     return df_sessions
-
 
 
 def assign_product_categories(df_sessions, search_weights, seed=42):
@@ -142,15 +137,11 @@ def assign_product_categories(df_sessions, search_weights, seed=42):
 
     return df_sessions
 
+
 def assign_products(df_sessions, df_products, seed=42):
     rng = np.random.default_rng(seed)
 
-    prods_by_cat = (
-        df_products
-        .groupby("Category")["Item_ID"]
-        .apply(np.array)
-        .to_dict()
-    )
+    prods_by_cat = df_products.groupby("Category")["Item_ID"].apply(np.array).to_dict()
 
     all_products = df_products["Item_ID"].dropna().to_numpy()
 
@@ -164,6 +155,7 @@ def assign_products(df_sessions, df_products, seed=42):
     df_sessions["Item_ID"] = df_sessions["product_category"].map(sample_prod)
 
     return df_sessions
+
 
 def build_product_sessions_pipeline(
     source_csv,
@@ -179,7 +171,7 @@ def build_product_sessions_pipeline(
         col="event_type",
         chunksize=200_000,
         target=1_000_000,
-        random_state=42
+        random_state=42,
     )
 
     df_users = pd.read_parquet(users_parquet)
@@ -207,7 +199,8 @@ def build_product_sessions_pipeline(
 
     return df_sessions
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     build_product_sessions_pipeline(
         source_csv=SOURCE_CSV,
         sample_parquet=SAMPLE_PARQUET,

@@ -18,9 +18,9 @@ DATASET_NAME = "dataset_name.parquet"
 # ==================================
 # DATA SCIENTIST PERSONAL CONFIG
 # ==================================
-RUN_NAME=f"baseline_xgboost_v1_{datetime.datetime.now():%Y%m%d_%H%M%S}"   # Ejecución puntual dentro de un experimento
-DS_NAME="Pepito_Pepin"
-STAGE="training"
+RUN_NAME = f"baseline_xgboost_v1_{datetime.datetime.now():%Y%m%d_%H%M%S}"  # Ejecución puntual dentro de un experimento
+DS_NAME = "Pepito_Pepin"
+STAGE = "training"
 
 # Registro de modelos en MLflow – Guía para Data Scientists
 #
@@ -60,14 +60,11 @@ STAGE="training"
 #
 # Esta convención es obligatoria para mantener un registry limpio y deployable.
 
+
 def main():
     init_mlflow(experiment_name=MLFLOW_EXPERIMENT_ENGINE_NAME)
 
-    with start_run(
-        run_name=RUN_NAME,
-        ds_name=DS_NAME,
-        stage=STAGE
-    ):
+    with start_run(run_name=RUN_NAME, ds_name=DS_NAME, stage=STAGE):
         # =====================
         # Load dataset
         # =====================
@@ -106,7 +103,9 @@ def main():
         # Reproducibility
         # =====================
         mlflow.log_param("random_state", SEED)
-        mlflow.log_param("cv_folds", 5) # Si se usa cross-validation, es solo un ejemplo
+        mlflow.log_param(
+            "cv_folds", 5
+        )  # Si se usa cross-validation, es solo un ejemplo
 
         # =====================
         # Environment
@@ -123,10 +122,8 @@ def main():
         # =====================
         # Artifacts
         # =====================
-        mlflow.sklearn.log_model(
-            model,
-            artifact_path="model_engine"
-        )
+        mlflow.sklearn.log_model(model, artifact_path="model_engine")
+
 
 if __name__ == "__main__":
     main()

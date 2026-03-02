@@ -11,6 +11,7 @@ MLFLOW_EXPERIMENT_LEADS = "equinelead-leads"
 MLFLOW_EXPERIMENT_ENGINE_NAME = "equinelead-recommendation-engine"
 SEED = 42
 
+
 def init_mlflow(experiment_name: str | None = None):
     """
     Initialize MLflow tracking with DagsHub backend.
@@ -18,11 +19,9 @@ def init_mlflow(experiment_name: str | None = None):
     """
 
     dagshub.init(
-        repo_owner=DAGSHUB_REPO_OWNER,
-        repo_name=DAGSHUB_REPO_NAME,
-        mlflow=True
+        repo_owner=DAGSHUB_REPO_OWNER, repo_name=DAGSHUB_REPO_NAME, mlflow=True
     )
-    
+
     if experiment_name:
         mlflow.set_experiment(experiment_name)
 
@@ -30,6 +29,7 @@ def init_mlflow(experiment_name: str | None = None):
 # =========================
 # Helpers
 # =========================
+
 
 def start_run(
     run_name: str | None = None,
@@ -52,7 +52,4 @@ def start_run(
     if tags:
         default_tags.update(tags)
 
-    return mlflow.start_run(
-        run_name=run_name,
-        tags=default_tags
-    )
+    return mlflow.start_run(run_name=run_name, tags=default_tags)
