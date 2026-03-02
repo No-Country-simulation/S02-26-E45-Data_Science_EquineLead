@@ -67,7 +67,7 @@ def scrape_listings(pages_per_category=2, sleep_seconds=5):
 
                     product_url = url + href
                     product_urls.add(product_url)
-            except Exception as e:
+            except Exception:
                 break  # salimos de esta categoría
 
     for product_url in tqdm(

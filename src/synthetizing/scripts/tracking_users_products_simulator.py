@@ -115,7 +115,7 @@ def assign_sessions_to_users(df_sessions, users_ids, seed=42):
 
 
 def assign_product_categories(df_sessions, search_weights, seed=42):
-    rng = np.random.default_rng(seed)
+    np.random.default_rng(seed)
 
     weights = pd.Series(search_weights)
     weights = weights / weights.sum()

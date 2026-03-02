@@ -34,6 +34,13 @@ dependencies = [
 [tool.uv]
 managed = true
 
+[tool.ruff]
+exclude = [
+    "src/cleaning/notebooks",
+    "src/notebooks",
+    "**/*.ipynb"
+]
+
 [dependency-groups]
 dev = [
     "black>=24.0.0",
