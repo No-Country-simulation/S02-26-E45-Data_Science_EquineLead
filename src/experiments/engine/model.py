@@ -1,24 +1,20 @@
 from typing import Any
 import pandas as pd
-from sklearn.ensemble import RandomForestRegressor
-
+from sklearn.neighbors import NearestNeighbors
 
 def train_model(
     X_train: pd.DataFrame,
-    y_train: pd.Series,
     random_state: int = 42
 ) -> Any:
     """
     Train and return a model.
     """
-    ## Ejemplo ####################################
-    model = RandomForestRegressor(
-        n_estimators=200,
-        max_depth=10,
-        random_state=random_state,
-        n_jobs=-1
+    ## Implementación Motor de Recomendación ########################
+    model = NearestNeighbors(
+        n_neighbors=5, 
+        metric='cosine', 
+        algorithm='brute'
     )
-
-    model.fit(X_train, y_train)
-    ##############################################
+    model.fit(X_train)
+    ##############################################################
     return model

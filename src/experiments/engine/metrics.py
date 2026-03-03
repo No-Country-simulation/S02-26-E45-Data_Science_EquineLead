@@ -1,21 +1,21 @@
+import numpy as np
 from typing import Dict
-import pandas as pd
-from sklearn.metrics import root_mean_squared_error, mean_absolute_error
-
 
 def evaluate(
-    model,
-    X_val: pd.DataFrame,
-    y_val: pd.Series
+    distances: np.ndarray
 ) -> Dict[str, float]:
     """
-    Evaluate model and return metrics dict.
+    Evaluate the model and return a dictionary of metrics.
     """
-    
-    # Ejemplo ####################################
-    preds = model.predict(X_val)
 
-    return {
-        "rmse": root_mean_squared_error(y_val, preds),
-        "mae": mean_absolute_error(y_val, preds),
+    ## Implementación Motor de Recomendación ########################
+    # Convertimos las distancias en porcentaje de similitud (fiabilidad)
+    similitudes = (1 - distances[:, 1:]) * 100
+    reliability = np.mean(similitudes)
+    
+    metrics = {
+        "reliability": reliability
     }
+    ##############################################################
+
+    return metrics
