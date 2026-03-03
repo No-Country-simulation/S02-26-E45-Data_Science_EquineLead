@@ -1,133 +1,175 @@
 import streamlit as st
 
-def inject_bi_style():
-    """Injects ultra-premium 'Deep Glass' CSS for a full executive experience."""
+# Professional Color Palette
+PRO_COLORS = ["#3366FF", "#00B8D9", "#36B37E", "#FFAB00", "#FF5630", "#6554C0", "#00A3BF", "#FF8B00", "#FF7452", "#8777D9"]
+
+def inject_premium_style():
+    """Injects high-contrast professional dark theme CSS."""
     st.markdown("""
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&display=swap');
-        
-        /* Immersive Mode: Hide Streamlit standard elements */
-        header {visibility: hidden;}
-        #MainMenu {visibility: hidden;}
-        footer {visibility: hidden;}
-        
-        html, body, [data-testid="stAppViewContainer"] {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f3f2f1; /* Power BI classic light grey */
-            color: #323130; /* Power BI classic dark grey */
+        /* Force Global Theme Colors */
+        [data-testid="stAppViewContainer"] {
+            background-color: #0E1117 !important;
+            color: #FAFAFA !important;
         }
 
-        /* PowerBI-style Canvas */
-        .main {
-            background-color: transparent;
-            padding-top: 0rem !important;
-        }
-
-        /* PowerBI Solid White Cards */
-        div[data-testid="stVerticalBlock"] > div:has(div.stPlotlyChart) {
-            background: #ffffff;
-            border: 1px solid #e1dfdd;
-            border-radius: 4px;
-            padding: 20px;
-            box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
-            margin-bottom: 25px;
-            transition: box-shadow 0.2s ease;
+        /* Sidebar Professional Dark Theme */
+        [data-testid="stSidebar"] {
+            background-color: #1A1C23 !important;
+            border-right: 1px solid #2D3748 !important;
         }
         
-        div[data-testid="stVerticalBlock"] > div:has(div.stPlotlyChart):hover {
-            box-shadow: 0 6.4px 14.4px 0 rgba(0,0,0,.132), 0 1.2px 3.6px 0 rgba(0,0,0,.108);
-        }
-
-        /* PowerBI Solid Metrics */
-        div[data-testid="stMetric"] {
-            background: #ffffff;
-            padding: 15px 20px;
-            border-radius: 4px;
-            border: 1px solid #e1dfdd;
-            border-left: 4px solid #118DFF; /* Power BI Blue Accent */
-            box-shadow: 0 1.6px 3.6px 0 rgba(0,0,0,.132), 0 0.3px 0.9px 0 rgba(0,0,0,.108);
+        [data-testid="stSidebar"] * {
+            color: #FAFAFA !important;
         }
         
-        div[data-testid="stMetricLabel"] {
-            color: #605e5c !important; /* Secondary grey */
-            font-size: 0.90rem !important;
-            font-weight: 600 !important;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        /* Make the sidebar text pop */
+        [data-testid="stSidebarNav"] span {
+            color: #FAFAFA !important;
         }
 
+        /* KPI Cards Styling (Power BI style) */
+        div[data-testid="metric-container"] {
+            background-color: #1A1C24 !important;
+            border-left: 5px solid #D4AF37 !important; /* Golden Accent */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+            padding: 20px !important;
+            border-radius: 8px !important;
+            margin-bottom: 1rem !important;
+        }
+        
         div[data-testid="stMetricValue"] {
-            color: #323130 !important;
-            font-size: 2.1rem !important;
+            font-size: 2.2rem !important;
             font-weight: 700 !important;
-            font-family: 'Segoe UI', sans-serif;
+            color: #D4AF37 !important; /* Gold */
         }
 
-        /* Immersive Sidebar - Dark */
-        section[data-testid="stSidebar"] {
-            background: #252423 !important; /* Authentic dark grey sidebar */
-            border-right: 1px solid #323130;
-            color: #ffffff !important;
+        /* Hide only the Deploy button and right-side Actions */
+        [data-testid="stAppDeployButton"], .stDeployButton, .stToolbarActions, #MainMenu, footer {
+            display: none !important;
         }
         
-        /* Force Sidebar Text to be White */
-        [data-testid="stSidebarNav"] span, 
-        [data-testid="stSidebarNav"] a, 
-        .st-emotion-cache-16txtl3 p {
-            color: #ffffff !important;
-            font-weight: 400 !important;
-        }
-
-        /* Segmentadores (Slicers) Power BI Theme (Light inside main body) */
-        div.stSelectbox > label, div.stMultiSelect > label, div.stSlider > label {
-            color: #323130 !important; 
-            font-weight: 600 !important;
-            font-size: 0.95rem !important;
+        /* Ensure the sidebar toggle button is ALWAYS visible and contrasting */
+        [data-testid="collapsedControl"] {
+            display: flex !important;
+            visibility: visible !important;
+            background-color: #D4AF37 !important; /* Make the arrow standout */
+            border-radius: 0 5px 5px 0 !important;
+            color: black !important;
         }
         
-        /* Slicers and Texts in sidebar need white labels */
-        section[data-testid="stSidebar"] div.stSelectbox > label, 
-        section[data-testid="stSidebar"] div.stMultiSelect > label,
-        section[data-testid="stSidebar"] div.stSlider > label,
-        section[data-testid="stSidebar"] p,
-        section[data-testid="stSidebar"] h1,
-        section[data-testid="stSidebar"] h2,
-        section[data-testid="stSidebar"] h3 {
-            color: #ffffff !important; 
-        }
-
-        /* Multiselect / Selectbox inner standard inputs */
-        div[data-baseweb="select"] > div {
-            background-color: #ffffff !important;
-            color: #323130 !important;
-            border: 1px solid #8a8886 !important;
-            border-radius: 2px !important;
+        header {
+            background-color: transparent !important;
             box-shadow: none !important;
         }
-        div[data-baseweb="popover"] ul {
-            background-color: #ffffff !important;
-            color: #323130 !important;
-            border: 1px solid #e1dfdd !important;
+        
+        /* Global Typography */
+        h1, h2, h3, h4, h5, h6, p, label {
+            color: #FAFAFA !important;
         }
 
-        /* Smooth Page Transitions */
-        .stApp {
-            animation: fadeIn 0.4s ease-in-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        /* Professional Button Styling */
+        div.stButton > button {
+            background-color: #1A1C24 !important;
+            color: #D4AF37 !important;
+            border: 2px solid #D4AF37 !important;
+            border-radius: 8px !important;
+            transition: all 0.3s ease !important;
+            font-weight: 600 !important;
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f3f2f1; }
-        ::-webkit-scrollbar-thumb { background: #c8c6c4; border-radius: 4px; }
+        div.stButton > button:hover {
+            background-color: #D4AF37 !important;
+            color: #0E1117 !important;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.4) !important;
+        }
+
+        /* Input Widget Styling */
+        div[data-testid="stSelectbox"], div[data-testid="stMultiSelect"], div[data-testid="stTextInput"] {
+            background-color: #1A1C24 !important;
+            border-radius: 8px !important;
+        }
+
+        div[data-baseweb="select"], div[data-baseweb="input"] {
+            background-color: #1A1C24 !important;
+            border: 1px solid #2D3748 !important;
+            border-radius: 8px !important;
+        }
+
+        div[data-baseweb="select"] *, div[data-baseweb="input"] * {
+            color: #FAFAFA !important;
+            background-color: transparent !important;
+        }
+
+        /* Expanders (Slicers) - High Contrast Fix for Local & Cloud */
+        details[data-testid="stExpander"], 
+        .st-emotion-cache-1h9usn1, 
+        .st-emotion-cache-1lsfsc6 {
+            background-color: #1A1C24 !important;
+            border: 1px solid #333333 !important;
+            border-radius: 8px !important;
+            margin-bottom: 1rem !important;
+            overflow: hidden !important;
+        }
+
+        details[data-testid="stExpander"] summary, 
+        .st-emotion-cache-1u3264x, 
+        summary.e12o48ov4 {
+            background-color: #1A1C24 !important;
+            color: #D4AF37 !important;
+            border-bottom: 1px solid #333333 !important;
+        }
+        
+        details[data-testid="stExpander"] summary:hover {
+            background-color: #2D3748 !important;
+        }
+
+        /* Kill white background on inner expander content in Cloud */
+        div[data-testid="stExpanderDetails"], 
+        .st-emotion-cache-pxambx {
+            background-color: #1A1C24 !important;
+            padding: 1.5rem !important;
+            border-top: none !important;
+        }
+
+        /* Fix Selectboxes/Multiselects in Cloud */
+        div[data-baseweb="select"], 
+        div[data-baseweb="input"],
+        .st-emotion-cache-1p6fhcq,
+        .st-emotion-cache-1er6fxc {
+            background-color: #1A1C24 !important;
+            border: 1px solid #2D3748 !important;
+        }
+
+        /* Force dark background on Dataframes and general containers */
+        div[data-testid="stDataFrame"], 
+        div[data-testid="stDataFrame"] > div,
+        .st-emotion-cache-1kyx738 {
+            background-color: #1A1C24 !important;
+        }
     </style>
     """, unsafe_allow_html=True)
 
-def render_bi_header(title: str, subtitle: str):
-    """Renders a professional header."""
-    st.title(f"📊 {title}")
-    st.markdown(f"**{subtitle}**")
-    st.markdown("---")
+def apply_pro_chart_style(fig, title=""):
+    """Applies a dark card-like style to plotly figures."""
+    fig.update_layout(
+        title=dict(text=title, font=dict(size=18, color="#F8FAFC", family="Segoe UI")),
+        template="plotly_dark",
+        paper_bgcolor="#1A1C24",
+        plot_bgcolor="#1A1C24",
+        margin=dict(l=40, r=20, t=60, b=40),
+        font=dict(color="#94A3B8"),
+        xaxis=dict(showgrid=True, gridcolor="#2D3748", zerolinecolor="#2D3748"),
+        yaxis=dict(showgrid=True, gridcolor="#2D3748", zerolinecolor="#2D3748"),
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, font=dict(size=12)),
+        hovermode="closest",
+        shapes=[
+            dict(
+                type="rect", xref="paper", yref="paper",
+                x0=0, y0=0, x1=1, y1=1,
+                line=dict(color="#2D3748", width=1),
+                layer="below"
+            )
+        ]
+    )
+    return fig
