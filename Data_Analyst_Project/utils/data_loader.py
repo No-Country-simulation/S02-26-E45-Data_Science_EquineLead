@@ -86,18 +86,18 @@ def get_all_dashboard_data():
         df_products = load_data("products_listing_limpio.parquet", 
                                cols=['Category', 'Price', 'Stock'])
         
-        # Memory-Efficient Session Loading (Crucial for Cloud stability)
+        # Ultra-Light Session Loading for Cloud Stability
         try:
-            # We strictly prune columns to avoid OOM crashes on Streamlit Cloud
+            # We use a very small limit (10k) for initial cloud boot to avoid OOM
             df_u_sessions = load_data("horses_sessions_info.parquet", 
                                      cols=['event_time', 'event_type', 'horse_id'], 
-                                     sample_limit=50000)
+                                     sample_limit=10000)
             
             df_p_sessions = load_data("prods_sessions_info.parquet", 
                                      cols=['event_time', 'event_type', 'item_id'], 
-                                     sample_limit=50000)
+                                     sample_limit=10000)
         except Exception as e:
-            st.sidebar.warning(f"Session engine restricted: {e}")
+            st.sidebar.error(f"Global Session Engine restricted: {e}")
             df_u_sessions = pd.DataFrame()
             df_p_sessions = pd.DataFrame()
         
