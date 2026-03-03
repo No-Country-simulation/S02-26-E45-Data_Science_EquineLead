@@ -123,6 +123,41 @@ st.markdown("""
     div[data-testid="stVerticalBlock"] > div > div > div > div > div {
         border-color: transparent !important;
     }
+
+    /* Robust fix for Expanders (Filter Panels) */
+    details[data-testid="stExpander"] {
+        background-color: #1A1C24 !important;
+        border: 1px solid #2D3748 !important;
+        border-radius: 8px !important;
+        margin-bottom: 1rem !important;
+    }
+
+    summary[data-testid="stExpanderSummary"] {
+        background-color: #1A1C24 !important;
+        color: #FAFAFA !important;
+        border-radius: 8px !important;
+    }
+    
+    summary[data-testid="stExpanderSummary"]:hover {
+        background-color: #2D3748 !important;
+    }
+    
+    /* Ensure the text inside the expander summary is white */
+    summary[data-testid="stExpanderSummary"] p {
+        color: #FAFAFA !important;
+    }
+
+    /* Target the expander icon */
+    summary[data-testid="stExpanderSummary"] svg {
+        fill: #FAFAFA !important;
+    }
+
+    /* Target the content area of the expander to ensure it's dark */
+    div[data-testid="stExpanderDetails"] {
+        background-color: #1A1C24 !important;
+        padding: 1.5rem !important;
+        border-top: 1px solid #2D3748 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
