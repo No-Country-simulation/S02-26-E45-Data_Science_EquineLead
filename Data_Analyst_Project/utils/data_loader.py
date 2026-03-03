@@ -86,13 +86,18 @@ def get_all_dashboard_data():
         df_products = load_data("products_listing_limpio.parquet", 
                                cols=['Category', 'Price', 'Stock'])
         
-        df_u_sessions = load_data("horses_sessions_info.parquet", 
-                                 cols=['event_time', 'event_type', 'horse_id'], 
-                                 sample_limit=50000)
+        # Load Sessions (100k limit, flexible columns)
+        df_u_sessions = load_data("horses_sessions_info.parquet", sample_limit=100000)
+        df_p_sessions = load_data("prods_sessions_info.parquet", sample_limit=100000)
         
-        df_p_sessions = load_data("prods_sessions_info.parquet", 
-                                 cols=['event_time', 'event_type', 'item_id'], 
-                                 sample_limit=50000)
+        # Standardize columns to avoid blank charts
+        if not df_u_sessions.empty and 'horse_id' not in df_u_sessions.columns:
+            if 'item_id' in df_u_sessions.columns:
+                df_u_sessions = df_u_sessions.rename(columns={'item_id': 'horse_id'})
+        
+        if not df_p_sessions.empty and 'item_id' not in df_p_sessions.columns:
+            if 'product_id' in df_p_sessions.columns:
+                df_p_sessions = df_p_sessions.rename(columns={'product_id': 'item_id'})
         
         u_cols = ['first_seen', 'country', 'city', 'traffic_source', 'gender', 'device_type', 'job_info']
         df_users = load_data("users_info.parquet", cols=u_cols)
