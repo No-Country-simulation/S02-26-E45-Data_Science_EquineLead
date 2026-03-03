@@ -3,7 +3,7 @@
 PATH_INFRA = infra/terraform
 
 install:
-	uv sync --locked
+	pip install -r requirements.txt
 
 lint:
 	pre-commit run --all-files
