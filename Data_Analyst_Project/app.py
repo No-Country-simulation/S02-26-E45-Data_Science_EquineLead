@@ -94,6 +94,35 @@ st.markdown("""
     div.stButton > button:active {
         transform: scale(0.98) !important;
     }
+
+    /* Fixing White Backgrounds on Selectboxes, Multiselects and Text Inputs */
+    div[data-testid="stSelectbox"], div[data-testid="stMultiSelect"], div[data-testid="stTextInput"] {
+        background-color: #1A1C24 !important;
+        border-radius: 8px !important;
+    }
+
+    /* Target the inner Divs of inputs */
+    div[data-baseweb="select"], div[data-baseweb="input"] {
+        background-color: #1A1C24 !important;
+        border: 1px solid #2D3748 !important;
+        border-radius: 8px !important;
+    }
+
+    /* Ensure text inside inputs is white */
+    div[data-baseweb="select"] *, div[data-baseweb="input"] * {
+        color: #FAFAFA !important;
+        background-color: transparent !important;
+    }
+
+    /* Highlight border on focus */
+    div[data-baseweb="select"]:focus-within, div[data-baseweb="input"]:focus-within {
+        border-color: #D4AF37 !important;
+    }
+
+    /* Fix for the 'Search' / Slicer icon area */
+    div[data-testid="stVerticalBlock"] > div > div > div > div > div {
+        border-color: transparent !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
