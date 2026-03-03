@@ -103,8 +103,10 @@ def get_all_dashboard_data():
 
         # Fallback to mock only if CRITICAL tables are empty (Horses or Users)
         # Session data is allowed to be empty to prevent global mock fallback
-        if df_horses.empty or df_users.empty:
-            st.sidebar.warning("Using Fallback Simulated Data")
-            return generate_mock_data()
+        # Diagnostic for empty sessions (Only if Users/Horses are NOT empty)
+        if df_u_sessions.empty and not df_users.empty:
+            st.sidebar.info("Note: Horse Session data is empty or filtered.")
+        if df_p_sessions.empty and not df_users.empty:
+            st.sidebar.info("Note: Product Session data is empty or filtered.")
 
         return df_horses, df_products, df_users, df_u_sessions, df_p_sessions

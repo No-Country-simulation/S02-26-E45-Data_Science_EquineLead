@@ -13,7 +13,8 @@ def render_executive_summary(df_users, df_horses, df_products, df_u_sessions, df
     kpi1.metric("Active Global Users", f"{len(df_users):,}" if not df_users.empty else "0", "12% MoM")
     kpi2.metric("Horses in Marketplace", f"{len(df_horses):,}" if not df_horses.empty else "0", "4.2% MoM")
     kpi3.metric("Retail Products", f"{len(df_products):,}" if not df_products.empty else "0", "8.9% MoM")
-    kpi4.metric("Total Interacted Sessions", f"{(len(df_u_sessions) + len(df_p_sessions)):,}" if not df_u_sessions.empty else "0", "15.3% MoM")
+    total_sessions = len(df_u_sessions) + len(df_p_sessions)
+    kpi4.metric("Total Interacted Sessions", f"{total_sessions:,}", "15.3% MoM")
     st.markdown("<br>", unsafe_allow_html=True)
 
     # ROW 2: Primary Visuals

@@ -28,20 +28,27 @@ def inject_premium_style():
             color: #FAFAFA !important;
         }
 
-        /* KPI Cards Styling (Power BI style) */
-        div[data-testid="metric-container"] {
+        /* Power BI Metrics - Premium Cards */
+        [data-testid="stMetric"] {
             background-color: #1A1C24 !important;
-            border-left: 5px solid #D4AF37 !important; /* Golden Accent */
-            box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+            border: 1px solid #333333 !important;
+            border-radius: 12px !important;
             padding: 20px !important;
-            border-radius: 8px !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5) !important;
             margin-bottom: 1rem !important;
         }
-        
-        div[data-testid="stMetricValue"] {
+
+        [data-testid="stMetricValue"] {
+            color: #FFFFFF !important;
             font-size: 2.2rem !important;
-            font-weight: 700 !important;
-            color: #D4AF37 !important; /* Gold */
+            font-weight: 800 !important;
+        }
+
+        [data-testid="stMetricLabel"] {
+            color: #94A3B8 !important;
+            font-size: 0.9rem !important;
+            font-weight: 600 !important;
+            text-transform: uppercase !important;
         }
 
         /* Hide only the Deploy button and right-side Actions */
