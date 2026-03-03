@@ -144,8 +144,8 @@ st.markdown("""
         background-color: #2D3748 !important;
     }
     
-    /* Ensure the text inside EVERYTHING is white and backgrounds are dark */
-    h1, h2, h3, h4, h5, h6, p, span, label, div, summary {
+    /* Ensure major text elements are white in Streamlit Cloud */
+    h1, h2, h3, h4, h5, h6, p, label {
         color: #FAFAFA !important;
     }
 
@@ -173,14 +173,6 @@ st.markdown("""
         background-color: #1A1C24 !important;
         padding: 1.5rem !important;
         border-top: 1px solid #2D3748 !important;
-    }
-
-    /* Force dark background on Plotly Charts/Maps */
-    .js-plotly-plot .main-svg {
-        background: #1A1C24 !important;
-    }
-    .js-plotly-plot .main-svg rect.bg {
-        fill: #1A1C24 !important;
     }
 </style>
 """, unsafe_allow_html=True)
