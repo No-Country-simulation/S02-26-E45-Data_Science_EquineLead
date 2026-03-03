@@ -4,7 +4,7 @@ import numpy as np
 import os
 from typing import Tuple, Optional, List
 
-def generate_mock_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+def generate_mock_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """Generates professional mock data if parquets are missing."""
     np.random.seed(42)
     
@@ -35,14 +35,19 @@ def generate_mock_data() -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.D
         'job_info': 'Professional'
     })
 
-    df_sessions = pd.DataFrame({
+    df_u_sessions = pd.DataFrame({
         'event_time': pd.date_range(start='2024-01-01', periods=n, freq='15min'),
         'event_type': np.random.choice(['view', 'cart', 'purchase'], n),
-        'horse_id': np.random.randint(1, 1000, n),
+        'horse_id': np.random.randint(1, 1000, n)
+    })
+
+    df_p_sessions = pd.DataFrame({
+        'event_time': pd.date_range(start='2024-01-01', periods=n, freq='15min'),
+        'event_type': np.random.choice(['view', 'cart', 'purchase'], n),
         'item_id': np.random.randint(1, 1000, n)
     })
     
-    return df_horses, df_products, df_users, df_sessions
+    return df_horses, df_products, df_users, df_u_sessions, df_p_sessions
 
 @st.cache_data(show_spinner=False)
 def load_data(filename: str, cols: List[str] = None, sample_limit: int = None) -> pd.DataFrame:
@@ -97,7 +102,7 @@ def get_all_dashboard_data():
             df_users['job_info'] = df_users['job_info'].apply(lambda x: x.get('title') if isinstance(x, dict) else x)
 
         # Fallback to mock if critical tables are empty
-        if df_horses.empty or df_users.empty:
+        if df_horses.empty or df_users.empty or df_u_sessions.empty or df_p_sessions.empty:
             st.sidebar.warning("Using Fallback Simulated Data")
             return generate_mock_data()
 
