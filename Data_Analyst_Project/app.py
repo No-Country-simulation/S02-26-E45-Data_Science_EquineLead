@@ -74,6 +74,26 @@ st.markdown("""
     h1, h2, h3, p, span {
         color: #FAFAFA !important;
     }
+
+    /* Professional Button Styling - Fixing the 'White Border/Background' issue */
+    div.stButton > button {
+        background-color: #1A1C24 !important;
+        color: #D4AF37 !important;
+        border: 2px solid #D4AF37 !important;
+        border-radius: 8px !important;
+        transition: all 0.3s ease !important;
+        font-weight: 600 !important;
+    }
+
+    div.stButton > button:hover {
+        background-color: #D4AF37 !important;
+        color: #0E1117 !important;
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.4) !important;
+    }
+
+    div.stButton > button:active {
+        transform: scale(0.98) !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
