@@ -101,8 +101,9 @@ def get_all_dashboard_data():
         if not df_users.empty and 'job_info' in df_users.columns:
             df_users['job_info'] = df_users['job_info'].apply(lambda x: x.get('title') if isinstance(x, dict) else x)
 
-        # Fallback to mock if critical tables are empty
-        if df_horses.empty or df_users.empty or df_u_sessions.empty or df_p_sessions.empty:
+        # Fallback to mock only if CRITICAL tables are empty (Horses or Users)
+        # Session data is allowed to be empty to prevent global mock fallback
+        if df_horses.empty or df_users.empty:
             st.sidebar.warning("Using Fallback Simulated Data")
             return generate_mock_data()
 
