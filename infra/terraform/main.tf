@@ -44,6 +44,38 @@ output "service_account_key" {
   sensitive = true
 }
 
+resource "google_cloud_run_v2_service" "equinelead_api" {
+  name     = "equinelead-api"
+  location = var.region
+
+  template {
+    service_account = data.google_service_account.pipeline_sa.email
+
+    containers {
+      image = "docker.io/aletbm/equinelead-api:latest"
+
+      ports {
+        container_port = 8080
+      }
+
+      resources {
+        limits = {
+          memory = "1Gi"
+          cpu    = "1"
+        }
+      }
+    }
+  }
+}
+
+resource "google_cloud_run_v2_service_iam_member" "public_access" {
+  project  = var.project_id
+  location = var.region
+  name     = google_cloud_run_v2_service.equinelead_api.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
+}
+
 # Logueate en GCP:
 # gcloud auth application-default login
 
@@ -59,12 +91,18 @@ output "service_account_key" {
 # Activar la API de Storage (Para crear el Bucket):
 # gcloud services enable storage-api.googleapis.com
 
-# Terraforma:
+# Terraformar:
 # terraform -chdir=infra/terraform init
 # terraform -chdir=infra/terraform validate
+
+# Para ejecutar solo el Cloud Run sin tocar el bucket:
+# terraform -chdir=infra/terraform apply -target=google_cloud_run_v2_service.equinelead_api -target=google_cloud_run_v2_service_iam_member.public_access
+
+# Para ejecutar solo el bucket:
+# terraform -chdir=infra/terraform apply -target=google_storage_bucket.equinelead-datalake
+
+# Para ejecutar todo:
 # terraform -chdir=infra/terraform plan -out=tfplan
 # terraform -chdir=infra/terraform apply "tfplan"
-# terraform -chdir=infra/terraform destroy -auto-approve
 
-# Error de cuenta
-# $env:GOOGLE_APPLICATION_CREDENTIALS = $null
+# terraform -chdir=infra/terraform destroy -auto-approve
