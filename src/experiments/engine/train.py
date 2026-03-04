@@ -9,9 +9,8 @@ from sklearn.neighbors import NearestNeighbors
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
-from misc.config import init_mlflow, start_run, SEED, MLFLOW_EXPERIMENT_ENGINE_NAME
+from misc.config import init_mlflow, start_run, MLFLOW_EXPERIMENT_ENGINE_NAME
 from misc.utils import log_dataset_metadata
-from metrics import evaluate  # Usaremos tu función de evaluación
 
 # =================================================================
 # CONFIGURACIÓN DE RUTA ABSOLUTA (Ruta Daisy)
