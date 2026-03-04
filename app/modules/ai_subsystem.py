@@ -22,7 +22,15 @@ def render_ai_subsystem():
                 for exp in experiments:
                     if exp.name == "Default": continue
                     exp_data = {"name": exp.name, "runs": []}
-                    runs = client.search_runs(experiment_ids=[exp.experiment_id], order_by=["attribute.start_time DESC"], max_results=2)
+                    if exp.name == "EquineLead_LeadScoring":
+                        runs = client.search_runs(
+                            experiment_ids=[exp.experiment_id], 
+                            filter_string="tags.`status` = 'champion'",
+                            max_results=2
+                        )
+                    else:
+                        runs = client.search_runs(experiment_ids=[exp.experiment_id], order_by=["attribute.start_time DESC"], max_results=2)
+                        
                     for r in runs:
                         run_info = {"id": r.info.run_id, "name": r.info.run_name, "metrics": r.data.metrics, "params": r.data.params, "plots": []}
                         # Find plots
