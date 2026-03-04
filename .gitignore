@@ -9,7 +9,6 @@ __pycache__
 *.pyc
 
 tfplan
-*.tfvars
 *.tfvars.json
 *.tfstate
 *.tfstate.backup
@@ -27,3 +26,5 @@ data/raw/equinenow_horses_listings.parquet
 .dvc/cache/
 .dvc/tmp/
 .dvc/config.local
+
+models/
