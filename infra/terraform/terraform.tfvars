@@ -1,0 +1,6 @@
+project_id           = "YOUR_PROJECT_ID"
+region               = "YOUR_REGION"
+bucket_name          = "YOUR_BUCKET_NAME"
+storage_class        = "STANDARD"
+service_account_name = "YOUR_SERVICE_ACCOUNT_NAME"
+image                = "docker.io/aletbm/equinelead-api:latest"
