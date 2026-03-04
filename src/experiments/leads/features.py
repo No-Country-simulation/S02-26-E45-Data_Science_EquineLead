@@ -29,7 +29,7 @@ COLS_TARGET_ENCODE = [
 ]
 
 
-# ── 2. Features eliminadas (COLS_DROP_V2) ────────────────────────────────────
+# ── Features eliminadas (COLS_DROP_V2) ────────────────────────────────────
 #
 #  Estas features se calculan pero NO se usan en el campeón v1.
 #  Se documentan acá para el día que se decida reentrenar con v2.
