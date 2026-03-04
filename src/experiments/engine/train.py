@@ -27,6 +27,7 @@ RUN_NAME = f"knn_cosine_recommender_{datetime.datetime.now():%Y%m%d_%H%M%S}"
 DS_NAME = "Daisy Quinteros Silva"
 STAGE = "training"
 
+
 def main():
     init_mlflow(experiment_name=MLFLOW_EXPERIMENT_ENGINE_NAME)
 
@@ -44,7 +45,7 @@ def main():
         # 3. FEATURE ENGINEERING MULTIDIMENSIONAL (Tu lógica de experimento)
         # =================================================================
         print("🛠️ Iniciando Feature Engineering...")
-        
+
         # Procesamiento de Texto (Raza + Color)
         tfidf = TfidfVectorizer(max_features=100)
         df["caracteristicas"] = (
@@ -59,7 +60,9 @@ def main():
 
         # Unión de características en matriz CSR (Optimización)
         X_combined = hstack([matrix_text, price_scaled]).tocsr()
-        print(f"✅ Matriz creada: {X_combined.shape[0]} registros y {X_combined.shape[1]} dimensiones.")
+        print(
+            f"✅ Matriz creada: {X_combined.shape[0]} registros y {X_combined.shape[1]} dimensiones."
+        )
 
         # =================================================================
         # 4. ENTRENAMIENTO DEL MOTOR
@@ -72,15 +75,15 @@ def main():
         # 5. EVALUACIÓN Y MÉTRICAS (MLflow)
         # =================================================================
         distancias, _ = model_knn.kneighbors(X_combined)
-        
+
         # Calculamos la fiabilidad basada en la distancia (1 - distancia = similitud)
         # Tomamos del segundo vecino en adelante porque el primero es el mismo caballo (distancia 0)
         avg_distance = distancias[:, 1:].mean()
         reliability = (1 - avg_distance) * 100
-        
+
         mlflow.log_metric("avg_cosine_distance", avg_distance)
         mlflow.log_metric("model_reliability_score", reliability)
-        
+
         print(f"📊 Distancia media: {avg_distance:.4f}")
         print(f"📊 Fiabilidad del modelo: {reliability:.2f}%")
 
@@ -99,19 +102,16 @@ def main():
         mlflow.log_param("vectorizer_type", "TfidfVectorizer")
         mlflow.log_param("scaler_type", "MinMaxScaler")
         mlflow.log_param("model_type", "NearestNeighbors")
-        
+
         # Guardar el modelo oficial en DagsHub/MLflow
         mlflow.sklearn.log_model(model_knn, artifact_path="model_engine")
-        
+
         # También guardamos el diccionario de artefactos para Alex (API)
-        artifacts = {
-            "model": model_knn,
-            "vectorizer": tfidf,
-            "scaler": scaler
-        }
+        artifacts = {"model": model_knn, "vectorizer": tfidf, "scaler": scaler}
         joblib.dump(artifacts, "recommendation_artifacts_v1.joblib")
 
         print(f"\n✅ ¡ÉXITO! Experimento registrado correctamente en DagsHub.")
+
 
 if __name__ == "__main__":
     main()
