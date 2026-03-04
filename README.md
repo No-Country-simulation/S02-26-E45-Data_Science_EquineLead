@@ -1,207 +1,217 @@
-# 📦 Subida de datos a Google Cloud Storage (GCS)
+![banner](./assets/equinelead_logo_github.jpg)
 
-Este repositorio explica **cómo subir datos al bucket compartido de GCS** usando **Python**, pensado para usuarios que **nunca usaron Google Cloud**.
+# EquineLead: Data-Driven Growth Engine for the Horse Industry
 
-El bucket de destino es:
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Prefect](https://img.shields.io/badge/Prefect-ffffff?style=for-the-badge&logo=prefect&logoColor=070E10)
+![UV](https://img.shields.io/badge/UV-000000?style=for-the-badge&logo=astral&logoColor=white)
+![Google Cloud](https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
+![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)
+![BeautifulSoup](https://img.shields.io/badge/BeautifulSoup-4E9A06?style=for-the-badge&logo=python&logoColor=white)
+![LXML](https://img.shields.io/badge/LXML-A90533?style=for-the-badge&logo=xml&logoColor=white)
+![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
+![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white)
+![Apache Parquet](https://img.shields.io/badge/Apache_Parquet-6070AD?style=for-the-badge&logo=apache&logoColor=white)
+![Faker](https://img.shields.io/badge/Faker-CF4141?style=for-the-badge&logo=python&logoColor=white)
 
-```
-gs://equinelead-datalake
-```
-
-No se usan claves ni credenciales manuales: **todo funciona con login de Google**.
-
----
-
-## 🧠 Qué vas a poder hacer
-
-- Autenticarte en Google Cloud
-- Ver el bucket compartido
-- Subir archivos o carpetas completas a GCS
-- Trabajar con Python usando **uv**
+**EquineLead** es un motor de crecimiento basado en datos diseñado para resolver la fragmentación del mercado ecuestre. Este sistema transforma la navegación casual en leads calificados mediante la integración de scrapers inteligentes, embudos automatizados y modelos de propensión de compra.
 
 ---
 
-## 1️⃣ Requisitos
-
-- Cuenta Google (la misma que está en el Google Group)
-- Python 3.9 o superior
-- Conexión a internet
-
----
-
-## 2️⃣ Instalar Google Cloud CLI
-
-Descargá el instalador desde:
-
-```
-https://cloud.google.com/sdk/docs/install
-```
-
-Durante la instalación:
-- Aceptá todas las opciones por defecto
-
-Verificá la instalación:
-
-```bash
-gcloud --version
-```
+## 📖 Tabla de Contenidos
+- [Definición del Problema](#definición-del-problema)
+- [Arquitectura y Stack](#arquitectura-del-sistema)
+- [Infraestructura (Terraform)](#infraestructura-como-código-iac)
+- [Pipeline de Datos](#pipeline-de-datos-etlelt)
+- [Guía de Ejecución Rápida](#guía-de-ejecución-quick-start)
 
 ---
 
-## 3️⃣ Iniciar sesión en Google Cloud
+## Definición del Problema
+### El Desafío
+La industria ecuestre opera en un ecosistema nicho, altamente fragmentado y con costos de adquisición (CAC) elevados. Actualmente, identificar a un comprador de un caballo de salto de $50,000 frente a un entusiasta casual es una tarea manual e ineficiente.
 
-En una terminal:
+### Objetivos del Proyecto
++ **Identificación de Leads de Alto Valor**: Clasificar automáticamente usuarios en los cuatro verticales: Eventos, Servicios, Caballos y Equipamiento.
++ **Reducción del Ciclo de Venta**: Acortar el tiempo entre el "interés inicial" y la "calificación (SQL)" mediante scoring predictivo.
++ **Optimización de B2B y B2C**: Diferenciar el comportamiento de propietarios individuales frente a administradores de centros hípicos o mayoristas.
 
-```bash
-gcloud auth login
-```
-
-- Se abrirá el navegador
-- Iniciá sesión con tu cuenta Google
-- Usá **la cuenta que pertenece al Google Group**
-
-Verificar sesión activa:
-
-```bash
-gcloud auth list
-```
+### KPIs de Éxito
++ **Lead Quality Score (LQS)**: Precisión del modelo para predecir la conversión (Meta: >80%).
++ **CAC Reduction**: Reducción esperada del 15% en costos de marketing mediante segmentación precisa.
++ **Conversion Rate (CVR)**: Mejora del flujo de ventas en el vertical de "Caballos de Alto Valor".
 
 ---
 
-## 4️⃣ Verificar acceso al bucket
+## Arquitectura del Sistema
+El proyecto está diseñado bajo principios de Modern Data Stack, priorizando la velocidad de ejecución y la observabilidad.
 
-```bash
-gcloud storage ls gs://equinelead-datalake
-```
+### 🛠 Stack Tecnológico
 
-Si ves archivos o carpetas → el acceso está OK ✅
++ **Orquestación**: Prefect (Local + Prefect Cloud).
++ **Gestión de Entorno**: UV (Instalación de dependencias 70% más rápida que pip).
++ **Contenerización**: Docker & Docker-compose.
++ **Ingesta**: Playwright (Dinámico), BeautifulSoup4 (Estático)
++ **Cloud Storage**: Google Cloud Storage (Data Lake en formato Parquet)
++ **Data Synthesis**: Python Faker + Proyecciones de [Rees46 Dataset](https://www.kaggle.com/mkechinov/ecommerce-behavior-data-from-multi-category-store).
 
 ---
 
-## 5️⃣ Preparar entorno Python con UV
+## Infraestructura como Código (IaC)
 
-Este proyecto usa **uv** para manejar dependencias y entorno virtual.
+Para garantizar la reproducibilidad total, la infraestructura de la nube (Google Cloud Storage) se gestiona mediante **Terraform**. Esto permite levantar el Data Lake y configurar los permisos necesarios en segundos.
 
-### Instalar uv
+### Configuración de Infraestructura
 
-#### Windows (PowerShell)
+1.  **Requisitos**: Tener instalado [Terraform](https://www.terraform.io/downloads) y el [Google Cloud CLI](https://cloud.google.com/sdk/docs/install).
+2.  **Autenticación**:
+    ```powershell
+    gcloud auth application-default login
+    ```
+3.  **Personalización**:
+    Crea un archivo `infra/terraform/terraform.tfvars` para definir tus variables:
+    ```hcl
+    project_id           = "tu-id-de-proyecto"
+    region               = "us_weast1"
+    bucket_name          = "equinelead-datalake"
+    storage_class        = "STANDARD"
+    service_account_name = "your-admin"
+    ```
+4.  **Despliegue**:
+    ```powershell
+    # Inicializar y aplicar cambios
+    terraform -chdir=infra/terraform init
+    terraform -chdir=infra/terraform validate
+    terraform -chdir=infra/terraform plan -out=tfplan
+    terraform -chdir=infra/terraform apply "tfplan"
+    ```
+
+### Gestión de Credenciales
+Una vez completado el `apply`, Terraform generará una Service Account Key. Extráela para que el pipeline de Docker pueda autenticarse:
 ```powershell
-pip install uv
+$rawKey = terraform -chdir=infra/terraform output -raw service_account_key
+[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($rawKey)) | Out-File -FilePath "./secrets/gcp-sa-key.json" -Encoding ascii
 ```
+---
 
-#### Linux / Mac
-```bash
-pip install uv
-```
+## Pipeline de Datos (ETL/ELT)
 
-Verificar instalación:
-```bash
-uv --version
+![pipeline_run](./assets/demo_flow_data_pipeline.png)
+
+### Ingesta y Scraping Paralelizado
+El pipeline ejecuta múltiples scrapers de forma concurrente dentro de contenedores Docker:
++ **Playwright**: Para la extracción de datos en sitios dinámicos de subastas y clasificados.
++ **BeautifulSoup4 + lxml**: Para el procesamiento rápido de directorios estáticos de servicios y eventos.
+
+### Generación de Datos Sintéticos (Behavioral Tracking)
+Para simular el comportamiento de usuario, se mapearon los eventos del dataset de Rees46 a un entorno ecuestre ficticio:
+
++ **Mapeo de Categorías**: Los productos electrónicos/hogar se transformaron en categorías como Sillas de Salto, Suplementos y Publicaciones de Caballos.
++ **Identidades con Faker**: Se generaron perfiles de usuarios únicos (Leads) con historiales de navegación coherentes.
++ **Proyección de Eventos**: Se recrearon funnels de conversión (view -> cart -> purchase) para identificar patrones de "Intención de Compra".
+
+### Limpieza y Carga (GCP)
++ **Transformación**: Limpieza de strings, normalización de datos numericos y manejo de valores nulos en paralelo.
++ **Storage**: Los datos finales se serializan en Parquet para optimizar el peso y la velocidad de consulta, y se suben a un bucket de Google Cloud Storage.
+
+### Diagrama Entidad-Relación (DER)
+
+```mermaid
+erDiagram
+    products_listings ||--o{ product_session_info : ""
+    users_info ||--o{ product_session_info : ""
+    users_info ||--o{ horses_session_info : ""
+    horses_listings ||--o{ horses_session_info : ""
+
+    users_info {
+        uuid user_id PK
+        varchar name
+        varchar gender
+        varchar country
+        varchar city
+        varchar address
+        varchar credit_card_info
+        varchar email
+        varchar phone_number
+        json job_info
+        varchar device_type
+        varchar traffic_source
+        date first_seen
+    }
+
+    horses_session_info {
+        uuid user_id FK
+        int horse_id FK
+        varchar event_type
+        datetime event_time
+    }
+
+    product_session_info {
+        uuid user_id FK
+        int Item_ID FK
+        varchar event_type
+        datetime event_time
+    }
+
+    horses_listings {
+        int Horse_ID PK
+        varchar Breed
+        varchar Name
+        varchar Gender
+        boolean In_Foal
+        float Height_hh
+        float Weight_lbs
+        varchar Temperament
+    }
+
+    products_listings {
+        int Item_ID PK
+        varchar Name
+        int Stock
+        text Description
+        float Price
+        varchar Images
+        varchar URL
+    }
 ```
 
 ---
 
-### Sincronizar entorno del proyecto
+## Guía de Ejecución (Quick Start)
+Este proyecto es totalmente reproducible y "Plug & Play".
 
-Desde la raíz del proyecto (donde está `pyproject.toml`):
+> Requisitos: Docker y una cuenta en Prefect Cloud (opcional para logs).
 
-```bash
-uv sync --dev
-```
-
-Esto:
-- Crea el entorno virtual automáticamente
-- Instala todas las dependencias necesarias
-
-No hace falta crear ni activar `.venv` manualmente.
-
----
-
-### Ejecutar comandos con uv
-
-```bash
-uv run python script.py
-```
-
----
-
-## 6️⃣ Función para subir datos a GCS
-
-Crear un archivo `upload_to_gcs.py` con el siguiente contenido:
-
-```python
-from google.cloud import storage
-from pathlib import Path
-
-def upload_to_clean_bucket(
-    local_path: str,
-    bucket_name: str = "equinelead-datalake",
-    clean_prefix: str = "clean"
-):
-    client = storage.Client()
-    bucket = client.bucket(bucket_name)
-
-    local_path = Path(local_path)
-
-    if local_path.is_file():
-        blob_path = f"{clean_prefix}/{local_path.name}"
-        blob = bucket.blob(blob_path)
-        blob.upload_from_filename(local_path)
-        print(f"Subido: gs://{bucket_name}/{blob_path}")
-
-    elif local_path.is_dir():
-        for file in local_path.rglob("*"):
-            if file.is_file():
-                relative_path = file.relative_to(local_path)
-                blob_path = f"{clean_prefix}/{relative_path}"
-                blob = bucket.blob(str(blob_path))
-                blob.upload_from_filename(file)
-                print(f"Subido: gs://{bucket_name}/{blob_path}")
-```
-
----
-
-## 7️⃣ Uso
-
-### Subir un archivo
-
-```python
-from upload_to_gcs import upload_to_clean_bucket
-upload_to_clean_bucket("data/clean/horses_clean.parquet")
-```
-
-### Subir una carpeta completa
-
-```python
-from upload_to_gcs import upload_to_clean_bucket
-upload_to_clean_bucket("data/clean/")
-```
-
-Los archivos quedarán en:
-
-```
-gs://equinelead-datalake/clean/
-```
-
----
-
-## ❌ Errores comunes
-
-### 403 Forbidden
-No tenés permisos para subir archivos.  
-Contactar al administrador del bucket.
-
-### El bucket no aparece
-- Estás usando otra cuenta Google
-- No tenés permisos de visualización
-
-Verificar cuenta activa:
+#### Clonar el repositorio:
 
 ```bash
-gcloud auth list
+git clone https://github.com/No-Country-simulation/S02-26-E45-Data_Science_EquineLead
+cd S02-26-E45-Data_Science_EquineLead
 ```
----
+#### Configurar variables de entorno:
+Crea un archivo .env con tus credenciales de GCP y el API Key de Prefect.
 
-## ✅ Listo
+```bash
+PREFECT_API_URL="https://api.prefect.cloud/api/accounts/[ACCOUNT-ID]/workspaces/[WORKSPACE-ID]"
+PREFECT_API_KEY="[API-KEY]"
+GCP_PROJECT_ID="tu_id_proyecto"
+GCP_BUCKET_NAME="tu_nombre_bucket"
+GOOGLE_APPLICATION_CREDENTIALS="path_to_credentials_json"
+```
 
-Con esto ya podés trabajar con el datalake compartido de forma segura y simple.
+#### Loguearte en Prefect Cloud:
+
+```bash
+prefect cloud login
+```
+
+#### Levantar la infraestructura:
+
+```bash
+docker compose --profile pipeline up --build
+```
+
+Este comando levantará el agente de Prefect, construira el contenedor e instalará dependencias con UV y disparará el flujo de ingesta.
+
+> *Nota Técnica*: Gracias al gestor UV, la construcción de la imagen ignora el overhead de pip, logrando entornos listos en segundos
