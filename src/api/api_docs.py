@@ -1,10 +1,60 @@
 import json
-from utils import load_input_example
 
 # Cargar input example
-data = load_input_example("HORSE_P1")
+sample_input_horses = {
+    "avg_comment_length": 0.0,
+    "avg_height": 0.0,
+    "avg_horse_age": 0.0,
+    "avg_prestige_score_horses": 0.0,
+    "avg_tech_score": 0.0,
+    "avg_temperament": 0.0,
+    "avg_weight": 0.0,
+    "caballos_unicos_vistos": 0,
+    "has_registry_viewed": 0,
+    "has_shipping_viewed": 0,
+    "horses_added_to_cart": 0,
+    "horses_viewed": 0,
+    "max_horse_price_viewed": 0.0,
+    "max_visitas_mismo_caballo": 0,
+    "rango_precio_horse": 0,
+    "ratio_cart_horse": 0.0,
+    "ratio_recurrencia_horse": 0.0,
+    "user_antiguedad_dias": 0,
+    "user_card_issuer": "string",
+    "user_domain": "string",
+    "user_prestige_score": 0,
+    "user_region": "string",
+    "viewed_family_safe": 0,
+    "viewed_premium_horses": 0,
+    "viewed_pro_sellers": 0,
+    "viewed_sport_elite": 0,
+    "viewed_working_elite": 0,
+}
 
-sample_input = dict(zip(data["columns"], data["data"][0]))
+sample_input_prods = {
+    "avg_prestige_score_products": 0.0,
+    "avg_product_price_viewed": 0.0,
+    "max_product_price_viewed": 0.0,
+    "most_viewed_brand": "string",
+    "most_viewed_category": "string",
+    "most_viewed_target_user": "string",
+    "productos_unicos_vistos": 0,
+    "products_added_to_cart": 0,
+    "products_viewed": 0,
+    "ratio_cart_prods": 0.0,
+    "ratio_recurrencia_prods": 0.0,
+    "unique_categories": 0,
+    "user_antiguedad_dias": 0,
+    "user_card_issuer": "string",
+    "user_domain": "string",
+    "user_prestige_score": 0,
+    "user_region": "string",
+    "viewed_breathable": 0,
+    "viewed_leather": 0,
+    "viewed_machine_washable": 0,
+    "viewed_uv_protection": 0,
+    "viewed_waterproof": 0,
+}
 
 sample_response = {
     "paso1": {
@@ -18,57 +68,53 @@ sample_response = {
 style = "padding: 8px; border: 1px solid #ddd;"
 
 feature_descriptions = [
-    ("horses_viewed", "Total de caballos vistos", ">= 0", "Float"),
-    ("horses_added_to_cart", "Caballos agregados al carrito", ">= 0", "Float"),
-    ("avg_horse_price_viewed", "Precio promedio de caballos vistos", ">= 0", "Float"),
-    ("max_horse_price_viewed", "Precio máximo de caballos vistos", ">= 0", "Float"),
-    ("min_horse_price_viewed", "Precio mínimo de caballos vistos", ">= 0", "Float"),
-    ("viewed_premium_horses", "Cantidad de caballos premium vistos", ">= 0", "Float"),
-    ("viewed_sport_elite", "Caballos sport/elite vistos", ">= 0", "Float"),
-    ("viewed_family_safe", "Caballos family/safe vistos", ">= 0", "Float"),
-    ("avg_horse_age", "Edad promedio de caballos vistos", ">= 0", "Float"),
-    ("viewed_pro_sellers", "Caballos de vendedores pro vistos", ">= 0", "Float"),
-    ("avg_prestige_score_horses", "Prestigio promedio de caballos vistos", ">= 0", "Float"),
-    ("unique_regions_horses", "Regiones únicas de caballos vistos", ">= 0", "Float"),
-    ("avg_height", "Altura promedio de caballos vistos", ">= 0", "Float"),
-    ("avg_weight", "Peso promedio de caballos vistos", ">= 0", "Float"),
-    ("has_registry_viewed", "Vio caballos con registro", "0 / 1", "Float"),
-    ("has_shipping_viewed", "Vio caballos con envío", "0 / 1", "Float"),
-    ("viewed_working_elite", "Caballos working/elite vistos", ">= 0", "Float"),
-    ("avg_tech_score", "Score técnico promedio de caballos", ">= 0", "Float"),
-    ("avg_temperament", "Temperamento promedio de caballos vistos", ">= 0", "Float"),
-    ("avg_comment_length", "Longitud promedio de comentarios", ">= 0", "Float"),
-    ("caballos_unicos_vistos", "Caballos únicos vistos", ">= 0", "Float"),
-    ("user_prestige_score", "Score de prestigio del usuario", ">= 0", "Float"),
-    ("user_region", "Región del usuario", "String", "Float"),
-    ("user_card_issuer", "Emisor de tarjeta del usuario", "String", "Float"),
-    ("user_domain", "Dominio del usuario", "String", "Float"),
-    ("user_antiguedad_dias", "Antigüedad del usuario en días", ">= 0", "Float"),
-    ("ratio_recurrencia_horse", "Ratio de recurrencia en caballos", "0–1", "Float"),
-    ("max_visitas_mismo_caballo", "Máximo de visitas al mismo caballo", ">= 0", "Float"),
-    ("products_viewed", "Total de productos vistos", ">= 0", "Float"),
-    ("products_added_to_cart", "Productos agregados al carrito", ">= 0", "Float"),
-    ("avg_product_price_viewed", "Precio promedio de productos vistos", ">= 0", "Float"),
-    ("max_product_price_viewed", "Precio máximo de productos vistos", ">= 0", "Float"),
-    ("unique_categories", "Categorías únicas de productos vistos", ">= 0", "Float"),
-    ("viewed_waterproof", "Productos waterproof vistos", ">= 0", "Float"),
-    ("viewed_leather", "Productos de cuero vistos", ">= 0", "Float"),
-    ("viewed_breathable", "Productos transpirables vistos", ">= 0", "Float"),
-    ("viewed_uv_protection", "Productos con protección UV vistos", ">= 0", "Float"),
-    ("viewed_machine_washable", "Productos lavables a máquina vistos", ">= 0", "Float"),
-    ("avg_prestige_score_products", "Prestigio promedio de productos vistos", ">= 0", "Float"),
-    ("productos_unicos_vistos", "Productos únicos vistos", ">= 0", "Float"),
-    ("ratio_recurrencia_prods", "Ratio de recurrencia en productos", "0–1", "Float"),
-    ("max_visitas_mismo_producto", "Máximo de visitas al mismo producto", ">= 0", "Float"),
-    ("total_views", "Total de vistas combinadas", ">= 0", "Float"),
-    ("total_cart_adds", "Total de agregados al carrito", ">= 0", "Float"),
-    ("ratio_cart_horse", "Ratio carrito/vistas caballos", "0–1", "Float"),
-    ("ratio_cart_prods", "Ratio carrito/vistas productos", "0–1", "Float"),
-    ("ratio_cart_global", "Ratio carrito/vistas global", "0–1", "Float"),
-    ("rango_precio_horse", "Rango de precios de caballos vistos", ">= 0", "Float"),
-    ("prestige_gap", "Diferencia de prestigio horse vs prods", ">= 0", "Float"),
-    ("ratio_horse_views", "Ratio de vistas de caballos vs total", "0–1", "Float"),
-    ("has_both_interests", "Tiene interés en caballos y productos", "0 / 1", "Float"),
+    # --- Caballos ---
+    ("horses_viewed", "Total de caballos vistos", ">= 0", "int64"),
+    ("horses_added_to_cart", "Caballos agregados al carrito", ">= 0", "int64"),
+    ("max_horse_price_viewed", "Precio máximo de caballos vistos", ">= 0", "float64"),
+    ("viewed_premium_horses", "Cantidad de caballos premium vistos", ">= 0", "int64"),
+    ("viewed_sport_elite", "Caballos sport/elite vistos", ">= 0", "int64"),
+    ("viewed_family_safe", "Caballos family/safe vistos", ">= 0", "int64"),
+    ("avg_horse_age", "Edad promedio de caballos vistos", ">= 0", "float64"),
+    ("viewed_pro_sellers", "Caballos de vendedores pro vistos", ">= 0", "int64"),
+    ("avg_prestige_score_horses", "Prestigio promedio de caballos vistos", ">= 0", "float64"),
+    ("avg_height", "Altura promedio de caballos vistos", ">= 0", "float64"),
+    ("avg_weight", "Peso promedio de caballos vistos", ">= 0", "float64"),
+    ("has_registry_viewed", "Vio caballos con registro", "0 / 1", "int64"),
+    ("has_shipping_viewed", "Vio caballos con envío", "0 / 1", "int64"),
+    ("viewed_working_elite", "Caballos working/elite vistos", ">= 0", "int64"),
+    ("avg_tech_score", "Score técnico promedio de caballos", ">= 0", "float64"),
+    ("avg_temperament", "Temperamento promedio de caballos vistos", ">= 0", "float64"),
+    ("avg_comment_length", "Longitud promedio de comentarios", ">= 0", "float64"),
+    ("caballos_unicos_vistos", "Caballos únicos vistos", ">= 0", "int64"),
+    ("ratio_recurrencia_horse", "Ratio de recurrencia en caballos", "0–1", "float64"),
+    ("max_visitas_mismo_caballo", "Máximo de visitas al mismo caballo", ">= 0", "int64"),
+    ("rango_precio_horse", "Rango de precios de caballos vistos", ">= 0", "int64"),
+    ("ratio_cart_horse", "Ratio carrito/vistas caballos", "0–1", "float64"),
+    # --- Productos ---
+    ("products_viewed", "Total de productos vistos", ">= 0", "int64"),
+    ("products_added_to_cart", "Productos agregados al carrito", ">= 0", "int64"),
+    ("avg_product_price_viewed", "Precio promedio de productos vistos", ">= 0", "float64"),
+    ("max_product_price_viewed", "Precio máximo de productos vistos", ">= 0", "float64"),
+    ("unique_categories", "Categorías únicas de productos vistos", ">= 0", "int64"),
+    ("viewed_waterproof", "Productos waterproof vistos", ">= 0", "int64"),
+    ("viewed_leather", "Productos de cuero vistos", ">= 0", "int64"),
+    ("viewed_breathable", "Productos transpirables vistos", ">= 0", "int64"),
+    ("viewed_uv_protection", "Productos con protección UV vistos", ">= 0", "int64"),
+    ("viewed_machine_washable", "Productos lavables a máquina vistos", ">= 0", "int64"),
+    ("avg_prestige_score_products", "Prestigio promedio de productos vistos", ">= 0", "float64"),
+    ("productos_unicos_vistos", "Productos únicos vistos", ">= 0", "int64"),
+    ("ratio_recurrencia_prods", "Ratio de recurrencia en productos", "0–1", "float64"),
+    ("most_viewed_brand", "Marca de producto más vista", ">= 0", "int64"),
+    ("most_viewed_category", "Categoría de producto más vista", ">= 0", "int64"),
+    ("most_viewed_target_user", "Perfil de usuario objetivo más visto", ">= 0", "int64"),
+    ("ratio_cart_prods", "Ratio carrito/vistas productos", "0–1", "float64"),
+    # --- Compartidas ---
+    ("user_prestige_score", "Score de prestigio del usuario", ">= 0", "int64"),
+    ("user_region", "Región del usuario", ">= 0", "int64"),
+    ("user_card_issuer", "Emisor de tarjeta del usuario", ">= 0", "int64"),
+    ("user_domain", "Dominio del usuario", ">= 0", "int64"),
+    ("user_antiguedad_dias", "Antigüedad del usuario en días", ">= 0", "int64"),
 ]
 
 feature_rows = "\n".join([
@@ -95,9 +141,11 @@ feature_table = f"""
 """
 
 def get_docs_html() -> str:
-    request_example = json.dumps({"features": sample_input}, indent=4)
+    request_example_horses = json.dumps({"features": sample_input_horses}, indent=4)
+    request_example_prods = json.dumps({"features": sample_input_prods}, indent=4)
     response_example = json.dumps(sample_response, indent=4)
-    python_example = json.dumps(sample_input, indent=8)
+    python_example_horses = json.dumps(sample_input_horses, indent=8)
+    python_example_prods = json.dumps(sample_input_prods, indent=8)
 
     return f"""
 <html>
@@ -138,8 +186,14 @@ def get_docs_html() -> str:
     </ol>
 
     <h2>Request Format</h2>
+    <h3>🐴 /horse/predict</h3>
     <div class="code-block">
-        <pre>{request_example}</pre>
+        <pre>{request_example_horses}</pre>
+    </div>
+
+    <h3>🛒 /prods/predict</h3>
+    <div class="code-block">
+        <pre>{request_example_prods}</pre>
     </div>
 
     <h2>Expected Response</h2>
@@ -148,18 +202,15 @@ def get_docs_html() -> str:
     </div>
 
     <h2>Python Example</h2>
+    <h3>🐴 Horse endpoint</h3>
     <div class="code-block">
         <pre>import requests
 
-payload = {{"features": {python_example}}}
+payload = {{"features": {python_example_horses}}}
 
-# Horse endpoint
 API_URL = "https://your-api-url/horse/predict"
 
-# Prods endpoint
-API_URL = "https://your-api-url/prods/predict"
-
-payload = {"features": payload}
+payload = {{"features": payload}}
 
 response = requests.post(API_URL, json=payload)
 
@@ -167,7 +218,25 @@ print(f"Status code: {{response.status_code}}")
 print("Prediction:", response.json())
 
 print(response.json())</pre>
-    </div>
+</div>
+
+    <h3>🛒 Prods endpoint</h3>
+    <div class="code-block">
+        <pre>import requests
+
+payload = {{"features": {python_example_prods}}}
+
+API_URL = "https://your-api-url/prods/predict"
+
+payload = {{"features": payload}}
+
+response = requests.post(API_URL, json=payload)
+
+print(f"Status code: {{response.status_code}}")
+print("Prediction:", response.json())
+
+print(response.json())</pre>
+</div>
 
     <a href="/docs" class="try-button">Try it in Interactive Docs →</a>
 

@@ -1,18 +1,4 @@
 steps:
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'build'
-      - '-t'
-      - 'aletbm/equinelead-api'
-      - '-f'
-      - './deployment/Dockerfile.api'
-      - '.'
-
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'push'
-      - 'aletbm/equinelead-api'
-
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     args:
       - 'gcloud'
@@ -20,7 +6,7 @@ steps:
       - 'deploy'
       - 'equinelead-api'
       - '--image'
-      - 'docker.io/aletbm/equinelead-api:latest'
+      - 'docker.io/$_DOCKERHUB_USERNAME/equinelead-api:$_IMAGE_TAG'
       - '--platform'
       - 'managed'
       - '--region'
@@ -31,4 +17,4 @@ steps:
       - '--memory'
       - '1Gi'
 
-#gcloud builds submit --config deployment/cloudbuild.yaml .
+# gcloud builds submit --config deployment/cloudbuild.yaml .

@@ -24,10 +24,9 @@ COLS_TARGET_ENCODE = ['user_region', 'user_card_issuer', 'user_domain']
 # Mapeo de target para TargetEncoder
 TARGET_MAP = {'Lead Bronce': 0, 'Lead Plata': 1, 'Lead Oro': 2}
 
-RUN_ID="430212554e824027832f9f829f7a438c"
+RUN_ID="dd6f2989958a48d587e2769933622ff8"
 
 def get_log_model_fn(model):
-    """Detecta el tipo de modelo y retorna la función correcta de mlflow"""
     module = type(model).__module__
     if "xgboost" in module:
         return mlflow.xgboost.log_model
@@ -42,7 +41,6 @@ def get_log_model_fn(model):
 
 
 def get_run_id(run_id=None, experiment_name=None):
-    """Obtiene el run_id por id directo o buscando el champion"""
     if run_id:
         return run_id
 
@@ -66,16 +64,10 @@ def get_run_id(run_id=None, experiment_name=None):
 
 
 def filter_params(params: dict, paso: str) -> dict:
-    """Filtra parámetros según el paso del modelo (p1 o p2)"""
     return {k: v for k, v in params.items() if k.startswith(paso)}
 
 
 def filter_metrics(metrics: dict, dominio: str, paso_label: str) -> dict:
-    """
-    Filtra métricas según dominio (horse/prods) y paso (paso1/paso2).
-    - Métricas con paso explícito: deben coincidir con el paso del modelo
-    - Métricas globales (macro, lead_oro, lead_plata): se incluyen para ambos pasos
-    """
     def belongs(key):
         if not key.endswith(f"_{dominio}"):
             return False
@@ -87,7 +79,6 @@ def filter_metrics(metrics: dict, dominio: str, paso_label: str) -> dict:
 
 
 def download_artifact(run_id: str, file_path: str, folder_path: str) -> str:
-    """Descarga un artefacto pkl y retorna el path local"""
     dst_path = f"./models/{run_id}/{folder_path}/"
     os.makedirs(dst_path, exist_ok=True)
     local_path = client.download_artifacts(run_id, file_path, dst_path=dst_path)
@@ -96,7 +87,6 @@ def download_artifact(run_id: str, file_path: str, folder_path: str) -> str:
 
 
 def load_model(local_path: str, file_path: str):
-    """Carga un modelo desde un pkl descargado"""
     try:
         with open(local_path, "rb") as f:
             return pickle.load(f)
@@ -106,7 +96,6 @@ def load_model(local_path: str, file_path: str):
 
 
 def encode_dataframe(df: pd.DataFrame) -> pd.DataFrame:
-    """Aplica TargetEncoder a las columnas categóricas"""
     target_ord = df["horse_target"].map(TARGET_MAP)
     te = TargetEncoder(cols=COLS_TARGET_ENCODE, smoothing=10)
     df_encoded = df.copy()
@@ -114,17 +103,45 @@ def encode_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     return df_encoded
 
 
+def find_pkl_artifacts(run_id: str):
+    """Busca .pkl recursivamente tanto en artifacts sueltos como en subcarpetas"""
+    found = []
+
+    def walk(path=""):
+        items = client.list_artifacts(run_id, path)
+        for item in items:
+            if item.is_dir:
+                walk(item.path)
+            elif item.path.endswith(".pkl"):
+                folder_path = str(Path(item.path).parent)
+                found.append((item.path, folder_path))
+
+    walk()
+    return found
+
+
 def build_signature(model, df: pd.DataFrame):
-    """Construye la firma del modelo usando las features reales de entrenamiento"""
     try:
         feature_names = model.feature_names_in_.tolist()
         df_encoded = encode_dataframe(df)
         input_example = df_encoded[feature_names].iloc[[0]]
-        signature = infer_signature(input_example, model.predict(input_example))
-        return signature
+
+        input_example = input_example.copy()
+        int_cols = input_example.select_dtypes(include="integer").columns
+        input_example[int_cols] = input_example[int_cols].astype("float64")
+
+        predictions = model.predict(input_example)
+
+        signature = infer_signature(
+            model_input=input_example,
+            model_output=predictions,
+        )
+        print(f"   ✅ Firma inferida: {len(feature_names)} features")
+        return signature, input_example
+
     except AttributeError:
         print("⚠️  El modelo no tiene feature_names_in_, sin firma")
-        return None
+        return None, None
 
 
 def log_model_to_registry(
@@ -144,7 +161,6 @@ def log_model_to_registry(
     signature,
     input_example
 ):
-    """Crea un nuevo run, loguea params/métricas/modelo y lo registra en el registry"""
     with mlflow.start_run(run_name=new_run_name, experiment_id=experiment_id):
         mlflow.log_params(params)
         mlflow.log_metrics(metrics)
@@ -165,7 +181,6 @@ def log_model_to_registry(
 
 
 def assign_alias(registered_name: str, alias: str):
-    """Asigna el alias a la última versión registrada del modelo"""
     versions = client.search_model_versions(f"name='{registered_name}'")
     latest_version = max(versions, key=lambda v: int(v.version))
     client.set_registered_model_alias(
@@ -175,38 +190,13 @@ def assign_alias(registered_name: str, alias: str):
     )
     print(f"✅ Registrado como: {registered_name} con alias '{alias}' → v{latest_version.version}")
 
-def build_signature(model, df: pd.DataFrame):
-    """Construye la firma del modelo usando las features reales de entrenamiento"""
-    try:
-        feature_names = model.feature_names_in_.tolist()
-        df_encoded = encode_dataframe(df)
-        input_example = df_encoded[feature_names].iloc[[0]]
-
-        # Castear enteros a float64 para evitar el warning de missing values
-        input_example = input_example.copy()
-        int_cols = input_example.select_dtypes(include="integer").columns
-        input_example[int_cols] = input_example[int_cols].astype("float64")
-
-        # Obtener predicciones para inferir el output
-        predictions = model.predict(input_example)
-
-        signature = infer_signature(
-            model_input=input_example,
-            model_output=predictions,
-        )
-        print(f"   ✅ Firma inferida: {len(feature_names)} features")
-        return signature, input_example  # ← retornar también el input_example
-
-    except AttributeError:
-        print("⚠️  El modelo no tiene feature_names_in_, sin firma")
-        return None, None
 
 def handle_models(
     run_id=None,
     experiment_name=None,
-    register=False,     # True = descargar + registrar | False = solo descargar
-    alias="staging",   # alias para el registry
-    df=None,            # dataset para inferir la firma del modelo
+    register=False,
+    alias="staging",
+    df=None,
 ):
     now = datetime.datetime.now()
 
@@ -215,72 +205,59 @@ def handle_models(
     run_name = run.info.run_name
     print(f"Nombre del run: {run_name}")
 
-    for folder in client.list_artifacts(run_id):
-        if not folder.is_dir:
+    for file_path, folder_path in find_pkl_artifacts(run_id):
+        local_path = download_artifact(run_id, file_path, folder_path)
+
+        if not register:
             continue
 
-        for file in client.list_artifacts(run_id, folder.path):
-            if not file.path.endswith(".pkl"):
-                continue
+        model = load_model(local_path, file_path)
+        if model is None:
+            continue
 
-            # Descargar pkl
-            local_path = download_artifact(run_id, file.path, folder.path)
+        # Extraer paso y dominio del nombre de la carpeta
+        # ej: "modelo_p1_horse" → paso="p1", dominio="horse"
+        parts = Path(folder_path).name.split("_")
+        paso = parts[1]                         # "p1" o "p2"
+        dominio = parts[-1]                     # "horse" o "prods"
+        paso_label = paso.replace("p", "paso")  # "paso1" o "paso2"
 
-            if not register:
-                continue
+        log_model_fn = get_log_model_fn(model)
+        params_filtrados = filter_params(run.data.params, paso)
+        metricas_filtradas = filter_metrics(run.data.metrics, dominio, paso_label)
+        registered_name = f"{dominio.upper()}_{paso.upper()}"
+        new_run_name = f"{run_name}_{'_'.join(parts[-2:])}_{now:%Y%m%d_%H%M%S}"
 
-            # Cargar modelo
-            model = load_model(local_path, file.path)
-            if model is None:
-                continue
+        print(f"   {folder_path} → {type(model).__name__} → {log_model_fn.__module__}")
+        print(f"   Params: {list(params_filtrados.keys())}")
+        print(f"   Métricas: {list(metricas_filtradas.keys())}")
 
-            # Extraer paso y dominio del nombre de la carpeta
-            # ej: "modelo_p1_horse" → paso="p1", dominio="horse"
-            parts = folder.path.split("_")
-            paso = parts[1]                         # "p1" o "p2"
-            dominio = parts[-1]                     # "horse" o "prods"
-            paso_label = paso.replace("p", "paso")  # "paso1" o "paso2"
+        signature, input_example = build_signature(model, df) if df is not None else (None, None)
 
-            log_model_fn = get_log_model_fn(model)
-            params_filtrados = filter_params(run.data.params, paso)
-            metricas_filtradas = filter_metrics(run.data.metrics, dominio, paso_label)
-            registered_name = f"{dominio.upper()}_{paso.upper()}"
-            new_run_name = f"{run_name}_{'_'.join(parts[-2:])}_{now:%Y%m%d_%H%M%S}"
+        log_model_to_registry(
+            model=model,
+            log_model_fn=log_model_fn,
+            folder_name=folder_path,
+            registered_name=registered_name,
+            experiment_id=EXPERIMENT_MAP[dominio],
+            new_run_name=new_run_name,
+            params=params_filtrados,
+            metrics=metricas_filtradas,
+            alias=alias,
+            source_run_id=run_id,
+            source_run_name=run_name,
+            paso=paso,
+            dominio=dominio,
+            signature=signature,
+            input_example=input_example,
+        )
 
-            print(f"   {folder.path} → {type(model).__name__} → {log_model_fn.__module__}")
-            print(f"   Params: {list(params_filtrados.keys())}")
-            print(f"   Métricas: {list(metricas_filtradas.keys())}")
-
-            # Inferir firma del modelo
-            signature, input_example = build_signature(model, df) if df is not None else None
-
-            # Loguear y registrar en MLflow
-            log_model_to_registry(
-                model=model,
-                log_model_fn=log_model_fn,
-                folder_name=folder.path,
-                registered_name=registered_name,
-                experiment_id=EXPERIMENT_MAP[dominio],
-                new_run_name=new_run_name,
-                params=params_filtrados,
-                metrics=metricas_filtradas,
-                alias=alias,
-                source_run_id=run_id,
-                source_run_name=run_name,
-                paso=paso,
-                dominio=dominio,
-                signature=signature,
-                input_example=input_example,
-            )
-
-            # Asignar alias a la versión recién creada
-            assign_alias(registered_name, alias)
+        assign_alias(registered_name, alias)
 
 
 init_mlflow()
 
 client = mlflow.tracking.MlflowClient()
-
 
 if __name__ == "__main__":
 
