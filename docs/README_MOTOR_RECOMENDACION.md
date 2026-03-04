@@ -18,8 +18,6 @@ Transformamos datos crudos de una plataforma ecuestre en un sistema de recomenda
 ## 📊 Hito 1: Ingeniería de Datos y Lead Scoring
 Procesamos más de **200,000 registros** para clasificar el valor potencial de los usuarios y preparar el terreno para el motor de recomendación.
 
-
-
 ### Logros Clave:
 * **Normalización:** Aplanamiento de estructuras complejas en la columna `job_info`.
 * **Unificación Multicanal:** Consolidación de 5 bases de datos (Usuarios, Caballos, Productos y Sesiones).
@@ -33,12 +31,23 @@ Procesamos más de **200,000 registros** para clasificar el valor potencial de l
 ## 🧠 Hito 2: Motor de Recomendación (IA)
 Evolucionamos de un filtrado básico basado en reglas a un sistema de **Búsqueda Vectorial** de alta fidelidad.
 
-
-
 ### Características Técnicas:
 * **NLP & Feature Engineering:** Uso de `TF-IDF Vectorizer` para procesar la semántica de razas y pelajes.
 * **Optimización de Memoria:** Implementación de matrices **CSR (Compressed Sparse Row)** para el manejo eficiente de datos dispersos.
 * **Algoritmo:** **K-Nearest Neighbors (KNN)** con métrica de **Similitud de Coseno**, logrando una precisión promedio del **74.65%**.
+
+### 📥 Especificaciones para la API (Features)
+Para la integración con el Backend, el modelo consume las siguientes variables:
+
+| Variable | Tipo | Descripción |
+| :--- | :--- | :--- |
+| **`price`** | Float | Precio del caballo (Gama económica). |
+| **`height_hh`** | Float | Altura física del ejemplar. |
+| **`age`** | Int | Edad en años. |
+| **`breed`** | Vectorized | Raza procesada semánticamente. |
+| **`color`** | Vectorized | Color/Pelaje procesado semánticamente. |
+
+
 
 ---
 
