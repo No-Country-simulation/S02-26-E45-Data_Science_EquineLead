@@ -13,13 +13,13 @@ import platform
 import datetime
 
 PATH_DATA = Path("./data/clean")
-DATASET_NAME = "dataset_name.parquet"
+DATASET_NAME = "horses_listings_limpio.parquet"
 
 # ==================================
 # DATA SCIENTIST PERSONAL CONFIG
 # ==================================
-RUN_NAME = f"baseline_xgboost_v1_{datetime.datetime.now():%Y%m%d_%H%M%S}"  # Ejecución puntual dentro de un experimento
-DS_NAME = "Pepito_Pepin"
+RUN_NAME = f"knn_cosine_recommender_v1_{datetime.datetime.now():%Y%m%d_%H%M%S}"
+DS_NAME = "Daisy Quinteros Silva"  # <--- ¡Aquí vas tú!
 STAGE = "training"
 
 # Registro de modelos en MLflow – Guía para Data Scientists
