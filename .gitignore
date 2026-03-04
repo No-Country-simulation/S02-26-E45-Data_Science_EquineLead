@@ -27,3 +27,5 @@ data/raw/equinenow_horses_listings.parquet
 .dvc/cache/
 .dvc/tmp/
 .dvc/config.local
+
+models/
