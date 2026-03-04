@@ -52,7 +52,7 @@ resource "google_cloud_run_v2_service" "equinelead_api" {
     service_account = data.google_service_account.pipeline_sa.email
 
     containers {
-      image = "docker.io/aletbm/equinelead-api:latest"
+      image = var.image
 
       ports {
         container_port = 8080

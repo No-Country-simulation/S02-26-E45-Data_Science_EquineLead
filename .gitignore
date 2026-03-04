@@ -9,7 +9,6 @@ __pycache__
 *.pyc
 
 tfplan
-*.tfvars
 *.tfvars.json
 *.tfstate
 *.tfstate.backup
