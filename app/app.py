@@ -15,20 +15,23 @@ import subprocess
 import os
 
 @st.cache_resource
+@st.cache_resource
 def pull_data():
     import json
     import tempfile
 
-    # Escribir credenciales GCS a archivo temporal
-    creds_str = st.secrets["gcp"]["credentials"]
-    creds_dict = json.loads(creds_str)
+    creds = st.secrets["gcp"]["credentials"]
     
+    # Streamlit puede devolvelo como dict o string
+    if isinstance(creds, str):
+        creds_dict = json.loads(creds.strip())
+    else:
+        creds_dict = dict(creds)
+
     tmp = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
     json.dump(creds_dict, tmp)
     tmp.flush()
     tmp.close()
-    
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = tmp.name
 
     # Borrar lock si existe
     lock_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".dvc", "tmp", "lock"))
