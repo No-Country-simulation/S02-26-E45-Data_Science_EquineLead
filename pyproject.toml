@@ -33,7 +33,6 @@ exclude = [
 
 [dependency-groups]
 dev = [
-    "black>=24.0.0",
     "google-cloud-storage>=3.9.0",
     "ipykernel>=7.1.0",
     "ipywidgets>=8.1.8",
