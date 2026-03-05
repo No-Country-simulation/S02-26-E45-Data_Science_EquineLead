@@ -38,6 +38,8 @@ def pull_data():
     )
     if result.returncode != 0:
         st.error(f"DVC pull failed:\n{result.stderr}")
+    else:
+        st.toast("Data pulled OK ✅", icon="✅")
 
 pull_data()
 
