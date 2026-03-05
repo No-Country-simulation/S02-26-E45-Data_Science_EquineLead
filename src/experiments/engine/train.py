@@ -1,4 +1,6 @@
 import sys
+import io
+import tempfile
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
@@ -7,8 +9,8 @@ from misc.config import init_mlflow, start_run, SEED, MLFLOW_EXPERIMENT_ENGINE_N
 from misc.utils import load_dataset, log_dataset_metadata
 import mlflow
 import joblib
-import pandas as pd
 import numpy as np
+import pandas as pd
 from features import build_features, transform_input
 from model import train_model
 from metrics import evaluate
@@ -113,7 +115,6 @@ def main():
         mlflow.sklearn.log_model(
             model,
             artifact_path="model_engine",
-            registered_model_name="model_engine",
             input_example=X_example,
             signature=signature,
         )
@@ -136,15 +137,22 @@ def main():
             "transform_fn": transform_input,   # función importada, no lambda
         }
 
-        bundle_path = "recommendation_artifacts_v1.joblib"
-        joblib.dump(artifacts_bundle, bundle_path)
+        # Bundle → MLflow (delete=False por compatibilidad Windows)
+        tmp = tempfile.NamedTemporaryFile(suffix=".joblib", delete=False)
+        try:
+            tmp.close()  # cerrar antes de escribir (necesario en Windows)
+            joblib.dump(artifacts_bundle, tmp.name)
+            mlflow.log_artifact(tmp.name, artifact_path="artifacts_bundle")
+        finally:
+            Path(tmp.name).unlink(missing_ok=True)  # borrar siempre, incluso si falla
 
-        # Registrar el bundle como artefacto en MLflow para trazabilidad
-        mlflow.log_artifact(bundle_path, artifact_path="artifacts_bundle")
+        # 3. Input example como CSV en memoria → MLflow
+        csv_buffer = io.StringIO()
+        input_example.to_csv(csv_buffer, index=False)
+        mlflow.log_text(csv_buffer.getvalue(), artifact_file="artifacts_bundle/input_example.csv")
 
-        # 3. Guardar input_example como CSV para documentación en MLflow
-        input_example.to_csv("input_example.csv", index=False)
-        mlflow.log_artifact("input_example.csv", artifact_path="artifacts_bundle")
+        mlflow.set_tag("status", "champion")  # marcar este modelo como el mejor hasta ahora
+
 
 if __name__ == "__main__":
     main()
