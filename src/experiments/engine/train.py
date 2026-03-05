@@ -1,10 +1,8 @@
 import sys
 from pathlib import Path
-import platform
 import datetime
 import mlflow
 import pandas as pd
-import numpy as np
 import joblib
 from sklearn.neighbors import NearestNeighbors
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -110,7 +108,7 @@ def main():
         artifacts = {"model": model_knn, "vectorizer": tfidf, "scaler": scaler}
         joblib.dump(artifacts, "recommendation_artifacts_v1.joblib")
 
-        print(f"\n✅ ¡ÉXITO! Experimento registrado correctamente en DagsHub.")
+        print("\n✅ ¡ÉXITO! Experimento registrado correctamente en DagsHub.")
 
 
 if __name__ == "__main__":
