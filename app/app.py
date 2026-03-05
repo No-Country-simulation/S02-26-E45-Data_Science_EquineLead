@@ -21,12 +21,7 @@ def pull_data():
     import tempfile
 
     creds = st.secrets["gcp"]["credentials"]
-    
-    # Streamlit puede devolvelo como dict o string
-    if isinstance(creds, str):
-        creds_dict = json.loads(creds.strip())
-    else:
-        creds_dict = dict(creds)
+    creds_dict = dict(creds)
 
     tmp = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
     json.dump(creds_dict, tmp)
