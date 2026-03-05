@@ -15,7 +15,23 @@ import os
 def pull_data():
     token = st.secrets["dagshub"]["token"]
     os.environ["DAGSHUB_USER_TOKEN"] = token
-    subprocess.run(["dvc", "pull"], check=True)
+    
+    # Borrar lock file si existe
+    lock_path = os.path.join(os.path.dirname(__file__), "..", ".dvc", "tmp", "lock")
+    lock_path = os.path.abspath(lock_path)
+    if os.path.exists(lock_path):
+        os.remove(lock_path)
+    
+    result = subprocess.run(
+        ["dvc", "pull"],
+        capture_output=True,
+        text=True
+    )
+    
+    if result.returncode != 0:
+        st.error(f"DVC pull failed:\n{result.stderr}")
+    else:
+        st.success("Data pulled OK")
 
 pull_data()
 
