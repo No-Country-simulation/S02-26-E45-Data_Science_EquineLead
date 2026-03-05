@@ -25,11 +25,17 @@ dependencies = [
 managed = true
 
 [tool.ruff]
+src = ["src"]
+line-length = 88
+target-version = "py311"
 exclude = [
     "src/cleaning/notebooks",
     "src/notebooks",
     "**/*.ipynb"
 ]
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]  # Errores, Pyflakes, isort
 
 [dependency-groups]
 dev = [
