@@ -41,7 +41,9 @@ def pull_data():
     else:
         st.toast("Data pulled OK ✅", icon="✅")
 
-pull_data()
+if "data_pulled" not in st.session_state:
+    pull_data()
+    st.session_state["data_pulled"] = True
 
 # ---------------------------------------------
 # 1. GLOBAL CONFIGURATION & AESTHETICS
