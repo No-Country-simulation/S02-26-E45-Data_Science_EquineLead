@@ -15,20 +15,17 @@ import subprocess
 import os
 
 @st.cache_resource
-@st.cache_resource
 def pull_data():
     import json
     import tempfile
 
-    creds = st.secrets["gcp"]["credentials"]
-    creds_dict = dict(creds)
+    creds_dict = dict(st.secrets["gcp"])
 
     tmp = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
     json.dump(creds_dict, tmp)
     tmp.flush()
     tmp.close()
 
-    # Borrar lock si existe
     lock_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".dvc", "tmp", "lock"))
     if os.path.exists(lock_path):
         os.remove(lock_path)
