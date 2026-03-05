@@ -7,6 +7,17 @@ from modules.retail_analytics import render_retail_analytics
 from modules.audience_analytics import render_audience_analytics
 from modules.conversion_analytics import render_conversion_analytics
 from modules.ai_subsystem import render_ai_subsystem
+import subprocess
+import os
+
+
+@st.cache_resource
+def pull_data():
+    token = st.secrets["dagshub"]["token"]
+    os.environ["DAGSHUB_USER_TOKEN"] = token
+    subprocess.run(["dvc", "pull"], check=True)
+
+pull_data()
 
 # ---------------------------------------------
 # 1. GLOBAL CONFIGURATION & AESTHETICS
