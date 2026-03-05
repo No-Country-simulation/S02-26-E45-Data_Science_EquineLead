@@ -14,28 +14,32 @@ from modules.ai_subsystem import render_ai_subsystem
 import subprocess
 import os
 
-
 @st.cache_resource
 def pull_data():
     import json
     import tempfile
 
-    # Configurar credenciales GCS
-    creds = st.secrets["gcp"]["credentials"]
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
-        f.write(creds)
-        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = f.name
+    # Escribir credenciales GCS a archivo temporal
+    creds_str = st.secrets["gcp"]["credentials"]
+    creds_dict = json.loads(creds_str)
+    
+    tmp = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
+    json.dump(creds_dict, tmp)
+    tmp.flush()
+    tmp.close()
+    
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = tmp.name
 
     # Borrar lock si existe
     lock_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".dvc", "tmp", "lock"))
     if os.path.exists(lock_path):
         os.remove(lock_path)
 
-    # Pullear desde GCS
     result = subprocess.run(
         ["dvc", "pull", "--remote", "gcsremote"],
         capture_output=True,
-        text=True
+        text=True,
+        env={**os.environ, "GOOGLE_APPLICATION_CREDENTIALS": tmp.name}
     )
     if result.returncode != 0:
         st.error(f"DVC pull failed:\n{result.stderr}")
