@@ -14,7 +14,6 @@ from modules.ai_subsystem import render_ai_subsystem
 import subprocess
 import os
 
-@st.cache_resource
 def pull_data():
     import json
     import tempfile
