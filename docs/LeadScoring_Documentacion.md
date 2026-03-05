@@ -31,7 +31,9 @@ El objetivo es clasificar a cada lead en tres niveles de valor:
 | **Lead Plata** | Compró caballos < USD 50.000 **o** productos < USD 2.000 |
 | **Lead Oro** | Compró caballos ≥ USD 50.000 **o** productos ≥ USD 2.000 |
 
-La clasificación se hace de forma **independiente para dos verticales**: `horse_target` y `prods_target`. El desafío principal es el desbalance extremo: Lead Oro representa menos del 1 % del total. El modelo campeón es **XGB Tuneado con feature selection**, logrando un **F2 Lead Oro horse ≈ 0.51** con gap de overfitting controlado (< 0.10).
+La clasificación se hace de forma **independiente para dos verticales**: `horse_target` y `prods_target`. El desafío principal es el desbalance extremo: Lead Oro representa menos del 1 % del total. El modelo campeón es **XGB Tuneado con feature selection por dominio**, logrando un **F2 Lead Oro horse ≈ 0.51** con gap de overfitting controlado (< 0.10).
+
+En la segunda iteración (`LeadScoring_v2.ipynb`) se exploraron LightGBM con Optuna y CatBoost con categóricas nativas como alternativas al XGB campeón. Ninguno lo superó en F2 Lead Oro horse; el XGB Tuneado mantiene el título.
 
 ---
 
@@ -66,7 +68,7 @@ Existen 1–2 filas donde un usuario es Lead Oro en caballos pero Lead Bronce en
 ### Estrategia de merge
 ```
 horsesInfo  ──(horse_id = Horse_ID)──►  df_horses   ──(user_id)──►  df_horses + users
-products    ──(item_id  = Item_ID) ──►  df_products  ──(user_id)──►  df_products + users
+prodsInfo   ──(item_id  = Item_ID) ──►  df_products  ──(user_id)──►  df_products + users
 ```
 
 Se enriquecen primero los eventos con los atributos del ítem (precio, raza, skills) y luego con el perfil del usuario, para poder agregarlos todos juntos en un solo `groupby` por `user_id`. Se usa **LEFT JOIN** para conservar todos los eventos incluso si el ítem fue eliminado del catálogo, evitando perder señal de comportamiento real.
@@ -160,6 +162,13 @@ A partir del campo `Description` se extraen 8 features por producto: `brand`, `t
 | `max_visitas_mismo_caballo` | max revisitas a un caballo individual | Interés concentrado = señal fuerte de intención |
 | `has_both_interests` | (horse_views>0) & (prod_views>0) | Usuario activo en ambas verticales |
 
+### Features nuevas exploradas en v2 (no incorporadas al campeón)
+
+| Feature | Fórmula | Resultado |
+|---|---|---|
+| `precio_aspiracional_horse` | max_horse_price / (avg_horse_price + 1) | No mejoró sobre `max_horse_price_viewed`; señal redundante |
+| `precio_aspiracional_prods` | max_product_price / (avg_product_price + 1) | Ídem dominio productos |
+
 ---
 
 ## 6. Observaciones relevantes del EDA
@@ -188,6 +197,8 @@ Las variables con mayor separación entre clases según violinplots y KDE:
 ### Variables categóricas — baja señal cruda, señal no lineal real
 
 El análisis de Cramér's V mostró coeficientes muy bajos (< 0.10) en todas las categóricas. Sin embargo, esto no implica que no tengan información — solo que la señal es no lineal. Por eso se optó por Target Encoding en lugar de eliminarlas.
+
+> **Nota v2:** En el notebook `LeadScoring_v2.ipynb` las columnas categóricas se buscaron con nombres distintos (`gender_with_most_appearances`, `breedFamily_with_most_appearances`, `color_grouped_with_most_appearances`) que no existen en `df_final.parquet`. Los nombres correctos son `gender_mode`, `breed_family_mode` y `color_mode` tal como los genera el `groupby` en `features.py`. Corregir `CAT_COLS` en v2 antes de usar ese notebook.
 
 ### Colinealidad alta — documentada, no eliminada
 
@@ -222,10 +233,35 @@ Todos los pasos se aplican **después del split** para evitar data leakage.
 |---|---|
 | **Split** | 80/20, estratificado por y, random_state=42 |
 | **Drop categóricas sin TE** | Se eliminan las categóricas de baja señal (Cramér's V < 0.10) que no entran al Target Encoding |
-| **Target Encoding** | `TargetEncoder(smoothing=10)` sobre 6 columnas; fit solo sobre X_train, horse_target como referencia ordinal |
+| **Target Encoding** | `TargetEncoder(smoothing=10)` sobre 9 columnas; fit solo sobre X_train, horse_target como referencia ordinal (Bronce=0, Plata=1, Oro=2) |
 | **Capping** | P99 de X_train aplicado a columnas con max/P99 > 2, más columnas fijas por EDA |
+| **Split por dominio** | Se filtran las features a `COLS_USER + COLS_HORSE` y `COLS_USER + COLS_PRODS` antes de entrenar cada modelo |
+
+### Las 9 columnas con Target Encoding
+
+```python
+COLS_TARGET_ENCODE = [
+    # Perfil del usuario
+    'user_region', 'user_card_issuer', 'user_domain',
+    # Características del caballo más visto (nombres correctos en df_final.parquet)
+    'gender_mode', 'breed_family_mode', 'color_mode',
+    # Características del producto más visto
+    'most_viewed_category', 'most_viewed_brand', 'most_viewed_target_user',
+]
+```
 
 **Por qué Target Encoding:** convierte cada categoría en la media del target condicionada a esa categoría, preservando la señal en una sola columna. OHE generaría 40+ columnas de baja densidad. El `smoothing=10` evita que categorías con pocas muestras se fijen en la media ruidosa de ese subset.
+
+### Separación de features por dominio
+
+Para evitar contaminación cruzada entre verticales, cada par de modelos recibe únicamente las features relevantes a su dominio:
+
+| Dataset | Features | Total |
+|---|---|---|
+| `X_train_horse` | 5 usuario + 22 caballos | **27** |
+| `X_train_prods` | 5 usuario + 17 productos | **22** |
+
+Las **5 features de usuario** (`user_prestige_score`, `user_antiguedad_dias`, `user_region`, `user_card_issuer`, `user_domain`) son compartidas porque describen el perfil del comprador, no el producto. Las features específicas de cada dominio son mutuamente excluyentes.
 
 ---
 
@@ -253,7 +289,6 @@ Usuario
 **Ventajas:**
 - Cada paso resuelve un problema binario bien definido.
 - P2 opera solo sobre el subconjunto no-Bronce, donde Plata/Oro está mucho más balanceado.
-- Permite threshold tuning independiente en P2 para maximizar F2 Oro.
 - Interpretable: "¿quién tiene intención?" y "¿quién tiene alto valor?" son preguntas separadas.
 
 Esto genera **4 modelos por experimento**: P1-horse, P1-prods, P2-horse, P2-prods.
@@ -263,7 +298,7 @@ Esto genera **4 modelos por experimento**: P1-horse, P1-prods, P2-horse, P2-prod
 | Modelo | Estrategia | Motivo |
 |---|---|---|
 | Random Forest | SMOTE antes de entrenar | RF no tiene parámetro nativo de costo por clase tan fino |
-| XGBoost | `scale_pos_weight = n_neg / n_pos` | Más eficiente que SMOTE para boosting; evita overfitting en la clase minoritaria |
+| XGBoost P1 | `scale_pos_weight = n_neg / n_pos` | Más eficiente que SMOTE para boosting; evita overfitting en la clase minoritaria |
 | XGB P2 en CV | `Pipeline(SMOTE → XGB)` dentro del fold | Evita leakage: SMOTE ve solo el train de cada fold, no el de validación |
 
 ### Métrica principal: F2-score Lead Oro
@@ -274,7 +309,7 @@ F2 penaliza más los falsos negativos que los falsos positivos. En este contexto
 
 ## 9. Experimentos y resultados
 
-### Modelos evaluados
+### Iteración v1 — `LeadScoring.ipynb`
 
 | ID | Modelo | Descripción |
 |---|---|---|
@@ -282,29 +317,47 @@ F2 penaliza más los falsos negativos que los falsos positivos. En este contexto
 | 2 | **RF Tuneado** | RF con RandomizedSearchCV (12 iter, sample_frac=0.4) |
 | 3 | **XGB Baseline** | XGBoost conservador + scale_pos_weight |
 | 4 | **XGB Baseline+TH** | XGB Baseline con threshold tuning sobre P2 (sin reentrenamiento) |
-| 5 | **XGB Tuneado** | XGB con RandomizedSearchCV (15 iter) + SMOTE-pipeline en P2 |
+| 5 | **XGB Tuneado** ⭐ | XGB con RandomizedSearchCV (15 iter) + SMOTE-pipeline en P2 |
 
-### Rendimiento — `horse_target`
+#### Rendimiento — `horse_target`
 
-| Modelo | F2 macro | F2 Lead Oro | F2 Lead Plata | Gap Overfitting P2 |
+| Modelo | F2 macro | F2 Lead Oro | Gap Overfitting P2 |
+|---|---|---|---|
+| RF Baseline | ~0.42 | ~0.38 | ~0.18 |
+| RF Tuneado | ~0.44 | ~0.40 | ~0.14 |
+| XGB Baseline | ~0.46 | ~0.44 | ~0.12 |
+| XGB Baseline+TH | ~0.46 | ~0.48 | ~0.12 |
+| **XGB Tuneado** ⭐ | **~0.48** | **~0.51** | **~0.10** |
+
+#### Rendimiento — `prods_target`
+
+| Modelo | F2 macro | F2 Lead Oro | Gap Overfitting P2 |
+|---|---|---|---|
+| RF Baseline | ~0.41 | ~0.36 | ~0.19 |
+| RF Tuneado | ~0.43 | ~0.38 | ~0.15 |
+| XGB Baseline | ~0.45 | ~0.42 | ~0.13 |
+| XGB Baseline+TH | ~0.45 | ~0.46 | ~0.13 |
+| **XGB Tuneado** ⭐ | **~0.47** | **~0.49** | **~0.11** |
+
+### Iteración v2 — `LeadScoring_v2.ipynb`
+
+Objetivo: explorar LightGBM y CatBoost como alternativas al XGB campeón. Todos los runs se logean con prefijo `v2_*` en el mismo experimento de DagsHub. Se agregan también las features `precio_aspiracional_horse` y `precio_aspiracional_prods`.
+
+| ID | Modelo | Descripción |
+|---|---|---|
+| v2-1 | **v2_XGB_ThresholdTuning** | XGB reentrenado con nuevo feature set + threshold tuning en v2 |
+| v2-2 | **v2_LightGBM_Optuna** | LightGBM con búsqueda bayesiana (Optuna, 30 trials) |
+| v2-3 | **v2_CatBoost_Optuna** | CatBoost con categóricas nativas + Optuna (30 trials) |
+
+#### Comparativa v2 vs campeón v1
+
+| Modelo | F2 Oro horse | F2 Oro prods | Gap P2 horse | vs campeón v1 |
 |---|---|---|---|---|
-| RF Baseline | ~0.42 | ~0.38 | ~0.51 | ~0.18 |
-| RF Tuneado | ~0.44 | ~0.40 | ~0.53 | ~0.14 |
-| XGB Baseline | ~0.46 | ~0.44 | ~0.55 | ~0.12 |
-| XGB Baseline+TH | ~0.46 | ~0.48 | ~0.55 | ~0.12 |
-| **XGB Tuneado** ⭐ | **~0.48** | **~0.51** | **~0.57** | **~0.10** |
+| v2_XGB_ThresholdTuning | — | — | — | registrado en DagsHub |
+| v2_LightGBM_Optuna | — | — | — | no supera al campeón |
+| v2_CatBoost_Optuna | — | — | — | no supera al campeón |
 
-### Rendimiento — `prods_target`
-
-| Modelo | F2 macro | F2 Lead Oro | F2 Lead Plata | Gap Overfitting P2 |
-|---|---|---|---|---|
-| RF Baseline | ~0.41 | ~0.36 | ~0.50 | ~0.19 |
-| RF Tuneado | ~0.43 | ~0.38 | ~0.52 | ~0.15 |
-| XGB Baseline | ~0.45 | ~0.42 | ~0.54 | ~0.13 |
-| XGB Baseline+TH | ~0.45 | ~0.46 | ~0.54 | ~0.13 |
-| **XGB Tuneado** ⭐ | **~0.47** | **~0.49** | **~0.56** | **~0.11** |
-
-> Los valores exactos están en DagsHub bajo el experimento `EquineLead_LeadScoring`. Los valores de la tabla son extraídos del notebook; los definitivos son los logueados en MLflow.
+> Los valores exactos están en DagsHub bajo el experimento `EquineLead_LeadScoring`, filtro `tags.version = "v2"`. El campeón vigente sigue siendo **XGB Tuneado (v1)**.
 
 ### Observaciones por modelo
 
@@ -312,11 +365,15 @@ F2 penaliza más los falsos negativos que los falsos positivos. En este contexto
 
 **RF Tuneado:** el tuning sobre max_depth y min_samples_leaf reduce el gap. La mejora en F2 Oro es modesta — RF tiene limitaciones estructurales para clases tan raras.
 
-**XGB Baseline:** supera a ambos RF gracias a la regularización L1/L2 nativa y a scale_pos_weight, que es más eficiente que SMOTE para datasets muy desbalanceados.
+**XGB Baseline:** supera a ambos RF gracias a la regularización L1/L2 nativa y a scale_pos_weight.
 
-**XGB Baseline + Threshold Tuning:** bajar el umbral de clasificación de P2 de 0.5 a ~0.20–0.30 mejora F2 Oro sin ningún costo computacional. El umbral óptimo tan bajo refleja que con < 1 % de Oro el modelo por defecto es demasiado conservador.
+**XGB Baseline + Threshold Tuning:** experimento exploratorio sobre el XGB Baseline. Bajar el umbral de P2 de 0.5 a ~0.20–0.25 mejora F2 Oro sin reentrenar el modelo. **No es el campeón** — el tuning de hiperparámetros resultó más efectivo como estrategia. El threshold tuning no forma parte del pipeline de inferencia del campeón.
 
-**XGB Tuneado:** la búsqueda sobre {max_depth, learning_rate, subsample, colsample_bytree, reg_alpha, reg_lambda} mejora F2 Oro y reduce el gap de overfitting simultáneamente.
+**XGB Tuneado:** la búsqueda sobre {max_depth, learning_rate, subsample, colsample_bytree, reg_alpha, reg_lambda} mejora F2 Oro y reduce el gap de overfitting simultáneamente. Es el campeón actual.
+
+**LightGBM (v2):** entrenamiento más rápido que XGB en CPU gracias a histogram splitting leaf-wise. La búsqueda bayesiana con Optuna exploró un espacio más amplio en el mismo tiempo. No superó al XGB Tuneado en F2 Oro horse a pesar del mayor número de configuraciones evaluadas.
+
+**CatBoost (v2):** el encoding nativo de variables categóricas con ordered target statistics es más robusto que el Target Encoding manual en teoría. En la práctica, el modelo no superó al XGB Tuneado. La ventaja de CatBoost es más pronunciada cuando hay muchas categorías de alta cardinalidad; en este dataset la cardinalidad fue reducida previamente en la FE.
 
 ---
 
@@ -328,11 +385,85 @@ Criterio de selección: mayor `f2_lead_oro_horse` entre todos los runs finalizad
 
 El criterio rector es `horse_target` porque los leads que compran caballos representan el mayor valor de negocio en la plataforma.
 
+### Features del modelo campeón
+
+#### 🐴 Modelo Caballos — 27 features
+
+```python
+features_caballos = [
+    # Usuario (compartidas con modelo productos)
+    "user_prestige_score",
+    "user_antiguedad_dias",
+    "user_region",          # target encoded
+    "user_card_issuer",     # target encoded
+    "user_domain",          # target encoded
+    # Comportamiento en caballos
+    "horses_viewed",
+    "horses_added_to_cart",
+    "max_horse_price_viewed",
+    "viewed_premium_horses",
+    "viewed_sport_elite",
+    "viewed_family_safe",
+    "viewed_working_elite",
+    "viewed_pro_sellers",
+    "has_shipping_viewed",
+    "caballos_unicos_vistos",
+    "ratio_recurrencia_horse",
+    "max_visitas_mismo_caballo",
+    "ratio_cart_horse",
+    "rango_precio_horse",
+    # Categóricas de caballos (target encoded)
+    "gender_mode",
+    "breed_family_mode",
+    "color_mode",
+    # Baja señal individual pero del dominio horse
+    "avg_horse_age",
+    "avg_prestige_score_horses",
+    "avg_height",
+    "avg_weight",
+    "has_registry_viewed",
+    "avg_tech_score",
+    "avg_temperament",
+    "avg_comment_length",
+]
+```
+
+#### 🛍️ Modelo Productos — 22 features
+
+```python
+features_productos = [
+    # Usuario (compartidas con modelo caballos)
+    "user_prestige_score",
+    "user_antiguedad_dias",
+    "user_region",          # target encoded
+    "user_card_issuer",     # target encoded
+    "user_domain",          # target encoded
+    # Comportamiento en productos
+    "products_viewed",
+    "products_added_to_cart",
+    "max_product_price_viewed",
+    "unique_categories",
+    "viewed_waterproof",
+    "viewed_leather",
+    "viewed_breathable",
+    "viewed_uv_protection",
+    "viewed_machine_washable",
+    "productos_unicos_vistos",
+    "ratio_recurrencia_prods",
+    "ratio_cart_prods",
+    # Categóricas de productos (target encoded)
+    "most_viewed_category",
+    "most_viewed_brand",
+    "most_viewed_target_user",
+    # Baja señal individual pero del dominio prods
+    "avg_prestige_score_products",
+    "avg_product_price_viewed",
+]
+```
+
 ### Feature Selection post-modelado
 
-Se extrae el feature importance del modelo P2 horse del campeón y se reentrena con `importance > 0.01`. Se pasa de ~60 a ~35–40 features.
-
-**Las features eliminadas coinciden con las identificadas como ruido/redundantes en el EDA**, validando la consistencia del análisis exploratorio con lo que el modelo realmente usa.
+Se extrae el feature importance del XGB Tuneado y se auditan las variables con `importance < 0.005` en todos los 4 modelos simultáneamente. Las features eliminadas por la auditoría coinciden con las identificadas como ruido/redundantes en el EDA, validando la consistencia del análisis exploratorio.
 
 ### Comparación full vs. seleccionado
 
@@ -346,27 +477,30 @@ Se extrae el feature importance del modelo P2 horse del campeón y se reentrena 
 La feature selection mantiene el rendimiento y reduce el overfitting — el modelo seleccionado generaliza mejor a datos nuevos.
 
 ---
-
 ## 11. Tracking de experimentos con MLflow / DagsHub
 
 Cada run logea automáticamente:
 
-- **Parámetros:** hiperparámetros de P1 y P2 (prefijo `p1_` / `p2_`), tipo de modelo, estrategia de balanceo.
+- **Parámetros:** hiperparámetros de P1 y P2 (prefijo `p1_` / `p2_`), tipo de modelo, estrategia de balanceo, umbrales de threshold tuning.
 - **Métricas:** `f2_macro`, `f2_lead_oro`, `f2_lead_plata`, `f2_paso1`, `f2_paso2_test`, `f2_paso2_train`, `overfit_gap_p2` — por cada target.
 - **Artefactos:** 4 modelos `.pkl`, feature importance (top 15), matrices de confusión normalizadas, curvas Precision-Recall con AUC-PR.
-- **Tags:** `model_type`, `pipeline`, `status` (champion / retired).
+- **Tags:** `model_type`, `pipeline`, `version` (v1 / v2), `status` (champion / retired).
+
 ```
 https://dagshub.com/aletbm/S02-26-E45-Data_Science_EquineLead.mlflow
 Experimento: EquineLead_LeadScoring
+Runs v1: sin prefijo
+Runs v2: prefijo v2_*  |  filtro: tags.version = "v2"
 ```
 
 ---
 
 ## 12. Estructura del pipeline de producción
+
 ```
 features.py  →  train.py  →  model.py
      │               │            │
- df_final.parquet  MLflow     predicciones.parquet
+ df_final.parquet  MLflow     predicciones
                   (DagsHub)
 ```
 
@@ -374,10 +508,22 @@ features.py  →  train.py  →  model.py
 |---|---|
 | `features.py` | Carga las 5 tablas, limpieza, FE, merges, targets, agrega por usuario, guarda `df_final.parquet` |
 | `metrics.py` | Funciones de evaluación y logging (importado por `train.py`) |
-| `train.py` | Carga `df_final.parquet`, preprocesa (TE + capping), entrena todos los modelos, loga en MLflow, selecciona campeón |
-| `model.py` | Carga el run campeón desde MLflow, reconstruye el preprocesamiento y expone `predict(X)` *(pendiente de implementar tras confirmar campeón)* |
+| `train.py` | Carga `df_final.parquet`, preprocesa (TE + capping + split por dominio), entrena todos los modelos, loga en MLflow, selecciona campeón, serializa artefactos |
+| `model.py` | Carga el run campeón desde MLflow, carga artefactos de preprocesamiento, expone `predict(X)` |
 
-> **Nota de producción:** el encoder TE y los límites de capping calculados en `train.py` deben serializarse en pickle para que `model.py` pueda reproducir el preprocesamiento exacto sin reejecutar el split.
+### Artefactos serializados por `train.py`
+
+| Archivo | Contenido | Nota |
+|---|---|---|
+| `modelo_p1_horse.pkl` | XGBoost P1 caballos | |
+| `modelo_p1_prods.pkl` | XGBoost P1 productos | |
+| `modelo_p2_horse.pkl` | XGBoost P2 caballos | |
+| `modelo_p2_prods.pkl` | XGBoost P2 productos | |
+| `target_encoder.pkl` | TargetEncoder fit sobre X_train | 9 columnas, smoothing=10 |
+| `limites_capping.pkl` | Dict col → límite P99 | Calculado sobre X_train |
+| `cols_horse.pkl` | Lista de features del dominio caballos | **Nuevo** — reemplaza `cols_v2.pkl` |
+| `cols_prods.pkl` | Lista de features del dominio productos | **Nuevo** — reemplaza `cols_v2.pkl` |
+| `cols_user.pkl` | Lista de 5 features de usuario compartidas | **Nuevo** |
 
 ---
 
@@ -393,5 +539,7 @@ features.py  →  train.py  →  model.py
 | SMOTE para XGBoost fuera del pipeline de CV | SMOTE antes del CV contamina los folds de validación (leakage); se usa `Pipeline(SMOTE→XGB)` |
 | GridSearchCV completo para XGB | Espacio de hiperparámetros demasiado grande para búsqueda exhaustiva; RandomizedSearchCV con 15 iteraciones es suficiente |
 | F1-score como métrica principal | F1 penaliza igual FP y FN; perder un Lead Oro (FN) es más costoso que un falso positivo — F2 es más apropiado |
-
----
+| LightGBM como modelo final | No superó al XGB Tuneado en F2 Lead Oro horse pese a mayor velocidad de entrenamiento y búsqueda bayesiana con Optuna |
+| CatBoost con categóricas nativas | El encoding nativo no mejoró respecto al Target Encoding del pipeline XGB; la reducción de cardinalidad previa en FE ya limita la ventaja de CatBoost |
+| `precio_aspiracional_horse/prods` como features activas | Ratio max/avg redundante con `max_horse_price_viewed` que ya captura la misma señal con mayor poder discriminativo |
+| `cols_v2.pkl` genérico para ambos dominios | Reemplazado por `cols_horse.pkl` y `cols_prods.pkl` separados para que `model.py` filtre correctamente sin lógica condicional adicional |
