@@ -38,8 +38,6 @@ def pull_data():
     )
     if result.returncode != 0:
         st.error(f"DVC pull failed:\n{result.stderr}")
-    else:
-        st.success("Data pulled OK")
 
 pull_data()
 
