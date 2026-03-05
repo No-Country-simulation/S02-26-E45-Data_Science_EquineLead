@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.insert(0, os.path.dirname(__file__))
+
 import streamlit as st
 from utils.style_utils import inject_premium_style
 from utils.data_loader import get_all_dashboard_data
@@ -7,6 +11,25 @@ from modules.retail_analytics import render_retail_analytics
 from modules.audience_analytics import render_audience_analytics
 from modules.conversion_analytics import render_conversion_analytics
 from modules.ai_subsystem import render_ai_subsystem
+import subprocess
+import os
+
+
+@st.cache_resource
+def pull_data():
+    token = st.secrets["dagshub"]["token"]
+    os.environ["DAGSHUB_USER_TOKEN"] = token
+    
+    # Borrar lock si existe
+    lock_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".dvc", "tmp", "lock"))
+    if os.path.exists(lock_path):
+        os.remove(lock_path)
+    
+    # Forzar uso del remote de DagsHub
+    subprocess.run(["dvc", "remote", "default", "dagshub"], check=True)
+    subprocess.run(["dvc", "pull", "--remote", "dagshub"], check=True)
+
+pull_data()
 
 # ---------------------------------------------
 # 1. GLOBAL CONFIGURATION & AESTHETICS
