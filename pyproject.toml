@@ -27,8 +27,10 @@ dependencies = [
     "setuptools>=80.10.2",
     "scikit-learn>=1.8.0",
     "dvc[gs]>=3.66.1",
+    "streamlit>=1.54.0",
     "numpy>=2.2.6",
     "seaborn>=0.13.2",
+    "plotly>=6.6.0",
 ]
 
 [tool.uv]
