@@ -14,20 +14,35 @@ from modules.ai_subsystem import render_ai_subsystem
 import subprocess
 import os
 
-
-@st.cache_resource
 def pull_data():
-    token = st.secrets["dagshub"]["token"]
-    os.environ["DAGSHUB_USER_TOKEN"] = token
-    
-    # Borrar lock si existe
+    import json
+    import tempfile
+
+    creds_dict = dict(st.secrets["gcp"])
+
+    tmp = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
+    json.dump(creds_dict, tmp)
+    tmp.flush()
+    tmp.close()
+
     lock_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".dvc", "tmp", "lock"))
     if os.path.exists(lock_path):
         os.remove(lock_path)
 
-    subprocess.run(["dvc", "pull"], check=True)
+    result = subprocess.run(
+        ["dvc", "pull", "--remote", "gcsremote"],
+        capture_output=True,
+        text=True,
+        env={**os.environ, "GOOGLE_APPLICATION_CREDENTIALS": tmp.name}
+    )
+    if result.returncode != 0:
+        st.error(f"DVC pull failed:\n{result.stderr}")
+    else:
+        st.toast("Data pulled OK ✅", icon="✅")
 
-pull_data()
+if "data_pulled" not in st.session_state:
+    pull_data()
+    st.session_state["data_pulled"] = True
 
 # ---------------------------------------------
 # 1. GLOBAL CONFIGURATION & AESTHETICS

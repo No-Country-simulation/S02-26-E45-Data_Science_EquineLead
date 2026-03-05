@@ -1,26 +1,39 @@
 from typing import Tuple
 import pandas as pd
-from sklearn.model_selection import train_test_split
-import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import MinMaxScaler
+from scipy.sparse import hstack, csr_matrix
 
 
 def build_features(
     df: pd.DataFrame, test_size: float = 0.2, random_state: int = 42
-) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
+) -> Tuple[csr_matrix, csr_matrix, pd.Series, pd.Series, TfidfVectorizer, MinMaxScaler]:
     """
-    Load data, build features and return train/validation split.
+    Build feature matrix combining TF-IDF (breed + color) and scaled price.
+    Returns train/val sparse matrices, price target, and fitted transformers.
     """
 
-    ## Ejemplo ####################################
-    X = df.drop(columns=["target"])
-    y = df["target"]
+    df.columns = [c.lower().strip() for c in df.columns]
 
-    X["feature_1_squared"] = X["feature_1"] ** 2
-    X["feature_2_log"] = np.log1p(X["feature_2"])
+    # Text features (breed + color)
+    tfidf = TfidfVectorizer(max_features=100)
+    df["caracteristicas"] = (
+        df["breed"].fillna("desconocido") + " " + df["color"].fillna("desconocido")
+    ).str.lower()
+    matrix_text = tfidf.fit_transform(df["caracteristicas"])
 
-    X_train, X_val, y_train, y_val = train_test_split(
-        X, y, test_size=test_size, random_state=random_state
-    )
-    ##############################################
+    # Numeric features
+    scaler = MinMaxScaler()
+    df["price"] = pd.to_numeric(df["price"], errors="coerce").fillna(0)
+    price_scaled = scaler.fit_transform(df[["price"]])
 
-    return X_train, X_val, y_train, y_val
+    # Combine into sparse matrix
+    X = hstack([matrix_text, price_scaled]).tocsr()
+    y = df["price"]
+
+    # Manual split preserving sparse format
+    split_idx = int(len(df) * (1 - test_size))
+    X_train, X_val = X[:split_idx], X[split_idx:]
+    y_train, y_val = y.iloc[:split_idx], y.iloc[split_idx:]
+
+    return X_train, X_val, y_train, y_val, tfidf, scaler
