@@ -102,6 +102,5 @@ def main():
             "recommendation_artifacts_v1.joblib",
         )
 
-
 if __name__ == "__main__":
     main()
