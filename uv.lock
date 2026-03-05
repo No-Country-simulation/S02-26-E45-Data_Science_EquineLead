@@ -1572,11 +1572,13 @@ dependencies = [
     { name = "matplotlib" },
     { name = "numpy" },
     { name = "pandas" },
+    { name = "plotly" },
     { name = "protobuf" },
     { name = "pyarrow" },
     { name = "requests" },
     { name = "scikit-learn" },
     { name = "setuptools" },
+    { name = "streamlit" },
     { name = "xgboost" },
 ]
 
@@ -1584,10 +1586,6 @@ dependencies = [
 api = [
     { name = "fastapi" },
     { name = "uvicorn" },
-]
-app = [
-    { name = "plotly" },
-    { name = "streamlit" },
 ]
 dev = [
     { name = "black" },
@@ -1632,11 +1630,13 @@ requires-dist = [
     { name = "matplotlib", specifier = ">=3.10.8" },
     { name = "numpy", specifier = ">=2.2.6" },
     { name = "pandas", specifier = ">=2.2" },
+    { name = "plotly", specifier = ">=6.6.0" },
     { name = "protobuf", specifier = "==4.25.3" },
     { name = "pyarrow", specifier = ">=20" },
     { name = "requests", specifier = ">=2.32.5" },
     { name = "scikit-learn", specifier = ">=1.8.0" },
     { name = "setuptools", specifier = ">=80.10.2" },
+    { name = "streamlit", specifier = ">=1.54.0" },
     { name = "xgboost", specifier = ">=3.2.0" },
 ]
 
@@ -1644,10 +1644,6 @@ requires-dist = [
 api = [
     { name = "fastapi", specifier = ">=0.135.1" },
     { name = "uvicorn", specifier = ">=0.41.0" },
-]
-app = [
-    { name = "plotly", specifier = ">=6.6.0" },
-    { name = "streamlit", specifier = ">=1.54.0" },
 ]
 dev = [
     { name = "black", specifier = ">=24.0.0" },
