@@ -1,4 +1,4 @@
-.PHONY: install lint run-data-pipeline run-prefect terraform-deploy terraform-destroy
+.PHONY: install lint format run-data-pipeline run-prefect terraform-deploy terraform-destroy
 
 PATH_INFRA = infra/terraform
 
@@ -9,7 +9,8 @@ run-app:
 	uv run streamlit run Data_Analyst_Project/app.py --server.port 8520
 
 lint:
-	pre-commit run --all-files
+	uv run pre-commit autoupdate
+	cmd /C "set PYTHONIOENCODING=utf-8 && uv run pre-commit run --all-files"
 
 run-data-pipeline:
 	docker compose -f deployment/docker-compose.yml --profile pipeline up --build

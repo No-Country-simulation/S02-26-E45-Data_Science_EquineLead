@@ -1,7 +1,7 @@
 resource "google_storage_bucket" "equinelead-datalake" {
   name          = var.bucket_name
   location      = var.region
-  storage_class = var.storage_class 
+  storage_class = var.storage_class
   force_destroy = true  # Permite borrar el bucket aunque tenga archivos (Cuidado en PROD)
 
   lifecycle_rule {

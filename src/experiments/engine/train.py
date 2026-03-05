@@ -31,7 +31,6 @@ STAGE = "training"
 def main():
     init_mlflow(experiment_name=MLFLOW_EXPERIMENT_ENGINE_NAME)
     with start_run(run_name=RUN_NAME, ds_name=DS_NAME, stage=STAGE):
-
         # =====================
         # Load dataset
         # =====================
@@ -93,11 +92,25 @@ def main():
         # Representa un caballo típico de los datos de entrenamiento.
         # Se usa para documentar el esquema esperado en la API y en MLflow.
         # =====================
-        input_example = pd.DataFrame([{
-            "breed": df["breed"].mode()[0] if "breed" in df.columns else "desconocido",
-            "color": df["color"].mode()[0] if "color" in df.columns else "desconocido",
-            "price": float(df["price"].median()) if "price" in df.columns else 0.0,
-        }])
+        input_example = pd.DataFrame(
+            [
+                {
+                    "breed": (
+                        df["breed"].mode()[0]
+                        if "breed" in df.columns
+                        else "desconocido"
+                    ),
+                    "color": (
+                        df["color"].mode()[0]
+                        if "color" in df.columns
+                        else "desconocido"
+                    ),
+                    "price": (
+                        float(df["price"].median()) if "price" in df.columns else 0.0
+                    ),
+                }
+            ]
+        )
 
         # Transformar el ejemplo para validar que el pipeline funciona end-to-end
         X_example = transform_input(input_example, tfidf, scaler)
@@ -108,8 +121,10 @@ def main():
 
         # 1. Modelo registrado con input_example y signature inferida
         signature = mlflow.models.infer_signature(
-            model_input=X_example,          # sparse CSR → numpy array internamente
-            model_output=np.array([[0.0] * 5]),  # shape de distancias esperada (1, n_neighbors)
+            model_input=X_example,  # sparse CSR → numpy array internamente
+            model_output=np.array(
+                [[0.0] * 5]
+            ),  # shape de distancias esperada (1, n_neighbors)
         )
 
         mlflow.sklearn.log_model(
@@ -134,7 +149,7 @@ def main():
                 "color": "str  — color del pelaje (e.g. 'bay')",
                 "price": "float — precio de referencia en USD",
             },
-            "transform_fn": transform_input,   # función importada, no lambda
+            "transform_fn": transform_input,  # función importada, no lambda
         }
 
         # Bundle → MLflow (delete=False por compatibilidad Windows)
@@ -149,9 +164,13 @@ def main():
         # 3. Input example como CSV en memoria → MLflow
         csv_buffer = io.StringIO()
         input_example.to_csv(csv_buffer, index=False)
-        mlflow.log_text(csv_buffer.getvalue(), artifact_file="artifacts_bundle/input_example.csv")
+        mlflow.log_text(
+            csv_buffer.getvalue(), artifact_file="artifacts_bundle/input_example.csv"
+        )
 
-        mlflow.set_tag("status", "champion")  # marcar este modelo como el mejor hasta ahora
+        mlflow.set_tag(
+            "status", "champion"
+        )  # marcar este modelo como el mejor hasta ahora
 
 
 if __name__ == "__main__":

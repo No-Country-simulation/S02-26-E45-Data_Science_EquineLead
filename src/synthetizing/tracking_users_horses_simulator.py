@@ -75,7 +75,7 @@ def download_and_prepare(
 
     if not download_path.exists():
         raise FileNotFoundError(
-            f"No existe el archivo {download_path}. " "No se puede extraer."
+            f"No existe el archivo {download_path}. No se puede extraer."
         )
 
     is_zip = zipfile.is_zipfile(download_path)
@@ -339,7 +339,6 @@ def build_rees_sample(
     selected = defaultdict(list)
 
     for chunk in pd.read_csv(source_csv, chunksize=chunksize):
-
         for cls, n_target in target_per_class.items():
             collected = sum(len(x) for x in selected[cls])
             remaining = n_target - collected

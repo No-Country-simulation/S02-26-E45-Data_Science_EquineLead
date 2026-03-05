@@ -119,7 +119,7 @@ Este dataset contiene información real sobre productos ecuestres disponibles en
 
 Archivo: `data/clean/users_info.parquet`
 
-Este dataset contiene información sintética sobre usuarios registrados en una plataforma digital, incluyendo datos demográficos, de contacto, adquisición y uso del sistema. Cada fila representa un usuario único identificado por un `user_id`.  
+Este dataset contiene información sintética sobre usuarios registrados en una plataforma digital, incluyendo datos demográficos, de contacto, adquisición y uso del sistema. Cada fila representa un usuario único identificado por un `user_id`.
 
 > ⚠️ Todos los datos son **sintéticos** y no corresponden a personas reales.
 
@@ -154,7 +154,7 @@ Este dataset contiene información sintética sobre usuarios registrados en una 
 
 Archivo: `data/clean/horses_sessions_info.parquet`
 
-Este dataset contiene información sintética sobre eventos de interacción de usuarios con caballos dentro de una plataforma digital (por ejemplo, un marketplace o portal de adopción/venta de caballos). Cada fila representa un evento individual generado por un usuario sobre un caballo durante una sesión.  
+Este dataset contiene información sintética sobre eventos de interacción de usuarios con caballos dentro de una plataforma digital (por ejemplo, un marketplace o portal de adopción/venta de caballos). Cada fila representa un evento individual generado por un usuario sobre un caballo durante una sesión.
 
 > ⚠️ Todos los datos son **sintéticos** y no corresponden a usuarios ni caballos reales.
 

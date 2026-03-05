@@ -2,7 +2,7 @@
 
 Este proyecto utiliza **DVC** para el versionado de datasets y **Google Cloud Storage (GCS)** como backend de almacenamiento remoto.
 
-Los datos **NO se almacenan en Git**.  
+Los datos **NO se almacenan en Git**.
 Se descargan bajo demanda utilizando DVC.
 
 ---
@@ -22,7 +22,7 @@ Antes de descargar los datasets, necesitás tener instalado:
 
 ### 🪟 Windows
 
-1. Descargar el instalador desde:  
+1. Descargar el instalador desde:
    https://cloud.google.com/sdk/docs/install
 2. Ejecutar el instalador
 3. Asegurarse de marcar la opción **“Add gcloud to PATH”**
@@ -62,9 +62,9 @@ gcloud auth login
 gcloud auth application-default login
 ```
 
-✔️ Las credenciales se guardan localmente  
-✔️ No se comparten claves  
-✔️ No se sube nada a Git  
+✔️ Las credenciales se guardan localmente
+✔️ No se comparten claves
+✔️ No se sube nada a Git
 
 📌 DVC utilizará automáticamente estas credenciales.
 
@@ -150,9 +150,9 @@ data/
  ├── raw/              # gestionado por DVC
  ├── clean/            # gestionado por DVC
  ├── tracking/         # gestionado por Git
- ├── clean.dvc         # puntero a los datos (Git)  
- └── raw.dvc           # puntero a los datos (Git)       
-   
+ ├── clean.dvc         # puntero a los datos (Git)
+ └── raw.dvc           # puntero a los datos (Git)
+
 .dvc/config            # configuración del remote GCS
 ```
 
@@ -218,7 +218,7 @@ para reproducir exactamente los datos del proyecto.
 
 ## ⬆️ Subir datasets a GCS usando DVC (solo maintainers)
 
-⚠️ **Esta sección es SOLO para maintainers o data engineers.**  
+⚠️ **Esta sección es SOLO para maintainers o data engineers.**
 El resto de colaboradores **NO deben subir datos**.
 
 ---
@@ -233,7 +233,7 @@ data/
  ├── raw/              # gestionado por DVC
  ├── clean/            # gestionado por DVC
  ├── tracking/         # gestionado por Git
- ├── clean.dvc         # puntero a los datos (Git)  
+ ├── clean.dvc         # puntero a los datos (Git)
  └── raw.dvc           # puntero a los datos (Git)
 ```
 
