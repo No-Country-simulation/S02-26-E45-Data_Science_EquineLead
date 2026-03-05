@@ -15,9 +15,7 @@ repos:
     rev: v0.15.4
     hooks:
       - id: ruff          # lint
-        args: [src/]
       - id: ruff-format   # format (reemplaza black)
-        args: [src/]
 
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.30.0
