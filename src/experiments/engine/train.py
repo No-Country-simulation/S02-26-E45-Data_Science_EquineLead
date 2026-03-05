@@ -7,16 +7,16 @@ from misc.config import init_mlflow, start_run, SEED, MLFLOW_EXPERIMENT_ENGINE_N
 from misc.utils import load_dataset, log_dataset_metadata
 import mlflow
 import joblib
-from features import build_features
+import pandas as pd
+import numpy as np
+from features import build_features, transform_input
 from model import train_model
 from metrics import evaluate
 import platform
 import datetime
 
-
 PATH_DATA = Path("./data/clean")
 DATASET_NAME = "horses_listings_limpio.parquet"
-
 
 # ==================================
 # DATA SCIENTIST PERSONAL CONFIG
@@ -28,8 +28,8 @@ STAGE = "training"
 
 def main():
     init_mlflow(experiment_name=MLFLOW_EXPERIMENT_ENGINE_NAME)
-
     with start_run(run_name=RUN_NAME, ds_name=DS_NAME, stage=STAGE):
+
         # =====================
         # Load dataset
         # =====================
@@ -51,7 +51,6 @@ def main():
         # Evaluate
         # =====================
         metrics = evaluate(model, X_val, y_val)
-
         for k, v in metrics.items():
             mlflow.log_metric(k, v)
 
@@ -88,20 +87,64 @@ def main():
         mlflow.log_param("scaler_type", "MinMaxScaler")
 
         # =====================
+        # Input example
+        # Representa un caballo típico de los datos de entrenamiento.
+        # Se usa para documentar el esquema esperado en la API y en MLflow.
+        # =====================
+        input_example = pd.DataFrame([{
+            "breed": df["breed"].mode()[0] if "breed" in df.columns else "desconocido",
+            "color": df["color"].mode()[0] if "color" in df.columns else "desconocido",
+            "price": float(df["price"].median()) if "price" in df.columns else 0.0,
+        }])
+
+        # Transformar el ejemplo para validar que el pipeline funciona end-to-end
+        X_example = transform_input(input_example, tfidf, scaler)
+
+        # =====================
         # Artifacts
         # =====================
+
+        # 1. Modelo registrado con input_example y signature inferida
+        signature = mlflow.models.infer_signature(
+            model_input=X_example,          # sparse CSR → numpy array internamente
+            model_output=np.array([[0.0] * 5]),  # shape de distancias esperada (1, n_neighbors)
+        )
+
         mlflow.sklearn.log_model(
             model,
             artifact_path="model_engine",
             registered_model_name="model_engine",
+            input_example=X_example,
+            signature=signature,
         )
 
-        # Export artifacts bundle for API consumption
-        joblib.dump(
-            {"model": model, "vectorizer": tfidf, "scaler": scaler},
-            "recommendation_artifacts_v1.joblib",
-        )
+        # 2. Bundle completo para la API:
+        #    - model        → NearestNeighbors ya entrenado
+        #    - vectorizer   → TfidfVectorizer ya ajustado
+        #    - scaler       → MinMaxScaler ya ajustado
+        #    - input_schema → dict con los campos y tipos esperados por la API
+        #    - transform_fn → referencia a la función de preprocesamiento
+        artifacts_bundle = {
+            "model": model,
+            "vectorizer": tfidf,
+            "scaler": scaler,
+            "input_schema": {
+                "breed": "str  — raza del caballo (e.g. 'Thoroughbred')",
+                "color": "str  — color del pelaje (e.g. 'bay')",
+                "price": "float — precio de referencia en USD",
+            },
+            "transform_fn": transform_input,   # función importada, no lambda
+        }
 
+        bundle_path = "recommendation_artifacts_v1.joblib"
+        joblib.dump(artifacts_bundle, bundle_path)
+
+        # Registrar el bundle como artefacto en MLflow para trazabilidad
+        mlflow.log_artifact(bundle_path, artifact_path="artifacts_bundle")
+
+        # 3. Guardar input_example como CSV para documentación en MLflow
+        input_example.to_csv("input_example.csv", index=False)
+        mlflow.log_artifact("input_example.csv", artifact_path="artifacts_bundle")
 
 if __name__ == "__main__":
     main()
