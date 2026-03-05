@@ -1,6 +1,6 @@
 import streamlit as st
-from utils.style_utils import inject_premium_style
-from utils.data_loader import get_all_dashboard_data
+from .utils.style_utils import inject_premium_style
+from .utils.data_loader import get_all_dashboard_data
 from modules.executive_summary import render_executive_summary
 from modules.horse_analytics import render_horse_analytics
 from modules.retail_analytics import render_retail_analytics
@@ -16,22 +16,14 @@ def pull_data():
     token = st.secrets["dagshub"]["token"]
     os.environ["DAGSHUB_USER_TOKEN"] = token
     
-    # Borrar lock file si existe
-    lock_path = os.path.join(os.path.dirname(__file__), "..", ".dvc", "tmp", "lock")
-    lock_path = os.path.abspath(lock_path)
+    # Borrar lock si existe
+    lock_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".dvc", "tmp", "lock"))
     if os.path.exists(lock_path):
         os.remove(lock_path)
     
-    result = subprocess.run(
-        ["dvc", "pull"],
-        capture_output=True,
-        text=True
-    )
-    
-    if result.returncode != 0:
-        st.error(f"DVC pull failed:\n{result.stderr}")
-    else:
-        st.success("Data pulled OK")
+    # Forzar uso del remote de DagsHub
+    subprocess.run(["dvc", "remote", "default", "dagshub"], check=True)
+    subprocess.run(["dvc", "pull", "--remote", "dagshub"], check=True)
 
 pull_data()
 
