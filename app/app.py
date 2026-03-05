@@ -17,15 +17,30 @@ import os
 
 @st.cache_resource
 def pull_data():
-    token = st.secrets["dagshub"]["token"]
-    os.environ["DAGSHUB_USER_TOKEN"] = token
-    
+    import json
+    import tempfile
+
+    # Configurar credenciales GCS
+    creds = st.secrets["gcp"]["credentials"]
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        f.write(creds)
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = f.name
+
     # Borrar lock si existe
     lock_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".dvc", "tmp", "lock"))
     if os.path.exists(lock_path):
         os.remove(lock_path)
 
-    subprocess.run(["dvc", "pull"], check=True)
+    # Pullear desde GCS
+    result = subprocess.run(
+        ["dvc", "pull", "--remote", "gcsremote"],
+        capture_output=True,
+        text=True
+    )
+    if result.returncode != 0:
+        st.error(f"DVC pull failed:\n{result.stderr}")
+    else:
+        st.success("Data pulled OK")
 
 pull_data()
 
