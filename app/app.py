@@ -1,6 +1,10 @@
+import sys
+import os
+sys.path.insert(0, os.path.dirname(__file__))
+
 import streamlit as st
-from .utils.style_utils import inject_premium_style
-from .utils.data_loader import get_all_dashboard_data
+from utils.style_utils import inject_premium_style
+from utils.data_loader import get_all_dashboard_data
 from modules.executive_summary import render_executive_summary
 from modules.horse_analytics import render_horse_analytics
 from modules.retail_analytics import render_retail_analytics
