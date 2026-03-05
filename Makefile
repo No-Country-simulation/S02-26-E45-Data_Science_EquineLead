@@ -21,6 +21,9 @@ deploy-api:
 install:
 	uv sync --locked
 
+run-app:
+	uv run streamlit run Data_Analyst_Project/app.py --server.port 8520
+
 lint:
 	pre-commit run --all-files
 

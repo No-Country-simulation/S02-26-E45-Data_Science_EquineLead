@@ -12,6 +12,7 @@ init_mlflow()
 client = mlflow.tracking.MlflowClient()
 
 REGISTERED_MODELS = [
+    "model_engine",
     "HORSE_P1",
     "HORSE_P2",
     "PRODS_P1",

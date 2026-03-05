@@ -6,59 +6,24 @@ sys.path.append(str(Path(__file__).resolve().parents[2]))
 from misc.config import init_mlflow, start_run, SEED, MLFLOW_EXPERIMENT_ENGINE_NAME
 from misc.utils import load_dataset, log_dataset_metadata
 import mlflow
+import joblib
 from features import build_features
 from model import train_model
 from metrics import evaluate
 import platform
 import datetime
 
+
 PATH_DATA = Path("./data/clean")
 DATASET_NAME = "horses_listings_limpio.parquet"
+
 
 # ==================================
 # DATA SCIENTIST PERSONAL CONFIG
 # ==================================
-RUN_NAME = f"knn_cosine_recommender_v1_{datetime.datetime.now():%Y%m%d_%H%M%S}"
-DS_NAME = "Daisy Quinteros Silva"  # <--- ¡Aquí vas tú!
+RUN_NAME = f"knn_cosine_recommender_{datetime.datetime.now():%Y%m%d_%H%M%S}"
+DS_NAME = "Daisy Quinteros Silva"
 STAGE = "training"
-
-# Registro de modelos en MLflow – Guía para Data Scientists
-#
-# Elegí el método de logeo según el framework con el que fue entrenado el modelo.
-# Usar el logger correcto garantiza:
-#   - Reproducibilidad
-#   - Serialización correcta
-#   - Compatibilidad con MLflow Model Registry y despliegues
-#
-# USAR mlflow.sklearn.log_model(model, artifact_path) SI:
-#   - El modelo es de scikit-learn:
-#       * LinearRegression, LogisticRegression
-#       * RandomForest, GradientBoosting
-#       * SVM, KNN, Naive Bayes
-#   - El modelo usa una API compatible con sklearn:
-#       * XGBoost (XGBClassifier / XGBRegressor)
-#       * LightGBM (LGBMClassifier / LGBMRegressor)
-#       * CatBoost (CatBoostClassifier / CatBoostRegressor)
-#
-# USAR el logger ESPECÍFICO del framework cuando esté disponible:
-#   - Modelos PyTorch            → mlflow.pytorch.log_model
-#   - Modelos TensorFlow / Keras → mlflow.tensorflow.log_model
-#   - XGBoost nativo (Booster)   → mlflow.xgboost.log_model
-#   - LightGBM nativo            → mlflow.lightgbm.log_model
-#   - Statsmodels                → mlflow.statsmodels.log_model
-#   - Spark MLlib                → mlflow.spark.log_model
-#
-# USAR mlflow.pyfunc.log_model SI:
-#   - El modelo es custom o no pertenece a un framework conocido
-#   - El modelo es heurístico, basado en reglas o lógica propia
-#   - No estás seguro de la compatibilidad con MLflow
-#
-# IMPORTANTE:
-#   - NO usar mlflow.sklearn.log_model para deep learning
-#   - Preferir siempre el logger específico del framework antes que pyfunc
-#   - En caso de duda, usar mlflow.pyfunc.log_model como fallback
-#
-# Esta convención es obligatoria para mantener un registry limpio y deployable.
 
 
 def main():
@@ -73,7 +38,9 @@ def main():
         # =====================
         # Feature Engineering
         # =====================
-        X_train, X_val, y_train, y_val = build_features(df=df, random_state=SEED)
+        X_train, X_val, y_train, y_val, tfidf, scaler = build_features(
+            df=df, random_state=SEED
+        )
 
         # =====================
         # Train
@@ -93,8 +60,8 @@ def main():
         # =====================
         log_dataset_metadata(
             name="horses_listings",
-            version="v1.0.1",
-            path="/clean/horses_listings_limpio.parquet",
+            version="v1.0.2",
+            path=f"/clean/{DATASET_NAME}",
             n_rows=df.shape[0],
             n_cols=df.shape[1],
         )
@@ -103,9 +70,6 @@ def main():
         # Reproducibility
         # =====================
         mlflow.log_param("random_state", SEED)
-        mlflow.log_param(
-            "cv_folds", 5
-        )  # Si se usa cross-validation, es solo un ejemplo
 
         # =====================
         # Environment
@@ -117,12 +81,26 @@ def main():
         # Model Info
         # =====================
         mlflow.log_param("model_type", model.__class__.__name__)
-        mlflow.log_param("model_family", "tree-based")
+        mlflow.log_param("metric", "cosine")
+        mlflow.log_param("n_neighbors", 5)
+        mlflow.log_param("features_used", "price, breed, color")
+        mlflow.log_param("vectorizer_type", "TfidfVectorizer")
+        mlflow.log_param("scaler_type", "MinMaxScaler")
 
         # =====================
         # Artifacts
         # =====================
-        mlflow.sklearn.log_model(model, artifact_path="model_engine")
+        mlflow.sklearn.log_model(
+            model,
+            artifact_path="model_engine",
+            registered_model_name="model_engine",
+        )
+
+        # Export artifacts bundle for API consumption
+        joblib.dump(
+            {"model": model, "vectorizer": tfidf, "scaler": scaler},
+            "recommendation_artifacts_v1.joblib",
+        )
 
 
 if __name__ == "__main__":

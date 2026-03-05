@@ -116,3 +116,5 @@ if __name__ == "__main__":
     set_production_version("HORSE_P2", target_version=VERSION)
     set_production_version("PRODS_P1", target_version=VERSION)
     set_production_version("PRODS_P2", target_version=VERSION)
+
+    set_production_version("model_engine", target_version=1)
