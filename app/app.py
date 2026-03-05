@@ -18,7 +18,11 @@ def pull_data():
     import json
     import tempfile
 
-    creds_dict = dict(st.secrets["gcp"])
+    try:
+        creds_dict = dict(st.secrets["gcp"])
+    except Exception as e:
+        print(f"Skipping DVC data pull. Local secrets not found: {e}")
+        return
 
     tmp = tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False)
     json.dump(creds_dict, tmp)
