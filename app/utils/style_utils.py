@@ -1,11 +1,24 @@
 import streamlit as st
 
 # Professional Color Palette
-PRO_COLORS = ["#3366FF", "#00B8D9", "#36B37E", "#FFAB00", "#FF5630", "#6554C0", "#00A3BF", "#FF8B00", "#FF7452", "#8777D9"]
+PRO_COLORS = [
+    "#3366FF",
+    "#00B8D9",
+    "#36B37E",
+    "#FFAB00",
+    "#FF5630",
+    "#6554C0",
+    "#00A3BF",
+    "#FF8B00",
+    "#FF7452",
+    "#8777D9",
+]
+
 
 def inject_premium_style():
     """Injects high-contrast professional dark theme CSS."""
-    st.markdown("""
+    st.markdown(
+        """
     <style>
         /* Force Global Theme Colors */
         [data-testid="stAppViewContainer"] {
@@ -18,11 +31,11 @@ def inject_premium_style():
             background-color: #1A1C23 !important;
             border-right: 1px solid #2D3748 !important;
         }
-        
+
         [data-testid="stSidebar"] * {
             color: #FAFAFA !important;
         }
-        
+
         /* Make the sidebar text pop */
         [data-testid="stSidebarNav"] span {
             color: #FAFAFA !important;
@@ -55,7 +68,7 @@ def inject_premium_style():
         [data-testid="stAppDeployButton"], .stDeployButton, .stToolbarActions, #MainMenu, footer {
             display: none !important;
         }
-        
+
         /* Ensure the sidebar toggle button is ALWAYS visible and contrasting */
         [data-testid="collapsedControl"] {
             display: flex !important;
@@ -64,12 +77,12 @@ def inject_premium_style():
             border-radius: 0 5px 5px 0 !important;
             color: black !important;
         }
-        
+
         header {
             background-color: transparent !important;
             box-shadow: none !important;
         }
-        
+
         /* Global Typography */
         h1, h2, h3, h4, h5, h6, p, label {
             color: #FAFAFA !important;
@@ -109,8 +122,8 @@ def inject_premium_style():
         }
 
         /* Expanders (Slicers) - High Contrast Fix for Local & Cloud */
-        details[data-testid="stExpander"], 
-        .st-emotion-cache-1h9usn1, 
+        details[data-testid="stExpander"],
+        .st-emotion-cache-1h9usn1,
         .st-emotion-cache-1lsfsc6 {
             background-color: #1A1C24 !important;
             border: 1px solid #333333 !important;
@@ -119,20 +132,20 @@ def inject_premium_style():
             overflow: hidden !important;
         }
 
-        details[data-testid="stExpander"] summary, 
-        .st-emotion-cache-1u3264x, 
+        details[data-testid="stExpander"] summary,
+        .st-emotion-cache-1u3264x,
         summary.e12o48ov4 {
             background-color: #1A1C24 !important;
             color: #D4AF37 !important;
             border-bottom: 1px solid #333333 !important;
         }
-        
+
         details[data-testid="stExpander"] summary:hover {
             background-color: #2D3748 !important;
         }
 
         /* Kill white background on inner expander content in Cloud */
-        div[data-testid="stExpanderDetails"], 
+        div[data-testid="stExpanderDetails"],
         .st-emotion-cache-pxambx {
             background-color: #1A1C24 !important;
             padding: 1.5rem !important;
@@ -140,7 +153,7 @@ def inject_premium_style():
         }
 
         /* Fix Selectboxes/Multiselects in Cloud */
-        div[data-baseweb="select"], 
+        div[data-baseweb="select"],
         div[data-baseweb="input"],
         .st-emotion-cache-1p6fhcq,
         .st-emotion-cache-1er6fxc {
@@ -149,13 +162,16 @@ def inject_premium_style():
         }
 
         /* Force dark background on Dataframes and general containers */
-        div[data-testid="stDataFrame"], 
+        div[data-testid="stDataFrame"],
         div[data-testid="stDataFrame"] > div,
         .st-emotion-cache-1kyx738 {
             background-color: #1A1C24 !important;
         }
     </style>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
+
 
 def apply_pro_chart_style(fig, title=""):
     """Applies a dark card-like style to plotly figures."""
@@ -168,15 +184,27 @@ def apply_pro_chart_style(fig, title=""):
         font=dict(color="#94A3B8"),
         xaxis=dict(showgrid=True, gridcolor="#2D3748", zerolinecolor="#2D3748"),
         yaxis=dict(showgrid=True, gridcolor="#2D3748", zerolinecolor="#2D3748"),
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1, font=dict(size=12)),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1,
+            font=dict(size=12),
+        ),
         hovermode="closest",
         shapes=[
             dict(
-                type="rect", xref="paper", yref="paper",
-                x0=0, y0=0, x1=1, y1=1,
+                type="rect",
+                xref="paper",
+                yref="paper",
+                x0=0,
+                y0=0,
+                x1=1,
+                y1=1,
                 line=dict(color="#2D3748", width=1),
-                layer="below"
+                layer="below",
             )
-        ]
+        ],
     )
     return fig

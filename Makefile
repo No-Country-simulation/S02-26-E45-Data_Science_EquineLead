@@ -1,17 +1,17 @@
--include .env
-export
+ifneq (,$(wildcard .env))
+    include .env
+    export
+endif
 
-.PHONY: install lint run-data-pipeline run-prefect terraform-deploy terraform-destroy
+.PHONY: install test-api deploy-api lint run-data-pipeline run-prefect terraform-deploy terraform-destroy
 
 PATH_INFRA = infra/terraform
 PATH_DEPLOY_API = ./deployment
 IMAGE_TAG = $(shell git rev-parse --short HEAD)
 
 test-api:
-	docker build -t $(DOCKER_USERNAME)/equinelead-api -f $(PATH_DEPLOY_API)/Dockerfile.api . 
+	docker build -t $(DOCKER_USERNAME)/equinelead-api:$(IMAGE_TAG) -f $(PATH_DEPLOY_API)/Dockerfile.api .
 	docker run -p 8080:8080 $(DOCKER_USERNAME)/equinelead-api:$(IMAGE_TAG)
-
-
 
 deploy-api:
 	docker build -t $(DOCKER_USERNAME)/equinelead-api:$(IMAGE_TAG) -f $(PATH_DEPLOY_API)/Dockerfile.api .
@@ -25,7 +25,8 @@ run-app:
 	uv run streamlit run Data_Analyst_Project/app.py --server.port 8520
 
 lint:
-	pre-commit run --all-files
+	uv run pre-commit autoupdate
+	cmd /C "set PYTHONIOENCODING=utf-8 && uv run pre-commit run --all-files"
 
 run-data-pipeline:
 	docker compose -f deployment/docker-compose.yml --profile pipeline up --build

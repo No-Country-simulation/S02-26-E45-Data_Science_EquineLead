@@ -10,6 +10,7 @@ init_mlflow()
 
 client = mlflow.tracking.MlflowClient()
 
+
 def clear_stages(model_name: str):
     """Limpia el stage de todas las versiones de un modelo"""
     versions = client.search_model_versions(f"name='{model_name}'")
@@ -21,9 +22,12 @@ def clear_stages(model_name: str):
                 version=v.version,
                 stage="None",  # quita el stage completamente
             )
-            print(f"✅ {model_name} v{v.version} → stage removido (era: {v.current_stage})")
+            print(
+                f"✅ {model_name} v{v.version} → stage removido (era: {v.current_stage})"
+            )
         else:
             print(f"   {model_name} v{v.version} → ya estaba sin stage")
+
 
 if __name__ == "__main__":
     # Limpiar un modelo específico

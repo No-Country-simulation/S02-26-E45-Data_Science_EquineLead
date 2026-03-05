@@ -12,7 +12,6 @@ from metrics import evaluate
 import platform
 import datetime
 
-
 PATH_DATA = Path("./data/clean")
 DATASET_NAME = "dataset_name.parquet"
 

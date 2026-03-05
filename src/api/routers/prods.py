@@ -22,17 +22,26 @@ def validate_features(features: dict, expected_features):
     missing = expected - received
 
     if extra:
-        raise HTTPException(status_code=422, detail=f"Features no soportadas: {sorted(extra)}")
+        raise HTTPException(
+            status_code=422, detail=f"Features no soportadas: {sorted(extra)}"
+        )
     if missing:
-        raise HTTPException(status_code=422, detail=f"Features faltantes: {sorted(missing)}")
+        raise HTTPException(
+            status_code=422, detail=f"Features faltantes: {sorted(missing)}"
+        )
 
     nulls = [k for k, v in features.items() if v is None]
     if nulls:
-        raise HTTPException(status_code=422, detail=f"Features con valor nulo: {sorted(nulls)}")
+        raise HTTPException(
+            status_code=422, detail=f"Features con valor nulo: {sorted(nulls)}"
+        )
 
     string_errors = [k for k, v in features.items() if isinstance(v, str)]
     if string_errors:
-        raise HTTPException(status_code=422, detail=f"Features con tipo string no permitido: {sorted(string_errors)}")
+        raise HTTPException(
+            status_code=422,
+            detail=f"Features con tipo string no permitido: {sorted(string_errors)}",
+        )
 
 
 def run_prediction(features: dict):

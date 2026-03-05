@@ -1,7 +1,7 @@
 import requests
 
 API_URL = "https://equinelead-api-516367992092.us-east1.run.app/horse/predict"
-#API_URL = "http://localhost:8080/horse/predict"
+# API_URL = "http://localhost:8080/horse/predict"
 
 sample_input = {
     "avg_comment_length": 0,
@@ -31,8 +31,8 @@ sample_input = {
     "viewed_pro_sellers": 0,
     "viewed_sport_elite": 0,
     "viewed_working_elite": 0,
-    "extra_features": 0
-  }
+    "extra_features": 0,
+}
 
 sample_input = {"features": sample_input}
 

@@ -69,7 +69,6 @@ def build_rees_sample(
     selected = defaultdict(list)
 
     for chunk in pd.read_csv(source_csv, chunksize=chunksize):
-
         for cls, n_target in target_per_class.items():
             collected = sum(len(x) for x in selected[cls])
             remaining = n_target - collected

@@ -19,6 +19,9 @@ REGISTERED_MODELS = [
     "PRODS_P2",
 ]
 
+# Modelos que tienen artifacts_bundle (vectorizer, scaler, transform_fn)
+MODELS_WITH_BUNDLE = {"model_engine"}
+
 
 def download_production_model(model_name: str, dst_path: str = "./models/production/"):
     """Descarga el modelo con alias 'production' del registry"""
@@ -43,8 +46,20 @@ def download_production_model(model_name: str, dst_path: str = "./models/product
         artifact_uri=model_uri,
         dst_path=local_path,
     )
-
     print(f"✅ {model_name} descargado en: {local_path}")
+
+    # Descargar artifacts_bundle si el modelo lo tiene
+    if model_name in MODELS_WITH_BUNDLE:
+        try:
+            bundle_uri = f"runs:/{run_id}/artifacts_bundle"
+            mlflow.artifacts.download_artifacts(
+                artifact_uri=bundle_uri,
+                dst_path=local_path,
+            )
+            print(f"✅ artifacts_bundle descargado en: {local_path}")
+        except Exception as e:
+            print(f"⚠️  {model_name} no tiene artifacts_bundle: {e}")
+
     return local_path
 
 

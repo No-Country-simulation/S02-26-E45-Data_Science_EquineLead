@@ -19,12 +19,13 @@ EXPERIMENT_MAP = {
 }
 
 # Columnas categóricas que requieren TargetEncoder
-COLS_TARGET_ENCODE = ['user_region', 'user_card_issuer', 'user_domain']
+COLS_TARGET_ENCODE = ["user_region", "user_card_issuer", "user_domain"]
 
 # Mapeo de target para TargetEncoder
-TARGET_MAP = {'Lead Bronce': 0, 'Lead Plata': 1, 'Lead Oro': 2}
+TARGET_MAP = {"Lead Bronce": 0, "Lead Plata": 1, "Lead Oro": 2}
 
-RUN_ID="dd6f2989958a48d587e2769933622ff8"
+RUN_ID = "dd6f2989958a48d587e2769933622ff8"
+
 
 def get_log_model_fn(model):
     module = type(model).__module__
@@ -53,7 +54,7 @@ def get_run_id(run_id=None, experiment_name=None):
     runs = client.search_runs(
         experiment_ids=experiment_ids,
         filter_string="tags.status = 'champion'",
-        max_results=1
+        max_results=1,
     )
 
     if not runs:
@@ -99,7 +100,9 @@ def encode_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     target_ord = df["horse_target"].map(TARGET_MAP)
     te = TargetEncoder(cols=COLS_TARGET_ENCODE, smoothing=10)
     df_encoded = df.copy()
-    df_encoded[COLS_TARGET_ENCODE] = te.fit_transform(df[COLS_TARGET_ENCODE], target_ord)
+    df_encoded[COLS_TARGET_ENCODE] = te.fit_transform(
+        df[COLS_TARGET_ENCODE], target_ord
+    )
     return df_encoded
 
 
@@ -159,7 +162,7 @@ def log_model_to_registry(
     paso: str,
     dominio: str,
     signature,
-    input_example
+    input_example,
 ):
     with mlflow.start_run(run_name=new_run_name, experiment_id=experiment_id):
         mlflow.log_params(params)
@@ -188,7 +191,9 @@ def assign_alias(registered_name: str, alias: str):
         alias=alias,
         version=latest_version.version,
     )
-    print(f"✅ Registrado como: {registered_name} con alias '{alias}' → v{latest_version.version}")
+    print(
+        f"✅ Registrado como: {registered_name} con alias '{alias}' → v{latest_version.version}"
+    )
 
 
 def handle_models(
@@ -218,8 +223,8 @@ def handle_models(
         # Extraer paso y dominio del nombre de la carpeta
         # ej: "modelo_p1_horse" → paso="p1", dominio="horse"
         parts = Path(folder_path).name.split("_")
-        paso = parts[1]                         # "p1" o "p2"
-        dominio = parts[-1]                     # "horse" o "prods"
+        paso = parts[1]  # "p1" o "p2"
+        dominio = parts[-1]  # "horse" o "prods"
         paso_label = paso.replace("p", "paso")  # "paso1" o "paso2"
 
         log_model_fn = get_log_model_fn(model)
@@ -232,7 +237,9 @@ def handle_models(
         print(f"   Params: {list(params_filtrados.keys())}")
         print(f"   Métricas: {list(metricas_filtradas.keys())}")
 
-        signature, input_example = build_signature(model, df) if df is not None else (None, None)
+        signature, input_example = (
+            build_signature(model, df) if df is not None else (None, None)
+        )
 
         log_model_to_registry(
             model=model,
@@ -260,7 +267,6 @@ init_mlflow()
 client = mlflow.tracking.MlflowClient()
 
 if __name__ == "__main__":
-
     df = pd.read_parquet("./data/clean/df_final.parquet")
 
     # Solo descargar

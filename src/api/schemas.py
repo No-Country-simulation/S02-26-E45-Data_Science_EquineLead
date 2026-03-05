@@ -1,7 +1,9 @@
 from pydantic import BaseModel
 
+
 class InputData(BaseModel):
     features: dict
+
 
 class HorsePredictRequest(InputData):
     model_config = {
@@ -40,6 +42,7 @@ class HorsePredictRequest(InputData):
         }
     }
 
+
 class ProdsPredictRequest(InputData):
     model_config = {
         "json_schema_extra": {
@@ -67,7 +70,23 @@ class ProdsPredictRequest(InputData):
                     "viewed_machine_washable": 0,
                     "viewed_uv_protection": 0,
                     "viewed_waterproof": 0,
-                }   
+                }
+            }
+        }
+    }
+
+
+class HorseRecommendRequest(BaseModel):
+    breed: str
+    color: str
+    price: float
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "breed": "andalusian",
+                "color": "bay",
+                "price": 22000.0,
             }
         }
     }

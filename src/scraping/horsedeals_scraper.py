@@ -94,7 +94,6 @@ def scrape_listings(max_pages=2):
                 )
 
                 for span_key, span_value in zip(span_key_features, span_value_features):
-
                     key = span_key.get_text(strip=True) if span_key else None
                     value = span_value.get_text(strip=True) if span_value else None
 

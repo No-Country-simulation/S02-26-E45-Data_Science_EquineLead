@@ -11,6 +11,8 @@ init_mlflow()
 client = mlflow.tracking.MlflowClient()
 
 3
+
+
 def get_model_versions(model_name: str) -> list:
     """Obtiene todas las versiones con sus aliases correctamente cargados"""
     try:
@@ -23,26 +25,20 @@ def get_model_versions(model_name: str) -> list:
 
     # Recargar cada versión individualmente para obtener los aliases
     versions_with_aliases = [
-        client.get_model_version(model_name, v.version)
-        for v in versions
+        client.get_model_version(model_name, v.version) for v in versions
     ]
 
     return versions_with_aliases
 
+
 def get_version_by_alias(versions: list, alias: str):
     """Retorna la versión que tiene un alias específico, o None si no existe"""
-    return next(
-        (v for v in versions if alias in (v.aliases or [])),
-        None
-    )
+    return next((v for v in versions if alias in (v.aliases or [])), None)
 
 
 def get_version_by_number(versions: list, version_number: int):
     """Retorna la versión por número, o None si no existe"""
-    return next(
-        (v for v in versions if int(v.version) == version_number),
-        None
-    )
+    return next((v for v in versions if int(v.version) == version_number), None)
 
 
 def print_model_status(model_name: str, versions: list, label: str = "Estado"):
@@ -56,7 +52,7 @@ def print_model_status(model_name: str, versions: list, label: str = "Estado"):
 def clear_aliases(model_name: str, version: str):
     """Elimina todos los aliases de una versión específica"""
     v = client.get_model_version(model_name, version)
-    for alias in (v.aliases or []):
+    for alias in v.aliases or []:
         client.delete_registered_model_alias(name=model_name, alias=alias)
         print(f"   🗑️  Alias '{alias}' eliminado de {model_name} v{version}")
 
@@ -64,7 +60,9 @@ def clear_aliases(model_name: str, version: str):
 def archive_version(model_name: str, version: str):
     """Limpia aliases existentes y asigna 'archived' a una versión"""
     clear_aliases(model_name, version)
-    client.set_registered_model_alias(name=model_name, alias="archived", version=version)
+    client.set_registered_model_alias(
+        name=model_name, alias="archived", version=version
+    )
     print(f"📦 {model_name} v{version} → archived")
 
 
@@ -93,7 +91,7 @@ def set_production_version(model_name: str, target_version: int):
             return
         archive_version(model_name, current_production.version)
     else:
-        print(f"\n⚠️  No había ninguna versión en production")
+        print("\n⚠️  No había ninguna versión en production")
 
     # Limpiar aliases de la versión target antes de promover
     clear_aliases(model_name, str(target_version))
@@ -108,6 +106,7 @@ def set_production_version(model_name: str, target_version: int):
 
     versions = get_model_versions(model_name)
     print_model_status(model_name, versions, label="Estado final")
+
 
 if __name__ == "__main__":
     # Mover una versión específica a production
