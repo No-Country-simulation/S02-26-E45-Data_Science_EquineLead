@@ -24,10 +24,8 @@ def pull_data():
     lock_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".dvc", "tmp", "lock"))
     if os.path.exists(lock_path):
         os.remove(lock_path)
-    
-    # Forzar uso del remote de DagsHub
-    subprocess.run(["dvc", "remote", "default", "dagshub"], check=True)
-    subprocess.run(["dvc", "pull", "--remote", "dagshub"], check=True)
+
+    subprocess.run(["dvc", "pull"], check=True)
 
 pull_data()
 
