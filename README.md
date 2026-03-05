@@ -1,199 +1,217 @@
-# 🐎 EquineLead: The Official Data Analyst Masterpiece Documentation
+![banner](./assets/equinelead_logo_github.jpg)
 
-Bienvenido a la documentación oficial, a nivel de **Reporte Ejecutivo y Arquitectura Técnica Senior**, del proyecto EquineLead: *De Directorio Estático a Marketplace Inteligente*. A petición del usuario, esta documentación ha sido elevada en extensión, minuciosidad técnica y narrativa hiperdetallada enfocado estrictamente al rol del **Data Analyst** y su entregable final (El Dashboard).
+# EquineLead: Data-Driven Growth Engine for the Horse Industry
 
-Esta lectura está diseñada para tomar aproximadamente 15-20 minutos a directivos y expone sin omitir un solo rincón, cada KPI, cada algoritmo utilizado en la visualización y cada simulación construida en la carpeta `app/`.
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Prefect](https://img.shields.io/badge/Prefect-ffffff?style=for-the-badge&logo=prefect&logoColor=070E10)
+![UV](https://img.shields.io/badge/UV-000000?style=for-the-badge&logo=astral&logoColor=white)
+![Google Cloud](https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
+![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)
+![BeautifulSoup](https://img.shields.io/badge/BeautifulSoup-4E9A06?style=for-the-badge&logo=python&logoColor=white)
+![LXML](https://img.shields.io/badge/LXML-A90533?style=for-the-badge&logo=xml&logoColor=white)
+![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
+![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white)
+![Apache Parquet](https://img.shields.io/badge/Apache_Parquet-6070AD?style=for-the-badge&logo=apache&logoColor=white)
+![Faker](https://img.shields.io/badge/Faker-CF4141?style=for-the-badge&logo=python&logoColor=white)
 
----
-
-## 📑 Tabla de Contenidos Analíticos (The Analyst Manifesto)
-
-1. [Génesis del Problema Comercial: La Crisis de Conversión](#1-génesis-del-problema-comercial-la-crisis-de-conversión)
-2. [Solución Propuesta: Data Analytics as a Catalyst](#2-solución-propuesta-data-analytics-as-a-catalyst)
-3. [Arquitectura del Dashboard (La Carpeta `app/`)](#3-arquitectura-del-dashboard--la-carpeta-app-)
-4. [Inmersión Técnica Módulo 1: Auditoría Operativa (Data Engineering)](#4-inmersión-técnica-módulo-1-auditoría-operativa-data-engineering)
-5. [Inmersión Técnica Módulo 2: Core Business (El Mercado Ecuestre)](#5-inmersión-técnica-módulo-2-core-business-el-mercado-ecuestre)
-6. [Inmersión Técnica Módulo 3: Rendimiento Algorítmico (Machine Learning)](#6-inmersión-técnica-módulo-3-rendimiento-algorítmico-machine-learning)
-7. [Inmersión Técnica Módulo 4: Inferencia Causal (Data Science 3)](#7-inmersión-técnica-módulo-4-inferencia-causal-data-science-3)
-8. [Inmersión Técnica Módulo 5: Motor Financiero Estocástico (Simulador ROI)](#8-inmersión-técnica-módulo-5-motor-financiero-estocástico-simulador-roi)
-9. [Directrices del Lenguaje Gráfico (Plotly & Streamlit)](#9-directrices-del-lenguaje-gráfico-plotly-streamlit)
-10. [Conclusiones del Data Analyst](#10-conclusiones-del-data-analyst)
+**EquineLead** es un motor de crecimiento basado en datos diseñado para resolver la fragmentación del mercado ecuestre. Este sistema transforma la navegación casual en leads calificados mediante la integración de scrapers inteligentes, embudos automatizados y modelos de propensión de compra.
 
 ---
 
-## 1. Génesis del Problema Comercial: La Crisis de Conversión
-
-La industria ecuestre en línea está atrapada en la década de los 2000. Mientras plataformas como Airbnb o Zillow introdujeron motores algorítmicos para emparejar instantáneamente la demanda (Usuarios) con la oferta (Bienes Inmuebles), el nicho de mercado ecuestre operaba sobre listados obsoletos, estáticos, sin curaduría y plagados de un sistema ineficiente para distinguir un prospecto "vitriguero" (Usuario sin plata que navega por ocio) frente a una "Finca Olímpica de Salto" (Stakeholder B2B).
-
-El síntoma primordial a nivel numérico que alertó a nuestro departamento analítico fue:
-- **Tasa de Conversión (CVR) Anémica:** Empantanada en un **13.5%**. Esto significa que por cada 100 usuarios que entran a ver las especificaciones biomecánicas de un caballo belga Sangre Caliente, casi 87 abandonaban sin registrar su correo de interés (Lead).
-- **Costo Por Lead (CPL) Insostenible:** La incapacidad del departamento de marketing digital para aislar clics recreacionales provocó que las facturas publicitarias por cada contacto escalonaran de forma dramática, ahogando los márgenes del modelo de negocio de listado digital.
-
-### El Rol del Analista
-¿Cómo puede el equipo técnico demostrar el valor del trabajo? De nada sirve entrenar modelos LightGBM complejos o hacer pipelines en Spark (Big Data) si la Gerencia de Inversiones (C-Level) no puede **palpar** y **jugar** con los números. El desarrollador Data Analyst entra aquí como el Traductor Supremo: Su misión es crear un panel de control inmersivo y reactivo.
+## 📖 Tabla de Contenidos
+- [Definición del Problema](#definición-del-problema)
+- [Arquitectura y Stack](#arquitectura-del-sistema)
+- [Infraestructura (Terraform)](#infraestructura-como-código-iac)
+- [Pipeline de Datos](#pipeline-de-datos-etlelt)
+- [Guía de Ejecución Rápida](#guía-de-ejecución-quick-start)
 
 ---
 
-## 2. Solución Propuesta: Data Analytics as a Catalyst
+## Definición del Problema
+### El Desafío
+La industria ecuestre opera en un ecosistema nicho, altamente fragmentado y con costos de adquisición (CAC) elevados. Actualmente, identificar a un comprador de un caballo de salto de $50,000 frente a un entusiasta casual es una tarea manual e ineficiente.
 
-El **Dashboard Executive EquineLead** (albergado en la carpeta `app/`) se convierte en la única fuente de la verdad para el ciclo de vida del dato. No es un panel con gráficos estáticos exportados desde PowerBI en imagen, sino una aplicación web completa desarrollada íntegramente de extremo a extremo en Python y renderizada con Streamlit.
+### Objetivos del Proyecto
++ **Identificación de Leads de Alto Valor**: Clasificar automáticamente usuarios en los cuatro verticales: Eventos, Servicios, Caballos y Equipamiento.
++ **Reducción del Ciclo de Venta**: Acortar el tiempo entre el "interés inicial" y la "calificación (SQL)" mediante scoring predictivo.
++ **Optimización de B2B y B2C**: Diferenciar el comportamiento de propietarios individuales frente a administradores de centros hípicos o mayoristas.
 
-### Filosofías de Diseño del Analista:
-- **Single Source of Truth:** Centralización. Las métricas generadas por MLflow loggeado remotamente o los pipelines fallidos detectados por Airflow se agregan en paneles únicos.
-- **Narrativa Continua (Storytelling):** El dashboard de Streamlit obliga al Stakeholder a leer una historia. Comienza admitiendo la fragilidad de los datos (Módulo 1), viaja explorando la macroeconomía (Módulo 2), revisa el cerebro de la bestia algorítmica (Módulo 3), desafía el escepticismo probabilístico (Módulo 4), y culmina en lo único que importa en un negocio: El Dinero y el ROI a futuro (Módulo 5).
-- **Mock Data Tolerance (Resiliencia):** La obra maestra analítica de este ecosistema radica en `app/utils/data_loader.py`. Si Google Cloud Platform colapsa catastróficamente; la interfaz no arrojará una página en blanco o un Error 500 críptico. Utilizará distribuciones Gaussianas artificiales con semilla dura `np.random.seed()` para falsificar una historia matemáticamente idéntica y mantener viva la reunión corporativa.
+### KPIs de Éxito
++ **Lead Quality Score (LQS)**: Precisión del modelo para predecir la conversión (Meta: >80%).
++ **CAC Reduction**: Reducción esperada del 15% en costos de marketing mediante segmentación precisa.
++ **Conversion Rate (CVR)**: Mejora del flujo de ventas en el vertical de "Caballos de Alto Valor".
 
 ---
 
-## 3. Arquitectura del Dashboard (La Carpeta `app/`)
+## Arquitectura del Sistema
+El proyecto está diseñado bajo principios de Modern Data Stack, priorizando la velocidad de ejecución y la observabilidad.
 
-En el rediseño más reciente, se eliminó drásticamente todo el "espagueti algorítmico" en el nivel raíz del proyecto para cumplir con los estándares de limpieza de Software Engineering. La estructura pura del repositorio Data Analyst ahora converge rígidamente en:
+### 🛠 Stack Tecnológico
 
-```text
-EquineLead (Raíz)
-├── app/                              # EL CEREBRO DE VISUALIZACIÓN
-│   ├── app.py                        # Router / Skeleton de navegación.
-│   ├── requirements.txt              # Módulo autocontenido (solo requiere esto).
-│   ├── pages/                        # Componentes de páginas enlazadas (Módulos 1-5).
-│   │   ├── 1_Market_Overview.py      
-│   │   ├── 2_Data_Validation.py      
-│   │   ├── 3_ML_Platform.py          
-│   │   ├── 4_Experimentation.py      
-│   │   └── 5_ROI_Simulator.py        
-│   ├── components/                   # Librería de componentes UI
-│   │   ├── ui_cards.py               # Genera métricas (st.metric wrap up).
-│   │   └── charts.py                 # ALOJA LOS 20 GRÁFICOS MATEMÁTICOS DE PLOTLY.
-│   └── utils/                        # Engine Trasero
-│       └── data_loader.py            # Orquestador del Mock Data y tolerancias.
-├── scripts/                          # (O Eliminados) Archivos satélite descartados.
-└── deploy_app.md                     # Manual avanzado (20+ pág.) de despliegue.
++ **Orquestación**: Prefect (Local + Prefect Cloud).
++ **Gestión de Entorno**: UV (Instalación de dependencias 70% más rápida que pip).
++ **Contenerización**: Docker & Docker-compose.
++ **Ingesta**: Playwright (Dinámico), BeautifulSoup4 (Estático)
++ **Cloud Storage**: Google Cloud Storage (Data Lake en formato Parquet)
++ **Data Synthesis**: Python Faker + Proyecciones de [Rees46 Dataset](https://www.kaggle.com/mkechinov/ecommerce-behavior-data-from-multi-category-store).
+
+---
+
+## Infraestructura como Código (IaC)
+
+Para garantizar la reproducibilidad total, la infraestructura de la nube (Google Cloud Storage) se gestiona mediante **Terraform**. Esto permite levantar el Data Lake y configurar los permisos necesarios en segundos.
+
+### Configuración de Infraestructura
+
+1.  **Requisitos**: Tener instalado [Terraform](https://www.terraform.io/downloads) y el [Google Cloud CLI](https://cloud.google.com/sdk/docs/install).
+2.  **Autenticación**:
+    ```powershell
+    gcloud auth application-default login
+    ```
+3.  **Personalización**:
+    Crea un archivo `infra/terraform/terraform.tfvars` para definir tus variables:
+    ```hcl
+    project_id           = "tu-id-de-proyecto"
+    region               = "us_weast1"
+    bucket_name          = "equinelead-datalake"
+    storage_class        = "STANDARD"
+    service_account_name = "your-admin"
+    ```
+4.  **Despliegue**:
+    ```powershell
+    # Inicializar y aplicar cambios
+    terraform -chdir=infra/terraform init
+    terraform -chdir=infra/terraform validate
+    terraform -chdir=infra/terraform plan -out=tfplan
+    terraform -chdir=infra/terraform apply "tfplan"
+    ```
+
+### Gestión de Credenciales
+Una vez completado el `apply`, Terraform generará una Service Account Key. Extráela para que el pipeline de Docker pueda autenticarse:
+```powershell
+$rawKey = terraform -chdir=infra/terraform output -raw service_account_key
+[System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($rawKey)) | Out-File -FilePath "./secrets/gcp-sa-key.json" -Encoding ascii
+```
+---
+
+## Pipeline de Datos (ETL/ELT)
+
+![pipeline_run](./assets/demo_flow_data_pipeline.png)
+
+### Ingesta y Scraping Paralelizado
+El pipeline ejecuta múltiples scrapers de forma concurrente dentro de contenedores Docker:
++ **Playwright**: Para la extracción de datos en sitios dinámicos de subastas y clasificados.
++ **BeautifulSoup4 + lxml**: Para el procesamiento rápido de directorios estáticos de servicios y eventos.
+
+### Generación de Datos Sintéticos (Behavioral Tracking)
+Para simular el comportamiento de usuario, se mapearon los eventos del dataset de Rees46 a un entorno ecuestre ficticio:
+
++ **Mapeo de Categorías**: Los productos electrónicos/hogar se transformaron en categorías como Sillas de Salto, Suplementos y Publicaciones de Caballos.
++ **Identidades con Faker**: Se generaron perfiles de usuarios únicos (Leads) con historiales de navegación coherentes.
++ **Proyección de Eventos**: Se recrearon funnels de conversión (view -> cart -> purchase) para identificar patrones de "Intención de Compra".
+
+### Limpieza y Carga (GCP)
++ **Transformación**: Limpieza de strings, normalización de datos numericos y manejo de valores nulos en paralelo.
++ **Storage**: Los datos finales se serializan en Parquet para optimizar el peso y la velocidad de consulta, y se suben a un bucket de Google Cloud Storage.
+
+### Diagrama Entidad-Relación (DER)
+
+```mermaid
+erDiagram
+    products_listings ||--o{ product_session_info : ""
+    users_info ||--o{ product_session_info : ""
+    users_info ||--o{ horses_session_info : ""
+    horses_listings ||--o{ horses_session_info : ""
+
+    users_info {
+        uuid user_id PK
+        varchar name
+        varchar gender
+        varchar country
+        varchar city
+        varchar address
+        varchar credit_card_info
+        varchar email
+        varchar phone_number
+        json job_info
+        varchar device_type
+        varchar traffic_source
+        date first_seen
+    }
+
+    horses_session_info {
+        uuid user_id FK
+        int horse_id FK
+        varchar event_type
+        datetime event_time
+    }
+
+    product_session_info {
+        uuid user_id FK
+        int Item_ID FK
+        varchar event_type
+        datetime event_time
+    }
+
+    horses_listings {
+        int Horse_ID PK
+        varchar Breed
+        varchar Name
+        varchar Gender
+        boolean In_Foal
+        float Height_hh
+        float Weight_lbs
+        varchar Temperament
+    }
+
+    products_listings {
+        int Item_ID PK
+        varchar Name
+        int Stock
+        text Description
+        float Price
+        varchar Images
+        varchar URL
+    }
 ```
 
-Para acceder al funcionamiento real: `streamlit run app/app.py`.
-
-A continuación, destripamos a nivel granular y científico, cada página construida.
-
 ---
 
-## 4. Inmersión Técnica Módulo 1: Auditoría Operativa (Data Engineering)
+## Guía de Ejecución (Quick Start)
+Este proyecto es totalmente reproducible y "Plug & Play".
 
-*(Archivo Interno: `app/pages/2_Data_Validation.py`)*
+> Requisitos: Docker y una cuenta en Prefect Cloud (opcional para logs).
 
-El pilar inicial se denomina "Módulo de Ingeniería". El Analista de Datos obedece a la ley inexorable: **Garbage In, Garbage Out (GIGO)**. El mejor modelo y el financiero no valdrán nada si los scrapers de la infraestructura le inyectan veneno operativo (nulls infinitos o volumen colapsado).
+#### Clonar el repositorio:
 
-### Gráficos Maestros Desarrollados:
+```bash
+git clone https://github.com/No-Country-simulation/S02-26-E45-Data_Science_EquineLead
+cd S02-26-E45-Data_Science_EquineLead
+```
+#### Configurar variables de entorno:
+Crea un archivo .env con tus credenciales de GCP y el API Key de Prefect.
 
-1.  **Volumen de Extracción Diario (Area Chart):** 
-    Desarrollado en un gráfico de área sombreado que ilustra la cantidad de listings extraídos (ej. caballos, equipamiento) contra una base de tiempo. Cualquier declive empinado de la montaña indica que los captchas de las páginas webs atacadas modificaron su estructura HTML, rompiendo nuestro Scrapy.
-2.  **Distribución del Funnel de Eventos (Donut Chart):**
-    Visualización esencial de embudo circular de rastreo en JS: % de Vistas (100k) -> % de Entradas a Ficha (30k) -> % de Leads (4k). Un estrangulamiento súbito entre Entradas a Ficha y Leads genera una alarma roja tipo P1 dirigida al Frontend.
-3.  **Monitoreo del Data Drift vía Test de Kolmogorov-Smirnov (KS Charting):**
-    Exquisita adición matemática. El Analista compara la distribución de las edades o precios de los caballos raspados hace 3 meses (Base Line) contra los scrapeados hoy (Curva Punteada). Genera una gráfica de curvas donde se delata el punto exacto donde la distancia KS es inaceptable (p-value > 0.05), lo que fuerza al equipo técnico a realizar un "Model Retraining".
-4.  **Mapa Cuantitativo de Nulls por Columna (Bar Chart Condicional):**
-    En vez de la molesta e ilegible visualización matriz-calor (`sns.heatmap(df.isnull())`) usada frecuentemente de manera descuidada, hemos propuesto un agresivo gráfico de barras horizontales, colorido mediante `RdYlGn` (Rojo-Amarillo-Verde). Expresa rigurosamente qué columnas logran >95% de llenado de celdas (Verde puro) contra columnas inservibles cargadas de basura (Rojo oscuro). Validamos que nuestra arquitectura ETL entrega más que diamantes limpios.
+```bash
+PREFECT_API_URL="https://api.prefect.cloud/api/accounts/[ACCOUNT-ID]/workspaces/[WORKSPACE-ID]"
+PREFECT_API_KEY="[API-KEY]"
+GCP_PROJECT_ID="tu_id_proyecto"
+GCP_BUCKET_NAME="tu_nombre_bucket"
+GOOGLE_APPLICATION_CREDENTIALS="path_to_credentials_json"
+```
 
----
+#### Loguearte en Prefect Cloud:
 
-## 5. Inmersión Técnica Módulo 2: Core Business (El Mercado Ecuestre)
+```bash
+prefect cloud login
+```
 
-*(Archivo Interno: `app/pages/1_Market_Overview.py`)*
+#### Levantar la infraestructura:
 
-Este es el módulo enfocado a los Directores de Marketing y Estrategia Expansiva. Analiza el comportamiento general en sí, desligándose temporalmente de modelos predictivos y basándose puramente en Estadística Descriptiva (Análisis Exploratorio de Datos Avanzado - EDA).
+```bash
+docker compose --profile pipeline up --build
+```
 
-### Gráficos Maestros Desarrollados:
+Este comando levantará el agente de Prefect, construira el contenedor e instalará dependencias con UV y disparará el flujo de ingesta.
 
-5.  **TAM Distribution by Country (Hierarchical Pie/Treemap):**
-    ¿Dónde habitan los dueños ricos del negocio hípico a nivel multiregional? Esta visualización expone de inmediato los clústers gigantes. Ej.: "Alemania domina con el 40%, Estados Unidos domina los establos privados periféricos en un 25% y Sudamérica emerge en 5%". Permite redirigir los presupuestos (AdWords) quirúrgicamente.
-6.  **Costo de la Incapacidad: CPL Antiguo vs CPL Machine Learning (Barra de Fisión):**
-    Un gráfico letal. Expone la sangría de dinero que ocasionaba utilizar marketing aleatorizado (Old CPL de $42 USD) frente al nuevo sistema optimizado donde solo pujamos publicidad por los usuarios que la IA indica que tienen alta probabilidad matemática (New CPL de $4 USD). La comparación lado a lado es el escudo definitivo frente a presupuestos recortados.
-7.  **Estacionalidad Macro del Tráfico (Velas o Line Markers):**
-    Detecta los pulsos biológicos obligatorios (ciclos de cría, pariciones, climas de invierno europeos que congelan competencias de salto), superponiendo esto con el engagement digital de la plataforma para ajustar ventanas temporales presupuestarias.
-8.  **Distribución Asimétrica del Precio de Élite (Histogram Bins Ajustado):**
-    Uno de los gráficos descriptivos clave. Dado que la distribución de precios equinos tiene una extrema *Left-Bound* y asume una larga curva cola-derecha (*Right-Skewness* generada por rarezas multimillonarias), este histograma (a menudo empotrado junto a línea Logarítmica) demuestra visualmente por qué los Data Scientists deben normalizar la variable previo a meterlo al árbol de decisión matemático.
-
----
-
-## 6. Inmersión Técnica Módulo 3: Rendimiento Algorítmico (Machine Learning)
-
-*(Archivo Interno: `app/pages/3_ML_Platform.py`)*
-
-El terreno de los Científicos de Datos y de Arquitectos de Redes. Traducir cómo piensa un modelo algorítmico oscuro de la forma más amigable posible, rindiendo cuentas del rendimiento (Accuracy & F1).
-
-### Gráficos Maestros Desarrollados:
-
-9.  **Análisis Sensorial: Permutaciones de Variables Críticas (Feature Importance Chart):**
-    El gráfico de barras horizontales desvela qué es lo que más "mira" el modelo para dictar si el individuo es propenso a convertirse en Lead. Por consiguiente, demuestra (por ejemplo) que "El tiempo gastado en la ficha técnica del linaje" pesa infinitamente más que "El género del usuario registrado".
-10. **Polarización Categórica: KDE (Kernel Density) de Probabilidades:**
-    Este es el arte de evaluar el calibrado de un estimador. Grafica las probabilidades desde 0 a 100%. Un modelo malo generaría campanas amontonadas al 50%. Nuestra IA genera un *Valle de la Muerte* central: empuja hacia la región gorda de la izquierda (0%) a los vagos y mirones pasivos; y a la región gorda de la derecha (>90%) a los compradores profesionales, validando un scoring robusto que facilita fijar rangos límite.
-11. **ROC-AUC Performance Matrix (Línea Ascendente Sombreada):**
-    La legendaria prueba visual `Receiver Operating Characteristic`. Trazada agresivamente en color morado intenso, este gráfico debe repeler intensamente la diagonal ineficaz "moneda al aire (0.5)". Su joroba máxima alcanza un volumen sub-área comprobado del 0.89+ (clasificador "Excelente" bajo estándares biomédicos o crediticios serios).
-12. **Matriz de Confusión Explicada de Laboratorio (Heatmap Seaborn Redesenhado):**
-    Visualiza literalmente cuántos Falsos Positivos nos tragamos. Aquí el negocio decide: "*Preferimos llamar a 10 falsos millonarios o equivocados (False Positive Cost)* y quemar el tiempo de call center en falsas alarmas, antes que permitir que un comprador billonario se escape inadvertido mediante un falso negativo (False Negative Cost)*."
-
----
-
-## 7. Inmersión Técnica Módulo 4: Inferencia Causal (Data Science 3)
-
-*(Archivo Interno: `app/pages/4_Experimentation.py`)*
-
-Donde la ciencia se vuelve espartana. Identificar que "Los que ven videos compran 5X más" es una aseveración ingenua si no aislamos el sesgo de selección empírico (quizá las personas que ya venían con la firme decisión de comprar fueron intencionalmente a buscar el video). Este módulo rompe falacias lógicas usando estadística pura Causal y Control de Experimentos A/B.
-
-### Gráficos Maestros Desarrollados:
-
-13. **Impacto Bruto Absolute Conversion Uplift (Comparison Bar):**
-    Control (A) vs Tratamiento (B). Visualización inmediata de que el Test del nuevo algoritmo Front-End incrementó matemáticamente el CTR frente a la variante legacy.
-14. **Validación de Intervalos de Confianza 95% (Bandas de Error Plotly):**
-    Nadie toma decisiones de millones de dólares por un aumento del 1% originado por mera suerte temporal. Este gráfico de Whiskers prueba la robustez de no-cruzamiento. Si el bigote de Control no toca jamás el bigote de Treatment (T-test value aplastante), cerramos el ticket afirmando: "El experimento es un éxito Estadísticamente Significativo (P < 0.05)".
-15. **Efectos Medios Marginales (AME) mediante Gráficos Forest Divergentes:**
-    Un gráfico hipnótico avanzado. Por cada decil unitario de progreso, en cuánto aportó exactamente al porcentaje aislado el hecho de que el caballo tuviera linaje (Ceteris Paribus: Asumiendo nulo el resto del entorno).
-16. **Leakage Funnel en Causalidad (Diagrama Sankey o Funnel Rígido):**
-    Mide los escapes colaterales post-experimento. Evalúa si el efecto del tratamiento en un canal "canibalizó" u opacó métricas lícitas en otras páginas paralelas que no estaban dentro el Target Group.
-
----
-
-## 8. Inmersión Técnica Módulo 5: Motor Financiero Estocástico (Simulador ROI)
-
-*(Archivo Interno: `app/pages/5_ROI_Simulator.py`)*
-
-El Santo Grial y el cierre dramático de la presentación a Inversores. Todos los 16 gráficos anteriores son mera validación matemática abstracta; aquí, el Analista le da al Directorio un panel de botones interactivos para predecir billetes puros mediante modelado reactivo instantáneo.
-
-### Funcionalidad Estelar Interactiva:
-
-17. **Sliders de Sensibilidad Financiera Inyectados al Modelo:**
-    El Stakeholder desde el Streamlit Local Web manipula botones para alterar tres variables exógenas en milisegundos:
-    - *Volumen Estimado de Tráfico Mensual:* (15k a 50k usuarios) - Evaluar impacto servidor Cloud.
-    - *Proporción de Algoritmo Activa (ML Penetration):* % de usuarios bajo recomendador.
-    - *Valor de Fee Operativo Marginal Requerido por la Agencia:* Modificador de desgaste.
-    El cerebro estocástico recalcula, en milisegundos, docenas de arrays usando Streamlit reactividad base para disparar renders en las siguientes tres gráficas finales inmediatas.
-
-### Gráficos Maestros Desarrollados:
-
-18. **Trazo Maestro Break-Even a Largo Plazo (Intersection Curve Chart):**
-    Traza una línea roja ascendente hiperplana constante (Costos Fijos Operativos como Instancias Cloud, Salarios y Bases de Datos Parquet). Mientras la línea verde oscura de "Ingresos Proyectados a través de AI" (que crece de modo semi-exponencial a medida que mejora la conversión) intercepta brutalmente la métrica de costo. Ese punto intersecto, cruzado por vertical-marker, le dice a los jefes el mes y día exacto que EquineLead deja de perder dinero para iniciar retornos de lucro prístinos.
-19. **Proyección ROI a Semestres Agresivos (Area Fill To Zero Y-Axis):**
-    Sintetiza la ecuación del `(Retorno de ML Profit - Gastos Computacionales ML) / Costo Operacional`. Gráfico poderoso donde pinta todo el área bajo de la curva un verde pálido, evidenciando un salto monstruoso superior al 550% predicho.
-20. **Lifetime Value por Clústeres (Stacked Bar Normalizado Text):**
-    Demuestra financieramente que agrupar al ecosistema equino en nichos es brutalmente rentable. Segmentando Clínicamente entre: *Recreational (Valor 100), Professional Groom (Valor 2k), Olympic Stakeholder (Valor 50k).*
-    Confirmando que enfocar el 80% de esfuerzo Data Engineering capturando a los del tope, triplica el valor real de la empresa a la larga de su suscripción vitalicia en Marketplace LTV.
-
----
-
-## 9. Directrices del Lenguaje Gráfico (Plotly & Streamlit)
-
-A nivel de "Clean Code" del Analista de Datos, la decisión final recayó en erradicar por completo la visualización estática tipo Jupyter. No existen gráficos `.png` fijos en EquineLead App.
-
-*   **Plotly Object Engine:** Todo gráfico alojado en el archivo maestro `app/components/charts.py` devuelve y exporta un `go.Figure()` íntegro y completamente dinámico, posibilitando a gerentes realizar ToolTips hover mouse para ver datos precisos al centímetro, y efectuar zooms rectangulares inmersivos en la nube.
-*   **Tema Unificado:** Colores sobrios institucionales. Los directivos experimentan fondos oscuros, azules eléctricos corporativos, paletas "Aggrnyl" o "RdYlGn", prohibiendo usar el esquema default horrendo pre-determinado de Seaborn o Matplotlib base, lo cual destrozaría el tono "Enterprise L3" de esto.
-*   **Estado Multipagina Efímero y Reactivo:** Gracias a las capacidades revolucionarias iterativas de Streamlit, se abandona por completo configuraciones rígidas tipo Dash-Flask; la aplicación renderiza *Top To Down* sus árboles binarios React.JS para evitar cuelgues ante cargas de información simulante voluminosa.
-
----
-
-## 10. Conclusiones del Data Analyst
-
-El entregable consolidado dentro de `app/` ratifica tres cosas a niveles de Ingeniería y Datos:
-1.  **Orquestación Perfecta:** Fuimos capaces de tomar la base inestable originada por los Scrapers (PlayWright, BeautifulSoup), normalizada por Data Engineers, modelada en R y SciKit-Learn con inferencia causa; empaquetarla limpiecito en un UI elegante e hiper-funcional.
-2.  **Narrativa Pragmática en el Lodo Abstruso:** El "Saber traducir" al humano lo que hace el software de Inteligencia Artificial es tal vez el recurso analítico subestimado más demandado del medioevo moderno.
-3.  **Luz Verde al Despliegue Cloud Inmediato.** (*Por favor referirse incondicionalmente al archivo [deploy_app.md](./deploy_app.md) que engloba un tratado de 20 hojas para llevar esto a instanciarse masivamente a la nube por Docker o Community.*).
-
----
-*Este Readme.md ha sido expandido en nivel analítico y gerencial MASIVO a petición corporativa del Master USER de EquineLead. Múltiples referencias al "Data Analyst View", arquitecturas analíticas pormenorizadas han sido inyectadas en esteroides comunicacionales.*
+> *Nota Técnica*: Gracias al gestor UV, la construcción de la imagen ignora el overhead de pip, logrando entornos listos en segundos
