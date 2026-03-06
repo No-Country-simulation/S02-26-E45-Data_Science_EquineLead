@@ -19,6 +19,18 @@
 
 ---
 
+## 🚀 Links del Proyecto
+
+| Producto | URL |
+|---|---|
+| 📊 Dashboard | [Streamlit Cloud](https://equinelead.streamlit.app) |
+| 🔌 API REST | [Google Cloud Run](https://equinelead-api-516367992092.us-east1.run.app/docs/overview) |
+| 🤗 App Gradio (Clientes) | [HuggingFace Spaces](https://huggingface.co/spaces/Itrs/EquineLead-Models) |
+| 📈 Reporte de Monitoreo | [Netlify](https://equinelead-reports.netlify.app) |
+| 🤖 Seguimiento de experimentos y modelos | [DagsHub](https://dagshub.com/aletbm/S02-26-E45-Data_Science_EquineLead) |
+
+---
+
 ## 📖 Tabla de Contenidos
 - [Definición del Problema](#definición-del-problema)
 - [Arquitectura y Stack](#arquitectura-del-sistema)
