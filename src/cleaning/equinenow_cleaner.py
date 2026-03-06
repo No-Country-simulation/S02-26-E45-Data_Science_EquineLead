@@ -1,7 +1,8 @@
-import pandas as pd
 import re
-import numpy as np
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
 
 PATH_OUTPUT = Path("./data/clean")
 PATH_INPUT = Path("./data/raw")

@@ -1,8 +1,9 @@
 from typing import Tuple
+
 import pandas as pd
+from scipy.sparse import csr_matrix, hstack
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import MinMaxScaler
-from scipy.sparse import hstack, csr_matrix
 
 
 def build_features(

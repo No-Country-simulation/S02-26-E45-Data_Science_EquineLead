@@ -1,4 +1,5 @@
 from typing import Any
+
 from scipy.sparse import csr_matrix
 from sklearn.neighbors import NearestNeighbors
 

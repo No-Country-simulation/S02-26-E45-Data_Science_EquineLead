@@ -1,8 +1,9 @@
-from playwright.sync_api import sync_playwright
-from bs4 import BeautifulSoup
-import pandas as pd
-from tqdm import tqdm
 from pathlib import Path
+
+import pandas as pd
+from bs4 import BeautifulSoup
+from playwright.sync_api import sync_playwright
+from tqdm import tqdm
 
 PATH_OUTPUT = Path("./data/raw")
 PATH_OUTPUT.mkdir(parents=True, exist_ok=True)
@@ -47,7 +48,8 @@ def scrape_listings(max_pages=2):
             soup = get_soup_from_page(page, url)
 
             links = soup.select(
-                "div.listingcard-module-pricingBox-Jfp > a[href*='/classifieds/item/horses/']"
+                """div.listingcard-module-pricingBox-Jfp >
+                a[href*='/classifieds/item/horses/']"""
             )
 
             for a in links:
@@ -100,7 +102,8 @@ def scrape_listings(max_pages=2):
                     data[key] = value
 
                 a_rider_level = lsoup.select_one(
-                    "div.summary-module-SummaryRight-okZ > a[href*='/rider-level/'] > span"
+                    """div.summary-module-SummaryRight-okZ >
+                    a[href*='/rider-level/'] > span"""
                 )
                 rider_level = (
                     a_rider_level.get_text(strip=True) if a_rider_level else None
@@ -112,7 +115,8 @@ def scrape_listings(max_pages=2):
                 breed = a_breed.get_text(strip=True) if a_breed else None
 
                 a_disciplines = lsoup.select(
-                    "div.summary-module-SummaryRight-okZ > a[href*='/disciplines/'] > span"
+                    """div.summary-module-SummaryRight-okZ >
+                    a[href*='/disciplines/'] > span"""
                 )
                 discipline = [
                     a_discipline.get_text(strip=True) if a_discipline else None

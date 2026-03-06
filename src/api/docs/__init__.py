@@ -1,5 +1,5 @@
-from .overview import get_overview_html
 from .horse import get_horse_html
+from .overview import get_overview_html
 from .prods import get_prods_html
 from .recommender import get_recommender_html
 

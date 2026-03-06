@@ -1,4 +1,5 @@
 import json
+
 from .layout import page
 from .samples import sample_input_recommender, sample_response_recommender
 
@@ -20,8 +21,10 @@ def get_recommender_html() -> str:
 
     content = f"""
     <h2><span class="badge-green">POST</span> <code>/recommender/recommend</code></h2>
-    <p>Devuelve los 5 caballos más similares usando KNN con similitud coseno sobre raza, color y precio.</p>
-    <p>La distancia coseno va de <strong>0</strong> (idéntico) a <strong>1</strong> (completamente distinto).</p>
+    <p>Devuelve los 5 caballos más similares usando KNN con similitud coseno sobre raza,
+      color y precio.</p>
+    <p>La distancia coseno va de <strong>0</strong> (idéntico) a <strong>1</strong>
+    (completamente distinto).</p>
 
     <h3>Request</h3>
     <div class="code-block"><pre>{request_example}</pre></div>

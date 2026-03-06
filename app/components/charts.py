@@ -1,7 +1,7 @@
+import numpy as np
+import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import pandas as pd
-import numpy as np
 
 # Palette Config (Power BI Classic Light)
 COLOR_REAL = "#118DFF"

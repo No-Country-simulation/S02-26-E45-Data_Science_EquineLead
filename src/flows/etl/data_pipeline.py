@@ -1,11 +1,12 @@
-from prefect import flow, task
-from prefect_gcp.cloud_storage import GcsBucket
-import subprocess
-import os
-import time
 import json
+import os
+import subprocess
+import time
 from pathlib import Path
+
+from prefect import flow, task
 from prefect.client import get_client
+from prefect_gcp.cloud_storage import GcsBucket
 
 DATA_DIR_CLEAN = Path("/app/data/clean")
 

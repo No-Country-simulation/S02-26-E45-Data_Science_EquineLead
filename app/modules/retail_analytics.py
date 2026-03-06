@@ -1,7 +1,7 @@
-import streamlit as st
 import pandas as pd
 import plotly.express as px
-from utils.style_utils import apply_pro_chart_style, PRO_COLORS
+import streamlit as st
+from utils.style_utils import PRO_COLORS, apply_pro_chart_style
 
 
 def render_retail_analytics(df_products):

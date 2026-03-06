@@ -1,8 +1,9 @@
-import streamlit as st
-import pandas as pd
-import numpy as np
 import os
-from typing import Tuple, List
+from typing import List, Tuple
+
+import numpy as np
+import pandas as pd
+import streamlit as st
 
 
 def generate_mock_data() -> Tuple[

@@ -1,4 +1,5 @@
 import json
+
 from .layout import page
 from .samples import sample_input_prods, sample_response
 
@@ -59,7 +60,8 @@ def get_prods_html() -> str:
 
     content = f"""
     <h2><span class="badge">POST</span> <code>/prods/predict</code></h2>
-    <p>Lead scoring basado en el comportamiento de navegación del usuario con productos.</p>
+    <p>Lead scoring basado en el comportamiento de navegación del
+    usuario con productos.</p>
 
     <h3>Request</h3>
     <div class="code-block"><pre>{request_example}</pre></div>

@@ -65,7 +65,8 @@ def inject_premium_style():
         }
 
         /* Hide only the Deploy button and right-side Actions */
-        [data-testid="stAppDeployButton"], .stDeployButton, .stToolbarActions, #MainMenu, footer {
+[data-testid="stAppDeployButton"], .stDeployButton,
+.stToolbarActions, #MainMenu, footer {
             display: none !important;
         }
 
@@ -105,7 +106,8 @@ def inject_premium_style():
         }
 
         /* Input Widget Styling */
-        div[data-testid="stSelectbox"], div[data-testid="stMultiSelect"], div[data-testid="stTextInput"] {
+div[data-testid="stSelectbox"],
+div[data-testid="stMultiSelect"], div[data-testid="stTextInput"] {
             background-color: #1A1C24 !important;
             border-radius: 8px !important;
         }

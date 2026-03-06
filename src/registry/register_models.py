@@ -3,14 +3,16 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
-from misc.config import init_mlflow
-import mlflow
-import pickle
-import os
 import datetime
+import os
+import pickle
+
+import mlflow
 import pandas as pd
-from mlflow.models import infer_signature
 from category_encoders import TargetEncoder
+from mlflow.models import infer_signature
+
+from misc.config import init_mlflow
 
 # Mapeo de dominio a experiment_id
 EXPERIMENT_MAP = {
@@ -192,7 +194,8 @@ def assign_alias(registered_name: str, alias: str):
         version=latest_version.version,
     )
     print(
-        f"✅ Registrado como: {registered_name} con alias '{alias}' → v{latest_version.version}"
+        f"""✅ Registrado como: {registered_name}
+        con alias '{alias}' → v{latest_version.version}"""
     )
 
 

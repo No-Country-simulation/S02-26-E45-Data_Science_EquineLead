@@ -3,8 +3,9 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
-from misc.config import init_mlflow
 import mlflow
+
+from misc.config import init_mlflow
 
 init_mlflow()
 

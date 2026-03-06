@@ -3,9 +3,9 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
+import pandas as pd
 from fastapi import APIRouter, HTTPException
 from schemas import ProdsPredictRequest
-import pandas as pd
 from utils import load_model
 
 router = APIRouter(prefix="/prods", tags=["Products"])

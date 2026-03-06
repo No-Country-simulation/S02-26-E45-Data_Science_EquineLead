@@ -1,22 +1,24 @@
-import sys
 import io
+import sys
 import tempfile
 from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
-from misc.config import init_mlflow, start_run, SEED, MLFLOW_EXPERIMENT_ENGINE_NAME
-from misc.utils import load_dataset, log_dataset_metadata
-import mlflow
+import datetime
+import platform
+
 import cloudpickle
+import mlflow
 import numpy as np
 import pandas as pd
 from features import build_features
-from scipy.sparse import hstack
-from model import train_model
 from metrics import evaluate
-import platform
-import datetime
+from model import train_model
+from scipy.sparse import hstack
+
+from misc.config import MLFLOW_EXPERIMENT_ENGINE_NAME, SEED, init_mlflow, start_run
+from misc.utils import load_dataset, log_dataset_metadata
 
 PATH_DATA = Path("./data/clean")
 DATASET_NAME = "horses_listings_limpio.parquet"
@@ -158,7 +160,7 @@ def main():
                 "color": "str  — color del pelaje (e.g. 'bay')",
                 "price": "float — precio de referencia en USD",
             },
-            "transform_fn": transform_input,  # bytecode completo, sin referencia a módulo externo
+            "transform_fn": transform_input,
         }
 
         tmp_dir = Path(tempfile.mkdtemp())

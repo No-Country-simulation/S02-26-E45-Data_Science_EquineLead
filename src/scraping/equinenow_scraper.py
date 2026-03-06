@@ -1,10 +1,11 @@
+from pathlib import Path
+from time import sleep
+from urllib.parse import urlparse
+
+import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-import pandas as pd
-from urllib.parse import urlparse
-from time import sleep
 from tqdm import tqdm
-from pathlib import Path
 
 PATH_OUTPUT = Path("./data/raw")
 PATH_OUTPUT.mkdir(parents=True, exist_ok=True)

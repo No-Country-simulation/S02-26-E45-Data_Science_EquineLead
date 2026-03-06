@@ -1,8 +1,9 @@
+import glob
+import os
+
+import cloudpickle
 import joblib
 import xgboost as xgb
-import os
-import glob
-import cloudpickle
 
 ARTIFACTS_PATH = "./models/production"
 
