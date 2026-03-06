@@ -1,19 +1,20 @@
-import sys
 import os
+import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 
+import os
+import subprocess
+
 import streamlit as st
-from utils.style_utils import inject_premium_style
-from utils.data_loader import get_all_dashboard_data
+from modules.ai_subsystem import render_ai_subsystem
+from modules.audience_analytics import render_audience_analytics
+from modules.conversion_analytics import render_conversion_analytics
 from modules.executive_summary import render_executive_summary
 from modules.horse_analytics import render_horse_analytics
 from modules.retail_analytics import render_retail_analytics
-from modules.audience_analytics import render_audience_analytics
-from modules.conversion_analytics import render_conversion_analytics
-from modules.ai_subsystem import render_ai_subsystem
-import subprocess
-import os
+from utils.data_loader import get_all_dashboard_data
+from utils.style_utils import inject_premium_style
 
 
 def pull_data():
@@ -73,11 +74,13 @@ df_horses, df_products, df_users, df_u_sessions, df_p_sessions = (
 # 3. SIDEBAR NAVIGATION
 # ---------------------------------------------
 st.sidebar.markdown(
-    "<h2 style='text-align: center; color: #00B8D9; font-weight: 800;'>EQUINELEAD PRO</h2>",
+    """<h2 style='text-align: center; color: #00B8D9;
+    font-weight: 800;'>EQUINELEAD PRO</h2>""",
     unsafe_allow_html=True,
 )
 st.sidebar.markdown(
-    "<p style='text-align: center; font-size: 0.9em; color: #64748B;'>Executive Analytics Engine</p>",
+    """<p style='text-align: center; font-size: 0.9em;
+      color: #64748B;'>Executive Analytics Engine</p>""",
     unsafe_allow_html=True,
 )
 st.sidebar.markdown("---")

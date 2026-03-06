@@ -1,22 +1,23 @@
-from pathlib import Path
-import os
-import requests
-import zipfile
-import tarfile
 import gzip
+import os
+import random
 import shutil
+import tarfile
+import uuid
+import zipfile
+from collections import Counter, defaultdict
+from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Literal
 from urllib.parse import urlparse
+
+import numpy as np
 import pandas as pd
-from collections import Counter, defaultdict
+import pycountry
+import requests
+from babel import Locale
 from faker import Faker
 from faker.providers import BaseProvider
-import random
-from babel import Locale
-import pycountry
-import numpy as np
-import uuid
-from datetime import datetime, timedelta
 
 DATA_DIR_CLEAN = Path("./data/clean")
 DATA_DIR_TRACKING = Path("./data/tracking")

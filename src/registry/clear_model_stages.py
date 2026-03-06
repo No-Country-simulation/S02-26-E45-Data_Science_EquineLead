@@ -3,8 +3,9 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
-from misc.config import init_mlflow
 import mlflow
+
+from misc.config import init_mlflow
 
 init_mlflow()
 
@@ -23,7 +24,8 @@ def clear_stages(model_name: str):
                 stage="None",  # quita el stage completamente
             )
             print(
-                f"✅ {model_name} v{v.version} → stage removido (era: {v.current_stage})"
+                f"""✅ {model_name} v{v.version} →
+                stage removido (era: {v.current_stage})"""
             )
         else:
             print(f"   {model_name} v{v.version} → ya estaba sin stage")

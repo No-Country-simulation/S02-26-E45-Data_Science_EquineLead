@@ -3,14 +3,16 @@ from pathlib import Path
 
 sys.path.append(str(Path(__file__).resolve().parents[2]))
 
-from misc.config import init_mlflow, start_run, SEED, MLFLOW_EXPERIMENT_LEADS
-from misc.utils import load_dataset, log_dataset_metadata
+import datetime
+import platform
+
 import mlflow
 from features import build_features
-from model import train_model
 from metrics import evaluate
-import platform
-import datetime
+from model import train_model
+
+from misc.config import MLFLOW_EXPERIMENT_LEADS, SEED, init_mlflow, start_run
+from misc.utils import load_dataset, log_dataset_metadata
 
 PATH_DATA = Path("./data/clean")
 DATASET_NAME = "dataset_name.parquet"
@@ -19,7 +21,7 @@ DATASET_NAME = "dataset_name.parquet"
 # ==================================
 # DATA SCIENTIST PERSONAL CONFIG
 # ==================================
-RUN_NAME = f"baseline_xgboost_v1_{datetime.datetime.now():%Y%m%d_%H%M%S}"  # Ejecución puntual dentro de un experimento
+RUN_NAME = f"baseline_xgboost_v1_{datetime.datetime.now():%Y%m%d_%H%M%S}"
 DS_NAME = "Pepito_Pepin"
 STAGE = "training"
 

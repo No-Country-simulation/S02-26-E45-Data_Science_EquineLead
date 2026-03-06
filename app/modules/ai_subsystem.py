@@ -1,12 +1,16 @@
-import streamlit as st
-import pandas as pd
 import os
+
+import pandas as pd
+import streamlit as st
 
 
 def render_ai_subsystem():
     st.markdown("<h1>System Architecture: ML Models</h1>", unsafe_allow_html=True)
     st.markdown(
-        "Remote endpoint integration to DagsHub MLFlow tracking server. Click below to establish a live connection to the ML server. This ensures the dashboard loads instantly while only retrieving heavy ML logs on demand."
+        """Remote endpoint integration to DagsHub MLFlow tracking server.
+        Click below to establish a live connection to the ML server.
+        This ensures the dashboard loads instantly while only
+        retrieving heavy ML logs on demand."""
     )
 
     # Using a button to prevent auto-loading which caused timeouts

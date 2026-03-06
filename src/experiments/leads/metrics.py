@@ -1,6 +1,7 @@
 from typing import Dict
+
 import pandas as pd
-from sklearn.metrics import root_mean_squared_error, mean_absolute_error
+from sklearn.metrics import mean_absolute_error, root_mean_squared_error
 
 
 def evaluate(model, X_val: pd.DataFrame, y_val: pd.Series) -> Dict[str, float]:
