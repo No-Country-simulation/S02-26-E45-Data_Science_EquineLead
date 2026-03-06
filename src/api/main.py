@@ -1,14 +1,21 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
-from .routers import horse, prods, engine
+
 from .docs import (
-    get_overview_html,
     get_horse_html,
+    get_overview_html,
     get_prods_html,
     get_recommender_html,
 )
+from .routers import engine, horse, prods
 
-app = FastAPI(title="EquineLead API")
+app = FastAPI(
+    title="EquineLead API",
+    description="""API de lead scoring y recomendación
+    de caballos para e-commerce ecuestre.""",
+    version="1.0.0",
+    docs_url="/docs",  # podés cambiar la ruta si querés
+)
 
 app.add_route("/docs/overview", lambda r: HTMLResponse(get_overview_html()))
 app.add_route("/docs/horse", lambda r: HTMLResponse(get_horse_html()))

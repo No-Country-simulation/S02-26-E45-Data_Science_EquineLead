@@ -502,6 +502,7 @@ dependencies = [
     { name = "jmespath" },
     { name = "s3transfer" },
 ]
+sdist = { url = "https://files.pythonhosted.org/packages/58/15/356d38280ce3fce37a8e2b44e2ead81240d933f64411e86415a2ed4c0bd5/boto3-1.42.61.tar.gz", hash = "sha256:117ebfc597c95bfb64c6d37ba77bd1c2a97a1885c1dcac2a8be1a14e2139a76d", size = 112750, upload-time = "2026-03-04T20:30:53.73Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/66/d7/a2fa875cb7c5d6b5c5cf6fc181343708c8dc6cafae3e6964ed486ae21bea/boto3-1.42.61-py3-none-any.whl", hash = "sha256:156efcc298a33206be6dfd220815c64aa8b09424017534cabe717636961fc306", size = 140555, upload-time = "2026-03-04T20:30:51.17Z" },
 ]
@@ -1531,18 +1532,15 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "cloudpickle" },
-    { name = "dvc", extra = ["gs"] },
     { name = "fastparquet" },
     { name = "matplotlib" },
     { name = "numpy" },
     { name = "pandas" },
-    { name = "plotly" },
     { name = "protobuf" },
     { name = "pyarrow" },
     { name = "requests" },
     { name = "scikit-learn" },
     { name = "setuptools" },
-    { name = "streamlit" },
     { name = "xgboost" },
 ]
 
@@ -1550,6 +1548,10 @@ dependencies = [
 api = [
     { name = "fastapi" },
     { name = "uvicorn" },
+]
+app = [
+    { name = "plotly" },
+    { name = "streamlit" },
 ]
 dev = [
     { name = "google-cloud-storage" },
@@ -1573,6 +1575,7 @@ ml = [
 ]
 ml-platform = [
     { name = "dagshub" },
+    { name = "dvc", extra = ["gs"] },
     { name = "mlflow" },
 ]
 scrap = [
@@ -1588,18 +1591,15 @@ scrap = [
 [package.metadata]
 requires-dist = [
     { name = "cloudpickle", specifier = ">=3.1.2" },
-    { name = "dvc", extras = ["gs"], specifier = ">=3.66.1" },
     { name = "fastparquet", specifier = ">=2025.12.0" },
     { name = "matplotlib", specifier = ">=3.10.8" },
     { name = "numpy", specifier = ">=2.2.6" },
     { name = "pandas", specifier = ">=2.2" },
-    { name = "plotly", specifier = ">=6.6.0" },
     { name = "protobuf", specifier = "==4.25.3" },
     { name = "pyarrow", specifier = ">=20" },
     { name = "requests", specifier = ">=2.32.5" },
     { name = "scikit-learn", specifier = ">=1.8.0" },
     { name = "setuptools", specifier = ">=80.10.2" },
-    { name = "streamlit", specifier = ">=1.54.0" },
     { name = "xgboost", specifier = ">=3.2.0" },
 ]
 
@@ -1607,6 +1607,10 @@ requires-dist = [
 api = [
     { name = "fastapi", specifier = ">=0.135.1" },
     { name = "uvicorn", specifier = ">=0.41.0" },
+]
+app = [
+    { name = "plotly", specifier = ">=6.6.0" },
+    { name = "streamlit", specifier = ">=1.54.0" },
 ]
 dev = [
     { name = "google-cloud-storage", specifier = ">=3.9.0" },
@@ -1630,6 +1634,7 @@ ml = [
 ]
 ml-platform = [
     { name = "dagshub", specifier = ">=0.6.5" },
+    { name = "dvc", extras = ["gs"], specifier = ">=3.66.1" },
     { name = "mlflow", specifier = ">=3.5.1" },
 ]
 scrap = [
