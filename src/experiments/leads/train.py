@@ -1,18 +1,30 @@
-import sys
-from pathlib import Path
+"""
+train.py
+========
+Reentrenamiento end-to-end del campeón XGB Tuneado v1.
 
-sys.path.append(str(Path(__file__).resolve().parents[2]))
+Uso:
+    python train.py --data ../../data/clean/df_final.parquet --outdir ../models/champion
 
-import datetime
-import platform
+    # Solo tuning de hiperparámetros (luego copiarlos en model.py):
+    python train.py --data ../../data/df_final.parquet --tune
+
+Qué cambia en cada archivo si necesitamos actualizar el campeón:
+    Hiperparámetros      → model.py  (PARAMS_P1H/P1P/P2H/P2P)
+    Features incluidas   → features.py  (COLS_HORSE, COLS_PRODS)
+    Features excluidas   → features.py  (COLS_DROP_V2)
+    Métricas / plots     → metrics.py
+"""
+
+import argparse
+import os
 
 import mlflow
 from features import build_features
-from metrics import evaluate
 from model import train_model
-
-from misc.config import MLFLOW_EXPERIMENT_LEADS, SEED, init_mlflow, start_run
-from misc.utils import load_dataset, log_dataset_metadata
+from metrics import evaluate
+import platform
+import datetime
 
 PATH_DATA = Path("./data/clean")
 DATASET_NAME = "dataset_name.parquet"
@@ -21,7 +33,7 @@ DATASET_NAME = "dataset_name.parquet"
 # ==================================
 # DATA SCIENTIST PERSONAL CONFIG
 # ==================================
-RUN_NAME = f"baseline_xgboost_v1_{datetime.datetime.now():%Y%m%d_%H%M%S}"
+RUN_NAME = f"baseline_xgboost_v1_{datetime.datetime.now():%Y%m%d_%H%M%S}"  # Ejecución puntual dentro de un experimento
 DS_NAME = "Pepito_Pepin"
 STAGE = "training"
 

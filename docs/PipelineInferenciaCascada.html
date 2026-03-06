@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EquineLead — API Pipeline</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #0a0b0f;
+    --surface:   #12141a;
+    --border:    #1e2130;
+    --accent1:   #e8c547;
+    --accent2:   #4fc3f7;
+    --accent3:   #81c784;
+    --muted:     #4a5068;
+    --text:      #dde1f0;
+    --text-dim:  #7a82a0;
+    --bronce:    #cd7f32;
+    --plata:     #9eb5c8;
+    --oro:       #e8c547;
+    --horse:     #c084fc;
+    --prods:     #4fc3f7;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 48px;
+  }
+  .logo-mark {
+    width: 52px; height: 52px;
+    background: var(--accent1);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    flex-shrink: 0;
+    animation: pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.65} }
+  .header-text h1 {
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    color: var(--accent1);
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .header-text h2 {
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+  .header-text p {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--text-dim);
+    max-width: 560px;
+    line-height: 1.65;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+  }
+  .leg {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    color: var(--text-dim);
+  }
+  .leg-dot { width: 9px; height: 9px; border-radius: 50%; }
+
+  /* ── ANIMATIONS ── */
+  .fadeup {
+    opacity: 0;
+    transform: translateY(14px);
+    animation: fadeUp .5s ease forwards;
+  }
+  @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+
+  /* ── UTILS ── */
+  .gap-xs { height: 8px; }
+  .gap-sm { height: 16px; }
+  .gap-md { height: 28px; }
+
+  .arrow-center {
+    display: flex;
+    justify-content: center;
+    padding: 5px 0;
+    font-size: 20px;
+    color: var(--muted);
+  }
+  .arrow-center.gold  { color: var(--accent1); }
+  .arrow-center.green { color: var(--accent3); }
+  .arrow-center.horse { color: var(--horse); }
+  .arrow-center.prods { color: var(--prods); }
+
+  .two-col-arrows {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 6px 0;
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+  .divider::before, .divider::after { content:''; flex:1; height:1px; background:var(--border); }
+  .divider.horse::before, .divider.horse::after { background: color-mix(in srgb, var(--horse) 30%, var(--border)); }
+  .divider.prods::before, .divider.prods::after { background: color-mix(in srgb, var(--prods) 30%, var(--border)); }
+
+  /* ── NODE base ── */
+  .node {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 18px 20px;
+    position: relative;
+    transition: border-color .25s, box-shadow .25s, transform .2s;
+    cursor: default;
+  }
+  .node:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,.4); }
+  .node-label {
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 5px;
+  }
+  .node-title { font-size: 16px; font-weight: 700; line-height: 1.2; }
+  .node-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 6px;
+    line-height: 1.55;
+    font-family: 'Space Mono', monospace;
+  }
+  .node-badge {
+    position: absolute;
+    top: -1px; right: 12px;
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: .08em;
+    padding: 3px 8px;
+    border-radius: 0 0 6px 6px;
+    font-weight: 700;
+  }
+
+  /* tooltip */
+  .tooltip-host { position: relative; }
+  .tooltip-host:hover .tooltip { opacity:1; pointer-events:auto; transform:translateX(-50%) translateY(0); }
+  .tooltip {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: #1a1d28;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    color: var(--text-dim);
+    white-space: nowrap;
+    z-index: 20;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s, transform .2s;
+    box-shadow: 0 8px 24px rgba(0,0,0,.6);
+  }
+  .tooltip strong { color: var(--text); }
+
+  /* ── REQUEST ── */
+  .node-request {
+    border-color: var(--accent1);
+    background: color-mix(in srgb, var(--accent1) 6%, var(--surface));
+    text-align: center;
+    max-width: 520px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .node-request:hover { box-shadow: 0 8px 32px color-mix(in srgb, var(--accent1) 20%, transparent); }
+  .node-request .node-title { color: var(--accent1); font-size: 19px; }
+
+  /* ── PREPROCESS ── */
+  .node-preprocess {
+    border-color: var(--accent3);
+    background: color-mix(in srgb, var(--accent3) 5%, var(--surface));
+    max-width: 520px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .node-preprocess:hover { box-shadow: 0 8px 32px color-mix(in srgb, var(--accent3) 15%, transparent); }
+  .node-preprocess .node-title { color: var(--accent3); }
+
+  /* preprocess steps inline */
+  .preprocess-steps {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .pp-step {
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    padding: 4px 9px;
+    border-radius: 4px;
+    border: 1px solid;
+    font-weight: 700;
+    letter-spacing: .05em;
+  }
+  .pp-step.te   { color: var(--accent3); border-color: color-mix(in srgb, var(--accent3) 40%, transparent); background: color-mix(in srgb, var(--accent3) 8%, transparent); }
+  .pp-step.cap  { color: var(--accent2); border-color: color-mix(in srgb, var(--accent2) 40%, transparent); background: color-mix(in srgb, var(--accent2) 8%, transparent); }
+  .pp-step.feat { color: var(--accent1); border-color: color-mix(in srgb, var(--accent1) 40%, transparent); background: color-mix(in srgb, var(--accent1) 8%, transparent); }
+
+  /* ── FEATURE SPLIT BLOCK ── */
+  .feat-split {
+    display: grid;
+    grid-template-columns: 1fr 40px 1fr;
+    gap: 0;
+    align-items: center;
+    margin-bottom: 0;
+  }
+  .feat-block {
+    border-radius: 8px;
+    padding: 14px 16px;
+    border: 1px solid;
+  }
+  .feat-block.horse {
+    border-color: color-mix(in srgb, var(--horse) 40%, var(--border));
+    background: color-mix(in srgb, var(--horse) 5%, var(--surface));
+  }
+  .feat-block.prods {
+    border-color: color-mix(in srgb, var(--prods) 40%, var(--border));
+    background: color-mix(in srgb, var(--prods) 5%, var(--surface));
+  }
+  .feat-block-title {
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .feat-block.horse .feat-block-title { color: var(--horse); }
+  .feat-block.prods .feat-block-title { color: var(--prods); }
+  .feat-count {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .feat-block.horse .feat-count { color: var(--horse); }
+  .feat-block.prods .feat-count { color: var(--prods); }
+  .feat-sub {
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+  .feat-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+  }
+  .feat-tag {
+    font-size: 9px;
+    font-family: 'Space Mono', monospace;
+    padding: 2px 6px;
+    border-radius: 3px;
+    line-height: 1.4;
+  }
+  .feat-tag.shared {
+    background: color-mix(in srgb, #ffffff 8%, transparent);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+  }
+  .feat-tag.domain-h {
+    background: color-mix(in srgb, var(--horse) 12%, transparent);
+    color: var(--horse);
+    border: 1px solid color-mix(in srgb, var(--horse) 30%, transparent);
+  }
+  .feat-tag.domain-p {
+    background: color-mix(in srgb, var(--prods) 12%, transparent);
+    color: var(--prods);
+    border: 1px solid color-mix(in srgb, var(--prods) 30%, transparent);
+  }
+  .feat-tag.cat {
+    background: color-mix(in srgb, var(--accent1) 10%, transparent);
+    color: var(--accent1);
+    border: 1px solid color-mix(in srgb, var(--accent1) 25%, transparent);
+  }
+  .feat-sep {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+    letter-spacing: .08em;
+  }
+  .feat-sep-line { width: 1px; height: 30px; background: var(--border); }
+
+  /* ── DECISION (P1) ── */
+  .decision-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .decision {
+    border-radius: 8px;
+    padding: 14px 16px;
+    border: 1px dashed;
+    position: relative;
+  }
+  .decision-horse {
+    border-color: color-mix(in srgb, var(--horse) 45%, transparent);
+    background: color-mix(in srgb, var(--horse) 4%, var(--surface));
+  }
+  .decision-prods {
+    border-color: color-mix(in srgb, var(--prods) 45%, transparent);
+    background: color-mix(in srgb, var(--prods) 4%, var(--surface));
+  }
+  .decision-step {
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .decision-title { font-size: 15px; font-weight: 700; }
+  .decision-horse .decision-title { color: var(--horse); }
+  .decision-prods .decision-title { color: var(--prods); }
+  .decision-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 4px;
+    font-family: 'Space Mono', monospace;
+    line-height: 1.5;
+  }
+  .outcomes { display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+  .outcome-chip {
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+    letter-spacing: .06em;
+  }
+  .chip-bronce { background:color-mix(in srgb,var(--bronce) 18%,transparent); color:var(--bronce); border:1px solid var(--bronce); }
+  .chip-plata  { background:color-mix(in srgb,var(--plata)  18%,transparent); color:var(--plata);  border:1px solid var(--plata); }
+  .chip-oro    { background:color-mix(in srgb,var(--oro)    18%,transparent); color:var(--oro);    border:1px solid var(--oro); }
+
+  /* ── P2 ── */
+  .p2-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .node-horse {
+    border-color: color-mix(in srgb, var(--horse) 50%, var(--border));
+    background: color-mix(in srgb, var(--horse) 6%, var(--surface));
+  }
+  .node-horse:hover { box-shadow: 0 8px 28px color-mix(in srgb, var(--horse) 18%, transparent); }
+  .node-horse .node-title { color: var(--horse); }
+  .node-horse .node-badge { background: var(--horse); color: #0a0b0f; }
+  .node-prods {
+    border-color: color-mix(in srgb, var(--prods) 50%, var(--border));
+    background: color-mix(in srgb, var(--prods) 6%, var(--surface));
+  }
+  .node-prods:hover { box-shadow: 0 8px 28px color-mix(in srgb, var(--prods) 18%, transparent); }
+  .node-prods .node-title { color: var(--prods); }
+  .node-prods .node-badge { background: var(--prods); color: #0a0b0f; }
+
+  /* ── RESPONSE ── */
+  .node-response {
+    border-color: var(--accent1);
+    background: color-mix(in srgb, var(--accent1) 6%, var(--surface));
+    max-width: 640px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .node-response:hover { box-shadow: 0 8px 32px color-mix(in srgb, var(--accent1) 20%, transparent); }
+  .node-response .node-title { color: var(--accent1); }
+  .response-fields { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:14px; }
+  .rf {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+  }
+  .rf-key { color: var(--text-dim); margin-bottom:4px; font-size:9px; letter-spacing:.05em; }
+  .rf-val { font-size: 13px; font-weight: 700; }
+  .rf-val.horse { color: var(--horse); }
+  .rf-val.prods { color: var(--prods); }
+  .rf-val.gold  { color: var(--oro); }
+
+  /* ── ARTIFACTS ── */
+  .artifacts {
+    margin-top: 48px;
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    opacity: 0;
+    animation: fadeUp .5s ease 1s forwards;
+  }
+  .artifacts-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .artifacts h3 {
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--accent3);
+  }
+  .artifacts-note {
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+  }
+  .artifact-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+  }
+  .artifact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'Space Mono', monospace;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .artifact-item:hover { border-color: var(--accent3); box-shadow: 0 4px 16px rgba(0,0,0,.3); }
+  .artifact-item.new { border-color: color-mix(in srgb, var(--accent1) 35%, var(--border)); }
+  .artifact-item.new:hover { border-color: var(--accent1); }
+  .artifact-icon { font-size: 15px; flex-shrink:0; line-height:1; margin-top:1px; }
+  .artifact-name { font-weight:700; font-size:11px; margin-bottom:2px; }
+  .artifact-item:not(.new) .artifact-name { color: var(--accent3); }
+  .artifact-item.new .artifact-name { color: var(--accent1); }
+  .artifact-desc { color: var(--text-dim); font-size:10px; line-height:1.45; }
+  .new-badge {
+    display: inline-block;
+    font-size: 8px;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: color-mix(in srgb, var(--accent1) 20%, transparent);
+    color: var(--accent1);
+    border: 1px solid var(--accent1);
+    letter-spacing: .08em;
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <header class="fadeup" style="animation-delay:.05s">
+    <div class="logo-mark"></div>
+    <div class="header-text">
+      <h1>EquineLead · API Architecture — Campeón XGB Tuneado</h1>
+      <h2>Pipeline de Inferencia<br>en Cascada</h2>
+      <p>Un request → preprocesamiento → split por dominio → cuatro modelos → dos scores independientes.<br>
+         Features de caballos y productos separadas. Campeón: XGB Tuneado con feature selection por dominio.</p>
+    </div>
+  </header>
+
+  <!-- LEGEND -->
+  <div class="legend fadeup" style="animation-delay:.1s">
+    <div class="leg"><div class="leg-dot" style="background:var(--horse)"></div> Cascada Caballos</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--prods)"></div> Cascada Productos</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--accent3)"></div> Preprocesamiento</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--accent1)"></div> Entrada / Salida</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--bronce)"></div> Lead Bronce</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--plata)"></div> Lead Plata</div>
+    <div class="leg"><div class="leg-dot" style="background:var(--oro)"></div> Lead Oro</div>
+  </div>
+
+  <!-- DIAGRAM -->
+  <div class="diagram">
+
+    <!-- 1. REQUEST -->
+    <div class="fadeup" style="animation-delay:.15s; display:flex; justify-content:center;">
+      <div class="node node-request tooltip-host" style="width:100%; max-width:520px;">
+        <div class="node-label">Endpoint · POST /predict</div>
+        <div class="node-title">Request</div>
+        <div class="node-sub">
+          user_id + vector de features de comportamiento ya agregadas por usuario<br>
+          (vistas, carritos, precios, recurrencia, perfil)
+        </div>
+        <div class="tooltip"><strong>Payload:</strong> ~44 features raw antes de filtrar por dominio</div>
+      </div>
+    </div>
+
+    <div class="arrow-center gold fadeup" style="animation-delay:.2s">↓</div>
+
+    <!-- 2. PREPROCESAMIENTO -->
+    <div class="fadeup" style="animation-delay:.25s; display:flex; justify-content:center;">
+      <div class="node node-preprocess tooltip-host" style="width:100%; max-width:520px;">
+        <div class="node-label">Paso 0 · Artefactos cargados al levantar el servidor</div>
+        <div class="node-title">Preprocesamiento</div>
+        <div class="preprocess-steps">
+          <span class="pp-step te">① Target Encoding</span>
+          <span class="pp-step cap">② Capping P99</span>
+          <span class="pp-step feat">③ Filtro por dominio</span>
+        </div>
+        <div class="node-sub" style="margin-top:10px">
+          ① <strong style="color:var(--accent3)">target_encoder.pkl</strong> — transforma categóricas (user_region, user_card_issuer, user_domain, gender_mode, breed_family_mode, color_mode, most_viewed_category, most_viewed_brand, most_viewed_target_user)<br>
+          ② <strong style="color:var(--accent2)">limites_capping.pkl</strong> — trunca outliers al P99 calculado sobre X_train<br>
+          ③ <strong style="color:var(--accent1)">cols_horse.pkl · cols_prods.pkl</strong> — filtra el vector completo a las features de cada dominio
+        </div>
+        <div class="tooltip">
+          <strong>Sin estos 4 artefactos el servidor no arranca.</strong><br>
+          Se generan en train.py y se serializan en /models/champion/
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-center green fadeup" style="animation-delay:.3s">↓</div>
+
+    <!-- 3. FEATURE SPLIT -->
+    <div class="divider fadeup" style="animation-delay:.33s">Split de features por dominio — sin contaminación cruzada</div>
+    <div class="gap-sm"></div>
+
+    <div class="feat-split fadeup" style="animation-delay:.36s">
+
+      <div class="feat-block horse tooltip-host">
+        <div class="feat-block-title">🐴 Dominio Caballos</div>
+        <div class="feat-count">27</div>
+        <div class="feat-sub">features activas · cols_horse.pkl</div>
+        <div class="feat-tags">
+          <span class="feat-tag shared">user_prestige_score</span>
+          <span class="feat-tag shared">user_antiguedad_dias</span>
+          <span class="feat-tag shared">user_region TE</span>
+          <span class="feat-tag shared">user_card_issuer TE</span>
+          <span class="feat-tag shared">user_domain TE</span>
+          <span class="feat-tag domain-h">horses_viewed</span>
+          <span class="feat-tag domain-h">horses_added_to_cart</span>
+          <span class="feat-tag domain-h">max_horse_price_viewed</span>
+          <span class="feat-tag domain-h">ratio_recurrencia_horse</span>
+          <span class="feat-tag domain-h">max_visitas_mismo_caballo</span>
+          <span class="feat-tag domain-h">ratio_cart_horse</span>
+          <span class="feat-tag domain-h">rango_precio_horse</span>
+          <span class="feat-tag domain-h">caballos_unicos_vistos</span>
+          <span class="feat-tag domain-h">viewed_premium_horses</span>
+          <span class="feat-tag domain-h">viewed_sport_elite</span>
+          <span class="feat-tag domain-h">viewed_family_safe</span>
+          <span class="feat-tag domain-h">viewed_working_elite</span>
+          <span class="feat-tag domain-h">viewed_pro_sellers</span>
+          <span class="feat-tag domain-h">has_shipping_viewed</span>
+          <span class="feat-tag cat">gender_mode TE</span>
+          <span class="feat-tag cat">breed_family_mode TE</span>
+          <span class="feat-tag cat">color_mode TE</span>
+        </div>
+        <div class="tooltip">
+          <strong>5 features de usuario</strong> compartidas con Productos<br>
+          <strong>17 features</strong> exclusivas del dominio caballos<br>
+          <strong>3 categóricas</strong> target-encoded · feature selection post-modelado
+        </div>
+      </div>
+
+      <div class="feat-sep">
+        <div class="feat-sep-line"></div>
+        <span style="font-size:9px; padding:4px 0">vs</span>
+        <div class="feat-sep-line"></div>
+      </div>
+
+      <div class="feat-block prods tooltip-host">
+        <div class="feat-block-title">🛍️ Dominio Productos</div>
+        <div class="feat-count">22</div>
+        <div class="feat-sub">features activas · cols_prods.pkl</div>
+        <div class="feat-tags">
+          <span class="feat-tag shared">user_prestige_score</span>
+          <span class="feat-tag shared">user_antiguedad_dias</span>
+          <span class="feat-tag shared">user_region TE</span>
+          <span class="feat-tag shared">user_card_issuer TE</span>
+          <span class="feat-tag shared">user_domain TE</span>
+          <span class="feat-tag domain-p">products_viewed</span>
+          <span class="feat-tag domain-p">products_added_to_cart</span>
+          <span class="feat-tag domain-p">max_product_price_viewed</span>
+          <span class="feat-tag domain-p">ratio_recurrencia_prods</span>
+          <span class="feat-tag domain-p">ratio_cart_prods</span>
+          <span class="feat-tag domain-p">productos_unicos_vistos</span>
+          <span class="feat-tag domain-p">unique_categories</span>
+          <span class="feat-tag domain-p">viewed_waterproof</span>
+          <span class="feat-tag domain-p">viewed_leather</span>
+          <span class="feat-tag domain-p">viewed_breathable</span>
+          <span class="feat-tag domain-p">viewed_uv_protection</span>
+          <span class="feat-tag domain-p">viewed_machine_washable</span>
+          <span class="feat-tag cat">most_viewed_category TE</span>
+          <span class="feat-tag cat">most_viewed_brand TE</span>
+          <span class="feat-tag cat">most_viewed_target_user TE</span>
+        </div>
+        <div class="tooltip">
+          <strong>5 features de usuario</strong> compartidas con Caballos<br>
+          <strong>12 features</strong> exclusivas del dominio productos<br>
+          <strong>3 categóricas</strong> target-encoded · feature selection post-modelado
+        </div>
+      </div>
+
+    </div>
+
+    <div class="gap-sm"></div>
+    <div class="two-col-arrows fadeup" style="animation-delay:.4s">
+      <div class="arrow-center horse">↓</div>
+      <div class="arrow-center prods">↓</div>
+    </div>
+    <div class="gap-xs"></div>
+
+    <!-- 4. P1 -->
+    <div class="divider fadeup" style="animation-delay:.42s">Paso 1 · clasificación binaria — ¿tiene intención de compra?</div>
+    <div class="gap-sm"></div>
+
+    <div class="decision-row fadeup" style="animation-delay:.45s">
+
+      <div class="decision decision-horse tooltip-host">
+        <div class="decision-step">Modelo 1 · Paso 1</div>
+        <div class="decision-title">P1-Horse</div>
+        <div class="decision-sub">
+          Bronce vs Plata/Oro<br>
+          XGBoost + scale_pos_weight<br>
+          Entrena sobre X_train_horse (27 feat)
+        </div>
+        <div class="outcomes">
+          <span class="outcome-chip chip-bronce">→ Bronce · termina</span>
+          <span class="outcome-chip chip-plata">→ pasa a P2</span>
+        </div>
+        <div class="tooltip">
+          <strong>modelo_p1_horse.pkl</strong><br>
+          scale_pos_weight = n_bronce / n_plata_oro<br>
+          Sin SMOTE — desbalance por peso
+        </div>
+      </div>
+
+      <div class="decision decision-prods tooltip-host">
+        <div class="decision-step">Modelo 2 · Paso 1</div>
+        <div class="decision-title">P1-Prods</div>
+        <div class="decision-sub">
+          Bronce vs Plata/Oro<br>
+          XGBoost + scale_pos_weight<br>
+          Entrena sobre X_train_prods (22 feat)
+        </div>
+        <div class="outcomes">
+          <span class="outcome-chip chip-bronce">→ Bronce · termina</span>
+          <span class="outcome-chip chip-plata">→ pasa a P2</span>
+        </div>
+        <div class="tooltip">
+          <strong>modelo_p1_prods.pkl</strong><br>
+          scale_pos_weight = n_bronce / n_plata_oro<br>
+          Sin SMOTE — desbalance por peso
+        </div>
+      </div>
+
+    </div>
+
+    <div class="gap-sm"></div>
+    <div class="two-col-arrows fadeup" style="animation-delay:.5s">
+      <div class="arrow-center horse">↓ solo si pasa P1</div>
+      <div class="arrow-center prods">↓ solo si pasa P1</div>
+    </div>
+    <div class="gap-xs"></div>
+
+    <!-- 5. P2 -->
+    <div class="divider fadeup" style="animation-delay:.52s">Paso 2 · clasificación binaria — ¿es comprador de alto valor?</div>
+    <div class="gap-sm"></div>
+
+    <div class="p2-row fadeup" style="animation-delay:.55s">
+
+      <div class="node node-horse tooltip-host">
+        <div class="node-badge">Modelo 3</div>
+        <div class="node-label">Paso 2 · Caballos</div>
+        <div class="node-title">P2-Horse</div>
+        <div class="node-sub">
+          Plata vs Oro — solo subconjunto no-Bronce<br>
+          XGBoost + SMOTE (Pipeline CV sin leakage)<br>
+          F2 Lead Oro horse ≈ 0.51
+        </div>
+        <div class="outcomes" style="margin-top:10px">
+          <span class="outcome-chip chip-plata">Lead Plata</span>
+          <span class="outcome-chip chip-oro">Lead Oro</span>
+        </div>
+        <div class="tooltip">
+          <strong>modelo_p2_horse.pkl</strong><br>
+          Entrena con Pipeline(SMOTE→XGB) en CV<br>
+          Final: SMOTE sobre dataset completo no-Bronce
+        </div>
+      </div>
+
+      <div class="node node-prods tooltip-host">
+        <div class="node-badge">Modelo 4</div>
+        <div class="node-label">Paso 2 · Productos</div>
+        <div class="node-title">P2-Prods</div>
+        <div class="node-sub">
+          Plata vs Oro — solo subconjunto no-Bronce<br>
+          XGBoost + SMOTE (Pipeline CV sin leakage)<br>
+          F2 Lead Oro prods ≈ 0.49
+        </div>
+        <div class="outcomes" style="margin-top:10px">
+          <span class="outcome-chip chip-plata">Lead Plata</span>
+          <span class="outcome-chip chip-oro">Lead Oro</span>
+        </div>
+        <div class="tooltip">
+          <strong>modelo_p2_prods.pkl</strong><br>
+          Entrena con Pipeline(SMOTE→XGB) en CV<br>
+          Final: SMOTE sobre dataset completo no-Bronce
+        </div>
+      </div>
+
+    </div>
+
+    <div class="gap-sm"></div>
+    <div class="divider fadeup" style="animation-delay:.7s">Merge de resultados independientes</div>
+    <div class="arrow-center gold fadeup" style="animation-delay:.72s">↓</div>
+
+    <!-- 7. RESPONSE -->
+    <div class="fadeup" style="animation-delay:.75s; display:flex; justify-content:center;">
+      <div class="node node-response" style="width:100%; max-width:640px;">
+        <div class="node-label">Response · 200 OK</div>
+        <div class="node-title">Resultado del Scoring</div>
+        <div class="response-fields">
+          <div class="rf">
+            <div class="rf-key">horse_lead</div>
+            <div class="rf-val horse">"Lead Oro"</div>
+          </div>
+          <div class="rf">
+            <div class="rf-key">prods_lead</div>
+            <div class="rf-val prods">"Lead Plata"</div>
+          </div>
+          <div class="rf">
+            <div class="rf-key">horse_p1_proba</div>
+            <div class="rf-val gold">0.91</div>
+          </div>
+          <div class="rf">
+            <div class="rf-key">prods_p1_proba</div>
+            <div class="rf-val gold">0.74</div>
+          </div>
+        </div>
+        <div class="node-sub" style="margin-top:12px">
+          Un usuario puede ser Oro en caballos y Bronce en productos — scores completamente independientes.<br>
+          horse_p1_proba y prods_p1_proba exponen la confianza del modelo para uso downstream.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /diagram -->
+
+  <!-- ARTIFACTS -->
+  <div class="artifacts">
+    <div class="artifacts-header">
+      <h3>Artefactos · /models/champion/</h3>
+      <span class="artifacts-note">cargados al levantar el servidor · generados por train.py</span>
+    </div>
+    <div class="artifact-list">
+      <div class="artifact-item">
+        <div class="artifact-icon">🧠</div>
+        <div>
+          <div class="artifact-name">modelo_p1_horse.pkl</div>
+          <div class="artifact-desc">P1 caballos: Bronce vs Plata/Oro<br>XGBoost · scale_pos_weight</div>
+        </div>
+      </div>
+      <div class="artifact-item">
+        <div class="artifact-icon">🧠</div>
+        <div>
+          <div class="artifact-name">modelo_p1_prods.pkl</div>
+          <div class="artifact-desc">P1 productos: Bronce vs Plata/Oro<br>XGBoost · scale_pos_weight</div>
+        </div>
+      </div>
+      <div class="artifact-item">
+        <div class="artifact-icon">🧠</div>
+        <div>
+          <div class="artifact-name">modelo_p2_horse.pkl</div>
+          <div class="artifact-desc">P2 caballos: Plata vs Oro<br>XGBoost · SMOTE</div>
+        </div>
+      </div>
+      <div class="artifact-item">
+        <div class="artifact-icon">🧠</div>
+        <div>
+          <div class="artifact-name">modelo_p2_prods.pkl</div>
+          <div class="artifact-desc">P2 productos: Plata vs Oro<br>XGBoost · SMOTE</div>
+        </div>
+      </div>
+      <div class="artifact-item">
+        <div class="artifact-icon">🔢</div>
+        <div>
+          <div class="artifact-name">target_encoder.pkl</div>
+          <div class="artifact-desc">TargetEncoder smoothing=10<br>Fit solo sobre X_train · 9 columnas</div>
+        </div>
+      </div>
+      <div class="artifact-item">
+        <div class="artifact-icon">✂️</div>
+        <div>
+          <div class="artifact-name">limites_capping.pkl</div>
+          <div class="artifact-desc">Límites P99 por columna<br>Calculados sobre X_train</div>
+        </div>
+      </div>
+      <div class="artifact-item new">
+        <div class="artifact-icon">📋</div>
+        <div>
+          <div class="artifact-name">cols_horse.pkl <span class="new-badge">NEW</span></div>
+          <div class="artifact-desc">Lista de 27 features del dominio caballos<br>Reemplaza cols_v2.pkl genérico</div>
+        </div>
+      </div>
+      <div class="artifact-item new">
+        <div class="artifact-icon">📋</div>
+        <div>
+          <div class="artifact-name">cols_prods.pkl <span class="new-badge">NEW</span></div>
+          <div class="artifact-desc">Lista de 22 features del dominio productos<br>Reemplaza cols_v2.pkl genérico</div>
+        </div>
+      </div>
+      <div class="artifact-item new">
+        <div class="artifact-icon">⚙️</div>
+        <div>
+          <div class="artifact-name">cols_user.pkl <span class="new-badge">NEW</span></div>
+          <div class="artifact-desc">5 features compartidas (usuario)<br>Subconjunto de cols_horse y cols_prods</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
