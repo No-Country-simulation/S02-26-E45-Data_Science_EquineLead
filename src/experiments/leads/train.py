@@ -16,24 +16,33 @@ Qué cambia en cada archivo si necesitamos actualizar el campeón:
     Métricas / plots     → metrics.py
 """
 
-import argparse
-import os
+import datetime
+import platform
+import sys
+from pathlib import Path
 
 import mlflow
 from features import build_features
-from model import train_model
 from metrics import evaluate
-import platform
-import datetime
+from model import train_model
+
+# Importaciones desde los módulos core del proyecto
+from src.misc.config import (
+    MLFLOW_EXPERIMENT_LEADS,
+    SEED,
+    init_mlflow,
+    start_run,
+)
+from src.misc.utils import load_dataset, log_dataset_metadata
 
 PATH_DATA = Path("./data/clean")
 DATASET_NAME = "dataset_name.parquet"
 
-
 # ==================================
 # DATA SCIENTIST PERSONAL CONFIG
 # ==================================
-RUN_NAME = f"baseline_xgboost_v1_{datetime.datetime.now():%Y%m%d_%H%M%S}"  # Ejecución puntual dentro de un experimento
+# Ejecución puntual dentro de un experimento
+RUN_NAME = f"baseline_xgboost_v1_{datetime.datetime.now():%Y%m%d_%H%M%S}"
 DS_NAME = "Pepito_Pepin"
 STAGE = "training"
 
