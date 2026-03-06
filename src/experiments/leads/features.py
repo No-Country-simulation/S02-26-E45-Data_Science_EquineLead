@@ -1,26 +1,234 @@
-from typing import Tuple
+"""
+features.py
+===========
+Definición de features por dominio, Target Encoding, capping y
+construcción de los datasets de entrenamiento / test.
+
+Campeón: XGB Tuneado v1 (27 features horse, 22 features prods)
+  — El XGB v2 reducido fue descartado: Δ F2 Oro horse = -0.0478 (< umbral -0.01)
+"""
+
+import pickle
 import pandas as pd
+from category_encoders import TargetEncoder
 from sklearn.model_selection import train_test_split
-import numpy as np
 
 
-def build_features(
-    df: pd.DataFrame, test_size: float = 0.2, random_state: int = 42
-) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
+# ── 1. Columnas con Target Encoding ──────────────────────────────────────────
+#
+#  Nota: gender_mode, breed_family_mode, color_mode estaban definidas en
+#  COLS_TARGET_ENCODE en el notebook pero NO aparecen en df_final.columns
+#  en este run (el output de cell 350 confirma que solo se encodean 6 columnas).
+#  Se mantienen en la lista — el filtro `if c in df_final.columns` las ignora
+#  si no existen, por compatibilidad futura.
+
+COLS_TARGET_ENCODE = [
+    'user_region', 'user_card_issuer', 'user_domain',
+    'gender_mode', 'breed_family_mode', 'color_mode',           # presentes si el FE las genera
+    'most_viewed_category', 'most_viewed_brand', 'most_viewed_target_user',
+]
+
+
+# ── Features eliminadas (COLS_DROP_V2) ────────────────────────────────────
+#
+#  Estas features se calculan pero NO se usan en el campeón v1.
+#  Se documentan acá para el día que se decida reentrenar con v2.
+
+COLS_DROP_ZERO_VAR = [
+    'unique_regions_horses',
+    'prestige_gap',
+    'has_both_interests',
+]
+
+COLS_DROP_COLINEALES = [
+    'total_views',
+    'total_cart_adds',
+    'ratio_cart_global',
+    'avg_horse_price_viewed',
+    'min_horse_price_viewed',
+    'max_visitas_mismo_producto',
+]
+
+COLS_DROP_LOW_SIGNAL = [
+    'avg_horse_age',
+    'avg_prestige_score_horses',
+    'avg_prestige_score_products',
+    'avg_height',
+    'avg_weight',
+    'has_registry_viewed',
+    'avg_tech_score',
+    'avg_temperament',
+    'avg_comment_length',
+    'avg_product_price_viewed',
+    'ratio_horse_views',
+]
+
+COLS_DROP_V2 = COLS_DROP_ZERO_VAR + COLS_DROP_COLINEALES + COLS_DROP_LOW_SIGNAL
+
+
+# ── 3. Features por dominio del campeón (v1 — sin reducción) ─────────────────
+#
+#  Verificado contra output cell 395: horse=27 features, prods=22 features.
+
+COLS_USER = [
+    'user_prestige_score', 'user_antiguedad_dias',
+    'user_region', 'user_card_issuer', 'user_domain',
+]
+
+COLS_HORSE = [
+    'horses_viewed', 'horses_added_to_cart',
+    'max_horse_price_viewed', 'viewed_premium_horses',
+    'viewed_sport_elite', 'viewed_family_safe', 'viewed_working_elite',
+    'viewed_pro_sellers', 'has_shipping_viewed',
+    'caballos_unicos_vistos', 'ratio_recurrencia_horse',
+    'max_visitas_mismo_caballo',
+    'ratio_cart_horse', 'rango_precio_horse',
+    # Categóricas de caballos (encodadas con TE si existen)
+    'gender_mode', 'breed_family_mode', 'color_mode',
+    # Baja señal — conservadas en v1, eliminadas en v2
+    'avg_horse_age', 'avg_prestige_score_horses', 'avg_height', 'avg_weight',
+    'has_registry_viewed', 'avg_tech_score', 'avg_temperament', 'avg_comment_length',
+]
+
+COLS_PRODS = [
+    'products_viewed', 'products_added_to_cart',
+    'max_product_price_viewed', 'unique_categories',
+    'viewed_waterproof', 'viewed_leather', 'viewed_breathable',
+    'viewed_uv_protection', 'viewed_machine_washable',
+    'productos_unicos_vistos', 'ratio_recurrencia_prods',
+    'ratio_cart_prods',
+    # Categóricas de productos (encodadas con TE)
+    'most_viewed_category', 'most_viewed_brand', 'most_viewed_target_user',
+    # Baja señal — conservadas en v1, eliminadas en v2
+    'avg_prestige_score_products', 'avg_product_price_viewed',
+]
+
+
+# ── 4. Capping ────────────────────────────────────────────────────────────────
+#
+#  Columnas fijas detectadas en el EDA con colas extremas.
+#  La detección automática (max/P99 > 2) se calcula sobre X_train en runtime.
+
+COLS_CAPPING_FIJAS = ['max_horse_price_viewed', 'viewed_sport_elite']
+
+
+def compute_capping_limits(X_train: pd.DataFrame) -> dict:
+    """Calcula límites P99 sobre X_train. Solo usar datos de train (no leakage)."""
+    cols_auto = [
+        col for col in X_train.select_dtypes(include='number').columns
+        if (p99 := X_train[col].quantile(0.99)) > 0
+        and X_train[col].max() / p99 > 2
+    ]
+    cols = list(set(COLS_CAPPING_FIJAS + cols_auto))
+    return {col: X_train[col].quantile(0.99) for col in cols if col in X_train.columns}
+
+
+def apply_capping(X: pd.DataFrame, limites: dict) -> pd.DataFrame:
+    X = X.copy()
+    for col, lim in limites.items():
+        if col in X.columns:
+            X[col] = X[col].clip(upper=lim)
+    return X
+
+
+# ── 5. Pipeline completo ──────────────────────────────────────────────────────
+
+def build_datasets(df_final: pd.DataFrame) -> dict:
     """
-    Load data, build features and return train/validation split.
+    Construye todos los datasets necesarios para entrenar el campeón (XGB Tuneado v1).
+
+    Retorna dict con:
+        X_train_horse, X_test_horse  — 27 features (5 user + 22 horse)
+        X_train_prods, X_test_prods  — 22 features (5 user + 17 prods)
+        X_p2h_raw, X_p2p_raw        — subsets Paso 2 (solo no-Bronce, sin SMOTE)
+        y_train, y_test
+        te, limites_capping
+        cols_horse, cols_prods       — listas de columnas finales por dominio
     """
-
-    ## Ejemplo ####################################
-    X = df.drop(columns=["target"])
-    y = df["target"]
-
-    X["feature_1_squared"] = X["feature_1"] ** 2
-    X["feature_2_log"] = np.log1p(X["feature_2"])
-
-    X_train, X_val, y_train, y_val = train_test_split(
-        X, y, test_size=test_size, random_state=random_state
+    # ── 5.1 Split ──────────────────────────────────────────────────────────────
+    X = df_final.drop(columns=['horse_target', 'prods_target'])
+    y = df_final[['horse_target', 'prods_target']]
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, stratify=y, test_size=0.2, random_state=42
     )
-    ##############################################
 
-    return X_train, X_val, y_train, y_val
+    # ── 5.2 Target Encoding ────────────────────────────────────────────────────
+    target_ord = y_train['horse_target'].map(
+        {'Lead Bronce': 0, 'Lead Plata': 1, 'Lead Oro': 2}
+    )
+    cols_te = [c for c in COLS_TARGET_ENCODE if c in X_train.columns]
+    te = TargetEncoder(cols=cols_te, smoothing=10)
+    X_train[cols_te] = te.fit_transform(X_train[cols_te], target_ord)
+    X_test[cols_te]  = te.transform(X_test[cols_te])
+    print(f'Target Encoding aplicado a {len(cols_te)} columnas: {cols_te}')
+
+    # ── 5.3 Capping ────────────────────────────────────────────────────────────
+    limites_capping = compute_capping_limits(X_train)
+    X_train = apply_capping(X_train, limites_capping)
+    X_test  = apply_capping(X_test,  limites_capping)
+
+    # ── 5.4 Separación por dominio (v1 — sin reducción) ────────────────────────
+    cols_user  = [c for c in COLS_USER  if c in X_train.columns]
+    cols_horse = [c for c in COLS_HORSE if c in X_train.columns]
+    cols_prods = [c for c in COLS_PRODS if c in X_train.columns]
+
+    X_train_horse = X_train[cols_user + cols_horse]
+    X_test_horse  = X_test[cols_user  + cols_horse]
+    X_train_prods = X_train[cols_user + cols_prods]
+    X_test_prods  = X_test[cols_user  + cols_prods]
+
+    # ── 5.5 Subsets Paso 2 (no-Bronce, sin SMOTE — el SMOTE se aplica en model.py) ──
+    mask_p2_horse = y_train['horse_target'] != 'Lead Bronce'
+    mask_p2_prods = y_train['prods_target'] != 'Lead Bronce'
+    X_p2h_raw = X_train_horse[mask_p2_horse]
+    X_p2p_raw = X_train_prods[mask_p2_prods]
+
+    print(f'X_train_horse: {X_train_horse.shape}  '
+          f'({len(cols_user)} user + {len(cols_horse)} horse)')
+    print(f'X_train_prods: {X_train_prods.shape}  '
+          f'({len(cols_user)} user + {len(cols_prods)} prods)')
+
+    return dict(
+        X_train_horse = X_train_horse,
+        X_test_horse  = X_test_horse,
+        X_train_prods = X_train_prods,
+        X_test_prods  = X_test_prods,
+        X_p2h_raw     = X_p2h_raw,
+        X_p2p_raw     = X_p2p_raw,
+        y_train       = y_train,
+        y_test        = y_test,
+        te            = te,
+        limites_capping = limites_capping,
+        cols_horse    = list(X_train_horse.columns),
+        cols_prods    = list(X_train_prods.columns),
+    )
+
+
+# ── 6. Serialización ──────────────────────────────────────────────────────────
+
+def save_preprocessing_artifacts(outdir: str, te, limites_capping: dict,
+                                   cols_horse: list, cols_prods: list):
+    """Guarda los artefactos que necesita la API en producción."""
+    import os
+    os.makedirs(outdir, exist_ok=True)
+    artifacts = {
+        'target_encoder.pkl':  te,
+        'limites_capping.pkl': limites_capping,
+        'cols_horse.pkl':      cols_horse,
+        'cols_prods.pkl':      cols_prods,
+        'cols_user.pkl':       COLS_USER,
+    }
+    for fname, obj in artifacts.items():
+        path = os.path.join(outdir, fname)
+        with open(path, 'wb') as f:
+            pickle.dump(obj, f)
+        print(f'  ✓ {path}')
+
+
+def load_preprocessing_artifacts(outdir: str) -> dict:
+    keys = ['target_encoder', 'limites_capping', 'cols_horse', 'cols_prods', 'cols_user']
+    result = {}
+    for key in keys:
+        with open(f'{outdir}/{key}.pkl', 'rb') as f:
+            result[key] = pickle.load(f)
+    return result
