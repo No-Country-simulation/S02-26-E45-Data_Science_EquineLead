@@ -1,24 +1,15 @@
 from typing import Any
-import pandas as pd
-from sklearn.ensemble import RandomForestRegressor
+from scipy.sparse import csr_matrix
+from sklearn.neighbors import NearestNeighbors
 
 
-def train_model(
-    X_train: pd.DataFrame,
-    y_train: pd.Series,
-    random_state: int = 42
-) -> Any:
+def train_model(X_train: csr_matrix, y_train=None, random_state: int = 42) -> Any:
     """
-    Train and return a model.
+    Train and return a KNN model with cosine similarity over sparse feature matrix.
+    y_train is unused (unsupervised), kept for API consistency.
     """
-    ## Ejemplo ####################################
-    model = RandomForestRegressor(
-        n_estimators=200,
-        max_depth=10,
-        random_state=random_state,
-        n_jobs=-1
-    )
 
-    model.fit(X_train, y_train)
-    ##############################################
+    model = NearestNeighbors(n_neighbors=5, metric="cosine", algorithm="brute")
+    model.fit(X_train)
+
     return model

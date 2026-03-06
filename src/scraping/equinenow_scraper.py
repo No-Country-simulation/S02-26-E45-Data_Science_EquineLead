@@ -23,11 +23,13 @@ HEADERS = {
     )
 }
 
+
 def get_soup(url, sleep_seconds=4):
     resp = requests.get(url, headers=HEADERS, timeout=30)
     sleep(sleep_seconds)  # rate limit suave
     resp.raise_for_status()
     return BeautifulSoup(resp.text, "lxml")
+
 
 def scrape_listings(max_pages=2):
 
@@ -54,19 +56,23 @@ def scrape_listings(max_pages=2):
                 parsed = urlparse(href)
                 clean_url = f"{parsed.scheme}://{parsed.netloc}{parsed.path}"
                 listing_urls.add(clean_url)
-                
+
         except Exception as e:
             print(f"Error scraping {url}: {e}")
 
-    for lurl in tqdm(listing_urls, total=len(listing_urls), desc="Scraping Horse Profiles"):
+    for lurl in tqdm(
+        listing_urls, total=len(listing_urls), desc="Scraping Horse Profiles"
+    ):
         try:
             data = {}
             data["Horse_ID"] = lurl.split("-")[-1]
 
-            #Caracteristicas del caballo
+            # Caracteristicas del caballo
             lsoup = get_soup(lurl).body
             if lsoup:
-                name = lsoup.select_one("div.well.margin-bottom5.padding-bottom10 > header > h3")
+                name = lsoup.select_one(
+                    "div.well.margin-bottom5.padding-bottom10 > header > h3"
+                )
                 data["Name"] = name.get_text(strip=True) if name else None
 
                 ul_features_horse = lsoup.select_one("ul.meta-data.list-unstyled")
@@ -78,7 +84,9 @@ def scrape_listings(max_pages=2):
                     data[key] = value
 
                 # Location
-                h5_location = lsoup.select_one("div.col-xs-12.col-sm-5.no-padding-xs div header h5")
+                h5_location = lsoup.select_one(
+                    "div.col-xs-12.col-sm-5.no-padding-xs div header h5"
+                )
                 location = h5_location.get_text(strip=True) if h5_location else None
 
                 # Price
@@ -94,7 +102,9 @@ def scrape_listings(max_pages=2):
 
                 # Additional comments (span[itemprop="description"])
                 desc_span = lsoup.select_one('div.well p span[itemprop="description"]')
-                additional_comments = desc_span.get_text(strip=True) if desc_span else None
+                additional_comments = (
+                    desc_span.get_text(strip=True) if desc_span else None
+                )
 
                 # Shipping (segundo <p> después de div.well)
                 p_shipping = lsoup.select_one("div.well p ~ p")
@@ -125,7 +135,7 @@ def scrape_listings(max_pages=2):
     df = pd.DataFrame(rows)
     return df
 
+
 if __name__ == "__main__":
     df = scrape_listings(max_pages=400)
     df.to_parquet(PATH_OUTPUT / "equinenow_horses_listings.parquet", index=False)
-

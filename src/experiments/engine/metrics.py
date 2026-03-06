@@ -1,21 +1,20 @@
 from typing import Dict
-import pandas as pd
-from sklearn.metrics import root_mean_squared_error, mean_absolute_error
+from scipy.sparse import csr_matrix
 
 
-def evaluate(
-    model,
-    X_val: pd.DataFrame,
-    y_val: pd.Series
-) -> Dict[str, float]:
+def evaluate(model, X_val: csr_matrix, y_val=None) -> Dict[str, float]:
     """
-    Evaluate model and return metrics dict.
+    Evaluate KNN recommender reliability.
+    Excludes first neighbor (self-match) when evaluating on training data.
     """
-    
-    # Ejemplo ####################################
-    preds = model.predict(X_val)
+
+    distancias, _ = model.kneighbors(X_val)
+
+    # Exclude self-match at index 0
+    avg_distance = distancias[:, 1:].mean()
+    reliability = (1 - avg_distance) * 100
 
     return {
-        "rmse": root_mean_squared_error(y_val, preds),
-        "mae": mean_absolute_error(y_val, preds),
+        "avg_cosine_distance": avg_distance,
+        "model_reliability_score": reliability,
     }

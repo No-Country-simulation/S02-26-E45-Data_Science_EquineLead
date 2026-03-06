@@ -13,3 +13,7 @@ variable "storage_class" {
 variable "service_account_name" {
   description = "Nombre de la cuenta de servicio"
 }
+
+variable "image" {
+  description = "Imagen del contenedor para Cloud Run"
+}

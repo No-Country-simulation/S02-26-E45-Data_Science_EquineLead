@@ -19,18 +19,22 @@ HEADERS = {
     )
 }
 
+
 def get_soup(url, sleep_seconds=4):
     resp = requests.get(url, headers=HEADERS, timeout=30)
     sleep(sleep_seconds)  # rate limit suave
     resp.raise_for_status()
     return BeautifulSoup(resp.text, "lxml")
 
+
 def scrape_listings(pages_per_category=2, sleep_seconds=5):
     rows = []
     url = f"{BASE}"
     soup = get_soup(url)
 
-    a_categories = soup.select('ul[role="menubar"] > li.menu-item-has-children > a[href]')
+    a_categories = soup.select(
+        'ul[role="menubar"] > li.menu-item-has-children > a[href]'
+    )
     categories_urls = set()
 
     for a in a_categories:
@@ -43,10 +47,18 @@ def scrape_listings(pages_per_category=2, sleep_seconds=5):
 
     product_urls = set()
 
-    for category_url in tqdm(categories_urls, total=len(categories_urls), desc="Scraping Product Categories", leave=False, position=0):
-        for i, page in enumerate(range(1, pages_per_category+1)):
+    for category_url in tqdm(
+        categories_urls,
+        total=len(categories_urls),
+        desc="Scraping Product Categories",
+        leave=False,
+        position=0,
+    ):
+        for i, page in enumerate(range(1, pages_per_category + 1)):
             try:
-                cat_soup = get_soup(f"{category_url}?filter.v.price.gte={FILTER_PRICE}&page={page}")
+                cat_soup = get_soup(
+                    f"{category_url}?filter.v.price.gte={FILTER_PRICE}&page={page}"
+                )
                 a_products = cat_soup.select("a.product-card-title")
                 for a in a_products:
                     href = str(a.get("href"))
@@ -55,14 +67,20 @@ def scrape_listings(pages_per_category=2, sleep_seconds=5):
 
                     product_url = url + href
                     product_urls.add(product_url)
-            except Exception as e:
+            except Exception:
                 break  # salimos de esta categoría
 
-    for product_url in tqdm(product_urls, total=len(product_urls), desc="Scraping Horse Profiles", leave=False, position=0):
+    for product_url in tqdm(
+        product_urls,
+        total=len(product_urls),
+        desc="Scraping Horse Profiles",
+        leave=False,
+        position=0,
+    ):
         try:
             data = {}
 
-            #Caracteristicas del producto
+            # Caracteristicas del producto
             psoup = get_soup(product_url)
 
             # Item ID
@@ -88,9 +106,9 @@ def scrape_listings(pages_per_category=2, sleep_seconds=5):
             el = psoup.select_one("div.section-header--content > div.rte")
             description = el.get_text(separator="\n", strip=True) if el else None
 
-            #Imagen
+            # Imagen
             a_imgs = psoup.select("a.product-single__media-zoom")
-            img_urls = list() 
+            img_urls = list()
             for a in a_imgs:
                 href = str(a.get("href"))
                 if not href:
@@ -99,7 +117,7 @@ def scrape_listings(pages_per_category=2, sleep_seconds=5):
                 if href and href.startswith("//"):
                     img_url = "https:" + href
                 else:
-                    img_url = None   
+                    img_url = None
                 img_urls.append(img_url)
 
             data["Item_ID"] = item_id
@@ -118,6 +136,7 @@ def scrape_listings(pages_per_category=2, sleep_seconds=5):
 
     df = pd.DataFrame(rows)
     return df
+
 
 if __name__ == "__main__":
     df = scrape_listings(pages_per_category=3)
