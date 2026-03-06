@@ -21,6 +21,7 @@ from faker.providers import BaseProvider
 
 DATA_DIR_CLEAN = Path("./data/clean")
 DATA_DIR_TRACKING = Path("./data/tracking")
+DATA_DIR_CLEAN = Path("./data/clean")
 
 
 def download_and_prepare(

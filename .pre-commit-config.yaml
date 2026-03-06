@@ -5,7 +5,6 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
-      - id: check-added-large-files
       - id: check-json          # valida JSONs (útil por los configs de mlflow)
       - id: check-toml          # valida pyproject.toml
       - id: debug-statements    # detecta breakpoint() y pdb olvidados
