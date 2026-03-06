@@ -1,77 +1,132 @@
+import os
+import pickle
 from pathlib import Path
 
 import config as cfg
 import numpy as np
 import pandas as pd
+from preprocess_horse import load_artifacts, predict_cascade
+
+
+def load_models(outdir: str) -> dict:
+    names = ["modelo_p1_horse", "modelo_p1_prods", "modelo_p2_horse", "modelo_p2_prods"]
+    result = {}
+    for name in names:
+        with open(os.path.join(outdir, f"{name}.pkl"), "rb") as f:
+            result[name] = pickle.load(f)
+    return result
+
+
+def _load_raw(path: str) -> pd.DataFrame:
+    p = Path(path)
+    if p.suffix == ".parquet":
+        return pd.read_parquet(p)
+    elif p.suffix == ".csv":
+        return pd.read_csv(p)
+    else:
+        raise ValueError(f"Formato no soportado: {p.suffix}")
+
+
+def _add_predictions(df_raw: pd.DataFrame, arts: dict, models: dict) -> pd.DataFrame:
+    """
+    Corre el pipeline de inferencia sobre datos crudos y agrega:
+        - lead_label    → ground truth simulado desde horse_target
+        - prediction    → label predicho por la cascada P1 → P2
+        - prob_plata_oro, prob_oro → probabilidades
+    """
+    # Separar target si viene en los datos (como en entrenamiento)
+    df_features = df_raw.drop(
+        columns=[c for c in ["horse_target", "prods_target"] if c in df_raw.columns]
+    )
+
+    # Correr cascada
+    result = predict_cascade(
+        df_features,
+        arts,
+        models["modelo_p1_horse"],
+        models["modelo_p2_horse"],
+    )
+
+    # Ground truth — usar horse_target si existe, si no simular
+    if "horse_target" in df_raw.columns:
+        result[cfg.TARGET_COL] = df_raw["horse_target"].values
+    else:
+        print("⚠️  Sin ground truth — simulando labels.")
+        result[cfg.TARGET_COL] = np.random.choice(
+            ["Lead Bronce", "Lead Plata", "Lead Oro"],
+            size=len(result),
+            p=[0.6, 0.3, 0.1],
+        )
+
+    result[cfg.PREDICTION_COL] = result["lead_label"]
+    return result
 
 
 def load_reference_data() -> pd.DataFrame:
     """Carga el dataset de entrenamiento como referencia."""
-    df = pd.read_parquet(cfg.REFERENCE_DATA_PATH)
-    df.columns = [c.lower().strip() for c in df.columns]
-    df = df[cfg.FEATURE_COLS].copy()
+    arts = load_artifacts(cfg.ARTIFACTS_DIR)
+    models = load_models(cfg.MODELS_DIR)
 
-    # Simular ground truth para referencia (en producción reemplazar con labels reales)
-    df[cfg.TARGET_COL] = _simulate_labels(len(df))
-    df[cfg.PREDICTION_COL] = _simulate_labels(len(df))
-
-    return df
+    df_raw = _load_raw(cfg.REFERENCE_DATA_PATH)
+    print(f"✅ Reference data: {len(df_raw)} filas")
+    return _add_predictions(df_raw, arts, models)
 
 
 def load_current_data() -> pd.DataFrame:
     """
-    Carga los datos de producción actuales.
+    Carga los datos de producción.
 
-    Reemplazá esta función con tu fuente real de datos:
-        - CSV/parquet de logs de Gradio
-        - Query a base de datos
-        - Archivo generado por el logger de la API
+    Si CURRENT_DATA_PATH no existe → genera datos sintéticos como fallback.
+    Reemplazá el archivo en CURRENT_DATA_PATH con tus logs reales.
     """
     path = Path(cfg.CURRENT_DATA_PATH)
 
     if not path.exists():
-        print(f"⚠️  Current data not found at {path}. Generating synthetic data...")
+        print(f"⚠️  {path} no encontrado — usando datos sintéticos.")
         return _generate_synthetic_data()
 
-    ext = path.suffix
-    if ext == ".parquet":
-        df = pd.read_parquet(path)
-    elif ext == ".csv":
-        df = pd.read_csv(path)
-    else:
-        raise ValueError(f"Unsupported file format: {ext}")
+    arts = load_artifacts(cfg.ARTIFACTS_DIR)
+    models = load_models(cfg.MODELS_DIR)
 
-    df.columns = [c.lower().strip() for c in df.columns]
-    return df[cfg.FEATURE_COLS + [cfg.TARGET_COL, cfg.PREDICTION_COL]]
-
-
-def _simulate_labels(n: int) -> list:
-    """Simula ground truth binario (0=no compra, 1=compra)."""
-    return np.random.choice([0, 1], size=n, p=[0.7, 0.3]).tolist()
+    df_raw = _load_raw(str(path))
+    print(f"✅ Current data: {len(df_raw)} filas")
+    return _add_predictions(df_raw, arts, models)
 
 
 def _generate_synthetic_data(n: int = 500) -> pd.DataFrame:
     """
-    Genera datos sintéticos de producción con distribución levemente desviada
-    respecto al dataset de entrenamiento para simular drift.
-
-    Reemplazá con datos reales cuando estén disponibles.
+    Fallback — genera datos sintéticos con distribución levemente desviada
+    para simular drift. Reemplazar con logs reales cuando estén disponibles.
     """
-    breeds = ["andalusian", "thoroughbred", "quarter horse", "arabian", "warmblood"]
-    colors = ["bay", "black", "chestnut", "grey", "palomino"]
-
+    print("🔧 Generando datos sintéticos de producción...")
+    np.random.seed(99)
     df = pd.DataFrame(
         {
-            "breed": np.random.choice(breeds, size=n, p=[0.4, 0.3, 0.15, 0.1, 0.05]),
-            "color": np.random.choice(colors, size=n, p=[0.5, 0.2, 0.15, 0.1, 0.05]),
-            # Precio con distribución desviada para simular drift
-            "price": np.random.lognormal(mean=10.5, sigma=0.8, size=n).clip(
-                1000, 100000
+            "horses_viewed": np.random.poisson(5, n),
+            "horses_added_to_cart": np.random.poisson(1, n),
+            "max_horse_price_viewed": np.random.lognormal(10, 1, n).clip(0, 500_000),
+            "viewed_premium_horses": np.random.poisson(1, n),
+            "viewed_sport_elite": np.random.poisson(0.5, n),
+            "viewed_family_safe": np.random.poisson(1, n),
+            "viewed_working_elite": np.random.poisson(0.5, n),
+            "viewed_pro_sellers": np.random.poisson(2, n),
+            "has_shipping_viewed": np.random.randint(0, 2, n),
+            "caballos_unicos_vistos": np.random.poisson(3, n),
+            "ratio_recurrencia_horse": np.random.uniform(0, 1, n),
+            "max_visitas_mismo_caballo": np.random.poisson(2, n),
+            "ratio_cart_horse": np.random.uniform(0, 0.5, n),
+            "rango_precio_horse": np.random.randint(0, 5, n),
+            "user_prestige_score": np.random.randint(0, 100, n),
+            "user_antiguedad_dias": np.random.randint(0, 1000, n),
+            "user_region": np.random.choice(["norte", "sur", "centro"], n),
+            "user_card_issuer": np.random.choice(["visa", "mastercard", "amex"], n),
+            "user_domain": np.random.choice(["gmail", "hotmail", "yahoo"], n),
+            cfg.TARGET_COL: np.random.choice(
+                ["Lead Bronce", "Lead Plata", "Lead Oro"], n, p=[0.6, 0.3, 0.1]
+            ),
+            cfg.PREDICTION_COL: np.random.choice(
+                ["Lead Bronce", "Lead Plata", "Lead Oro"], n, p=[0.55, 0.32, 0.13]
             ),
         }
     )
-
-    df[cfg.TARGET_COL] = _simulate_labels(n)
-    df[cfg.PREDICTION_COL] = _simulate_labels(n)
-
     return df

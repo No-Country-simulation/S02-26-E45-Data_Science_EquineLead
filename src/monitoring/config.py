@@ -1,24 +1,29 @@
 import os
+from pathlib import Path
 
-# ── MLflow ────────────────────────────────────────────────────────────────────
-MODEL_NAME = "model_engine"
-MODEL_ALIAS = "production"  # stage usado en DagsHub
+from dotenv import load_dotenv
+
+# Carga el .env desde la raíz del proyecto
+load_dotenv(Path(__file__).resolve().parents[2] / ".env")
+
+# ── Modelos y artefactos ──────────────────────────────────────────────────────
+MODELS_DIR = "src/models/champion"  # donde están los 4 .pkl de modelos
+ARTIFACTS_DIR = "src/models/champion"  # donde están los 5 .pkl de preprocesamiento
 
 # ── Datos ─────────────────────────────────────────────────────────────────────
-# Dataset de referencia (entrenamiento)
-REFERENCE_DATA_PATH = "data/clean/horses_listings_limpio.parquet"
+# Dataset de referencia (mismo formato que df_final.parquet de entrenamiento)
+REFERENCE_DATA_PATH = "data/clean/df_final.parquet"
 
-# Dataset de producción — reemplazá esta ruta con tus datos reales.
-# Puede ser un CSV/parquet generado por logs de Gradio, una query a BD, etc.
-CURRENT_DATA_PATH = "data/monitoring/current_data.parquet"
+# Dataset de producción — mismo formato crudo que entrenamiento.
+# Reemplazá este archivo con tus logs reales de producción.
+CURRENT_DATA_PATH = "data/production/data_drift.parquet"
 
-# ── Features esperadas por el modelo ─────────────────────────────────────────
-FEATURE_COLS = ["breed", "color", "price"]
-TARGET_COL = "label"  # columna de ground truth (real o simulada)
-PREDICTION_COL = "prediction"  # columna de predicción del modelo
+# ── Columnas de monitoreo ─────────────────────────────────────────────────────
+TARGET_COL = "horse_target"  # ground truth  ('Lead Bronce' | 'Lead Plata' | 'Lead Oro')
+PREDICTION_COL = "prediction"  # predicción del modelo
 
 # ── Reportes ──────────────────────────────────────────────────────────────────
-REPORT_DIR = "monitoring/reports/"
+REPORT_DIR = "src/monitoring/reports/"
 
 # ── Drift ─────────────────────────────────────────────────────────────────────
 DRIFT_THRESHOLD = 0.3  # proporción de features drifteadas que dispara alerta
