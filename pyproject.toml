@@ -15,7 +15,8 @@ dependencies = [
     "setuptools>=80.10.2",
     "scikit-learn>=1.8.0",
     "xgboost>=3.2.0",
-    "cloudpickle>=3.1.2"
+    "cloudpickle>=3.1.2",
+    "python-dotenv>=1.2.2",
 ]
 
 [tool.uv]
@@ -76,7 +77,12 @@ ml = [
 ml_platform = [
     "dagshub>=0.6.5",
     "mlflow>=3.5.1",
-    "dvc[gs]>=3.66.1"
+    "dvc[gs]>=3.66.1",
+]
+
+monitoring = [
+    "evidently>=0.4.36",
+    "netlify-python>=0.4.0",
 ]
 
 app = [
