@@ -24,11 +24,13 @@ resource "google_storage_bucket" "equinelead-datalake" {
 }
 
 data "google_service_account" "pipeline_sa" {
-  account_id   = var.service_account_name
+  account_id = var.service_account_name
 }
 
+data "google_project" "project" {}
+
 resource "google_storage_bucket_iam_member" "pipeline_sa_storage_admin" {
-  bucket = google_storage_bucket.equine-lead-test.name
+  bucket = google_storage_bucket.equinelead-datalake.name
   role   = "roles/storage.objectAdmin"
   member = "serviceAccount:${data.google_service_account.pipeline_sa.email}"
 }
@@ -82,13 +84,17 @@ resource "google_project_iam_member" "pipeline_sa_cloudbuild_editor" {
   member  = "serviceAccount:${data.google_service_account.pipeline_sa.email}"
 }
 
+resource "google_project_iam_member" "pipeline_sa_logs_viewer" {
+  project = var.project_id
+  role    = "roles/logging.viewer"
+  member  = "serviceAccount:${data.google_service_account.pipeline_sa.email}"
+}
+
 resource "google_service_account_iam_member" "pipeline_sa_act_as_cloudbuild" {
   service_account_id = "projects/${var.project_id}/serviceAccounts/${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
   role               = "roles/iam.serviceAccountUser"
   member             = "serviceAccount:${data.google_service_account.pipeline_sa.email}"
 }
-
-data "google_project" "project" {}
 
 # Logueate en GCP:
 # gcloud auth application-default login
