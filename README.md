@@ -59,6 +59,7 @@ Todo el pipeline, desde el scraping hasta el deploy, está orquestado, versionad
   - [POST /recommender/recommend](#post-recommenderrecommend)
 - [Monitoreo](#-monitoreo-de-modelos-en-producción)
 - [Demo Interactivo](#-demo-interactivo-huggingface)
+- [CI/CD con GitHub Actions](#️-cicd-con-github-actions)
 - [Infraestructura (IaC)](#️-infraestructura-como-código-iac)
 - [Quick Start](#-guía-de-ejecución-quick-start)
 - [Estructura del Proyecto](#-estructura-del-proyecto)
@@ -324,10 +325,8 @@ Dashboard modular construido con Streamlit y Plotly, con tema oscuro estilo Powe
 | ⚡ **Funnel & Session Telemetry** | Funnels de conversión, volumen de eventos, top items |
 | 🧠 **AI Subsystem (DagsHub)** | Conexión en vivo a experimentos MLflow, métricas y plots |
 
-### Ejecución Local
-
 ```bash
-# Desde la raíz del repositorio
+# Ejecución local
 streamlit run app/app.py
 ```
 
@@ -335,7 +334,7 @@ streamlit run app/app.py
 
 ## ⚡ API de Inferencia
 
-→ [Acceder a la API](equinelead-api) · [Docs interactivos `/docs`](equinelead-api/docs)
+→ [Acceder a la API](https://equinelead-api-516367992092.us-east1.run.app/) · [Docs interactivos `/docs`](https://equinelead-api-516367992092.us-east1.run.app/docs)
 
 ![api](./assets/api.png)
 
@@ -351,7 +350,7 @@ REST API construida con **FastAPI**, desplegada como servicio serverless en **Go
 
 ---
 
-### `POST /horse/predict y POST /prods/predict`
+### `POST /horse/predict` y `POST /prods/predict`
 
 Clasifica al usuario en **Lead Bronce / Plata / Oro** mediante el pipeline en cascada.
 
@@ -442,13 +441,10 @@ Datos de producción
 | **Class Balance** | Distribución de clases Lead Bronce / Plata / Oro |
 | **Model Performance** | Accuracy y matriz de confusión sobre datos recientes |
 
-### Ejecución Manual
 ```bash
-# Correr reporte de monitoreo
+# Ejecución manual
 uv run python src/monitoring/flow.py
 ```
-
-El reporte se publica automáticamente en Netlify y si se detecta drift, se envía una alerta al canal de Slack del equipo.
 
 ---
 
@@ -458,7 +454,38 @@ El reporte se publica automáticamente en Netlify y si se detecta drift, se env�
 
 ![gradio](./assets/gradio.png)
 
-Interfaz Gradio alojada en HuggingFace Spaces que permite explorar el motor de recomendación KNN y el pipeline de Lead Scoring sin necesidad de configuración local. Ideal para demostraciones rápidas del modelo campeón.
+Interfaz Gradio alojada en HuggingFace Spaces que permite explorar el motor de recomendación KNN y el pipeline de Lead Scoring sin necesidad de configuración local.
+
+---
+
+## ⚙️ CI/CD con GitHub Actions
+
+El pipeline de integración y despliegue continuo está configurado en `.github/workflows/ci.yml` y corre automáticamente en cada push a `develop` o `main`, o manualmente desde **Actions → CI → Run workflow** (útil para redesplegar cuando se promociona un nuevo modelo en DagsHub).
+
+### Flujo de Jobs
+
+```
+lint ──┬── download-models ──── build-and-push ──── deploy ──── smoke-test
+       └───────────────────────────────────────────────────────────────────
+```
+
+| Job | Trigger | Descripción |
+|---|---|---|
+| `lint` | Todo push / PR | Pre-commit: black + ruff |
+| `download-models` | Push + manual | Descarga modelos `@production` desde DagsHub |
+| `build-and-push` | Push + manual | Build imagen Docker + push a DockerHub |
+| `deploy` | `main`, `develop` + manual | Deploy a Cloud Run via Cloud Build |
+| `smoke-test` | `main`, `develop` + manual | Tests de los 3 endpoints con pytest |
+
+### Secrets requeridos en GitHub
+
+| Secret | Descripción |
+|---|---|
+| `DOCKER_USERNAME` | Usuario de DockerHub |
+| `DOCKER_PASSWORD` | Personal Access Token de DockerHub |
+| `GCP_SA_KEY` | JSON de la service account de GCP |
+| `DAGSHUB_USER_TOKEN` | Access token de DagsHub |
+| `DAGSHUB_USERNAME` | Usuario de DagsHub |
 
 ---
 
@@ -475,6 +502,9 @@ Para garantizar la reproducibilidad total, la infraestructura de la nube se gest
 | `google_service_account_key` | Key JSON para autenticación desde el pipeline |
 | `google_cloud_run_v2_service` | API FastAPI desplegada como servicio serverless |
 | `google_cloud_run_v2_service_iam_member` | Acceso público al endpoint de Cloud Run |
+| `google_project_iam_member` (cloudbuild editor) | Permisos para triggerear Cloud Build |
+| `google_project_iam_member` (viewer) | Permisos para streaming de logs de Cloud Build |
+| `google_service_account_iam_member` | Permisos para actuar como service account de Cloud Build |
 
 ### Configuración Inicial
 ```bash
@@ -489,6 +519,7 @@ gcloud config set project TU_PROJECT_ID
 gcloud services enable iam.googleapis.com
 gcloud services enable storage-api.googleapis.com
 gcloud services enable run.googleapis.com
+gcloud services enable cloudbuild.googleapis.com
 
 # 4. Crear infra/terraform/terraform.tfvars
 project_id           = "tu-id-de-proyecto"
@@ -501,17 +532,10 @@ image                = "docker.io/usuario/equinelead-api:latest"
 
 ### Despliegue
 ```bash
-# Desplegar toda la infraestructura
-make terraform-deploy
-
-# Desplegar solo el bucket de GCS
-make terraform-datalake
-
-# Desplegar solo el servicio de Cloud Run
-make terraform-api
-
-# ⚠️ Destruir toda la infraestructura
-make terraform-destroy
+make terraform-deploy      # Despliega toda la infraestructura
+make terraform-datalake    # Despliega solo el bucket de GCS
+make terraform-api         # Despliega solo el servicio de Cloud Run
+make terraform-destroy     # ⚠️ Destruye toda la infraestructura GCP
 ```
 
 ### Extraer Service Account Key
@@ -543,8 +567,6 @@ cd S02-26-E45-Data_Science_EquineLead
 
 ### 2. Configurar variables de entorno
 ```bash
-# Crear .env con credenciales
-
 # Google Cloud
 GCP_PROJECT_ID=tu_id_proyecto
 GCP_BUCKET_NAME=tu_nombre_bucket
@@ -571,8 +593,7 @@ NETLIFY_SITE_ID=your_netlify_site_id
 > - `GCP`: [Google Cloud Console](https://console.cloud.google.com/)
 > - `PREFECT_API_KEY`: [Prefect Cloud](https://app.prefect.cloud/) → Settings → API Keys
 > - `DAGSHUB_USER_TOKEN`: [DagsHub](https://dagshub.com/) → Settings → Access Tokens
-> - `DOCKER_USERNAME`: tu usuario de [Docker Hub](https://hub.docker.com/)
-> - `DOCKER_PASSWORD`: tu PAT en [Docker Hub](https://hub.docker.com/) → Account Settings → Personal Access Token
+> - `DOCKER_PASSWORD`: [Docker Hub](https://hub.docker.com/) → Account Settings → Personal Access Token
 > - `SLACK_WEBHOOK_URL`: Slack → Apps → Incoming Webhooks
 > - `NETLIFY_TOKEN`: [Netlify](https://app.netlify.com/) → User Settings → Applications → Personal access tokens
 
@@ -626,8 +647,8 @@ dvc pull
 ## 📁 Estructura del Proyecto
 ```
 S02-26-E45-Data_Science_EquineLead/
-├── .github/workflows/ci.yml        # Pipeline de CI: linting y tests automáticos en cada push
-├── .pre-commit-config.yaml         # Hooks de pre-commit (black, ruff) para mantener calidad de código
+├── .github/workflows/ci.yml        # CI/CD: lint, build, deploy y smoke test automáticos
+├── .pre-commit-config.yaml         # Hooks de pre-commit (black, ruff)
 ├── Makefile                        # Comandos útiles: levantar servicios, correr pipelines, etc.
 ├── pyproject.toml                  # Configuración del proyecto y dependencias (uv)
 ├── uv.lock                         # Lockfile de dependencias para reproducibilidad
@@ -656,7 +677,7 @@ S02-26-E45-Data_Science_EquineLead/
 ├── docs/                           # Documentación técnica y de negocio del proyecto
 │
 ├── infra/terraform/                # Infraestructura como código (IaC)
-│   ├── main.tf                     # Recursos GCP: Storage, IAM, Cloud Run
+│   ├── main.tf                     # Recursos GCP: Storage, IAM, Cloud Run, permisos CI/CD
 │   ├── variables.tf                # Variables de configuración
 │   └── providers.tf                # Provider de Google Cloud
 │
@@ -702,8 +723,6 @@ S02-26-E45-Data_Science_EquineLead/
 
 ## 📚 Documentacion Adicional
 
-### Docs
-
 | Documento | Descripción |
 |---|---|
 | [LeadScoring_Documentacion.md](./docs/LeadScoring_Documentacion.md) | Documentación técnica completa del modelo de Lead Scoring |
@@ -714,7 +733,7 @@ S02-26-E45-Data_Science_EquineLead/
 | [how-can-i-use-MLFlow-Tracking.md](./docs/how-can-i-use-MLFlow-Tracking-Experiment-on-Dagshub.md) | Tutorial de tracking de experimentos con MLflow y DagsHub |
 | [PipelineInferenciaCascada.html](./docs/PipelineInferenciaCascada.html) | Diagrama visual del pipeline de inferencia |
 
-### Video del demo Day
+### Video del Demo Day
 
 [![EquineLead Demo](./assets/Presentacion.png)](https://www.youtube.com/watch?v=EMtkNVQexdI)
 
