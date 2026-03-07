@@ -1,7 +1,6 @@
 ![banner](./assets/equinelead_logo_github.jpg)
 
 # EquineLead: Data-Driven Growth Engine for the Horse Industry
-<div align="center">
 <!-- Lenguajes & Entorno -->
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![UV](https://img.shields.io/badge/UV-000000?style=for-the-badge&logo=astral&logoColor=white)
@@ -34,7 +33,6 @@
 <!-- Comunicación & Gestión -->
 ![Slack](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)
 ![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white)
-</div>
 
 **EquineLead** es un sistema de inteligencia comercial diseñado para el mercado ecuestre, un nicho de alto ticket, altamente fragmentado, donde identificar a un comprador real entre miles de visitantes casuales es el principal cuello de botella del equipo de ventas.
 El sistema analiza el comportamiento de navegación de cada usuario en tiempo real y lo clasifica automáticamente como Lead Bronce, Plata u Oro, sin formularios ni intervención manual. Complementado por un motor de recomendación que mantiene al usuario explorando productos de alto valor, y una API REST lista para integrarse con cualquier CRM o frontend existente.
