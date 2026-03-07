@@ -4,6 +4,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 from fastapi import APIRouter, HTTPException
+from logger import logger
 from schemas import HorseRecommendRequest
 from utils import load_bundle
 
@@ -36,6 +37,17 @@ def recommend(data: HorseRecommendRequest):
         )
 
         distances, indices = model.kneighbors(X)
+
+        logger.info(
+            {
+                "event": "recommender_recommendation",
+                "breed": data.breed,
+                "color": data.color,
+                "price": data.price,
+                "top1_distance": distances[0][0],
+                "top1_index": int(indices[0][0]),
+            }
+        )
 
         return {
             "neighbors": [

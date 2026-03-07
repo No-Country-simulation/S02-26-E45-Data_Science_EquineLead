@@ -5,6 +5,7 @@ sys.path.append(str(Path(__file__).resolve().parents[1]))
 
 import pandas as pd
 from fastapi import APIRouter, HTTPException
+from logger import logger
 from schemas import HorsePredictRequest
 from utils import load_model
 
@@ -49,7 +50,8 @@ def run_prediction(features: dict):
     df = df[model_p1.feature_names_in_]
     probs_p1 = model_p1.predict_proba(df)[0]
     probs_p2 = model_p2.predict_proba(df)[0]
-    return {
+
+    result = {
         "paso1": {
             "prob_bronce": round(float(probs_p1[0]), 4),
             "prob_plata_oro": round(float(probs_p1[1]), 4),
@@ -59,6 +61,20 @@ def run_prediction(features: dict):
             "prob_oro": round(float(probs_p2[1]), 4),
         },
     }
+
+    # Loguear para monitoreo de drift
+    logger.info(
+        {
+            "event": "horse_prediction",
+            "prob_oro": result["paso2"]["prob_oro"],
+            "prob_plata": result["paso2"]["prob_plata"],
+            "prob_bronce": result["paso1"]["prob_bronce"],
+            "horses_viewed": features.get("horses_viewed"),
+            "ratio_cart_horse": features.get("ratio_cart_horse"),
+        }
+    )
+
+    return result
 
 
 @router.post("/predict")

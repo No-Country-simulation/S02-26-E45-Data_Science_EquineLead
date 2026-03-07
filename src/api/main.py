@@ -1,4 +1,6 @@
-from fastapi import FastAPI
+import time
+
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 
 from .docs import (
@@ -7,6 +9,7 @@ from .docs import (
     get_prods_html,
     get_recommender_html,
 )
+from .logger import logger
 from .routers import engine, horse, prods
 
 app = FastAPI(
@@ -25,6 +28,23 @@ app.add_route("/docs/recommender", lambda r: HTMLResponse(get_recommender_html()
 app.include_router(horse.router)
 app.include_router(prods.router)
 app.include_router(engine.router)
+
+
+@app.middleware("http")
+async def monitor_requests(request: Request, call_next):
+    start = time.perf_counter()
+    response = await call_next(request)
+    latency = time.perf_counter() - start
+
+    logger.info(
+        {
+            "endpoint": request.url.path,
+            "method": request.method,
+            "status_code": response.status_code,
+            "latency_ms": round(latency * 1000, 2),
+        }
+    )
+    return response
 
 
 @app.get("/", response_class=HTMLResponse)
