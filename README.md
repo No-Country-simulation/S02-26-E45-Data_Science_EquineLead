@@ -404,6 +404,32 @@ Devuelve los 5 caballos más similares. La distancia coseno va de **0** (idénti
 
 ---
 
+### Monitoreo y Logging
+
+Logs estructurados en JSON emitidos por cada endpoint y capturados automáticamente por **Google Cloud Logging** vía stdout de Cloud Run.
+
+| Evento | Origen | Campos |
+|---|---|---|
+| Request HTTP | Middleware | `endpoint`, `method`, `status_code`, `latency_ms` |
+| `horse_prediction` | `/horse/predict` | `prob_oro`, `prob_plata`, `prob_bronce`, `horses_viewed`, `ratio_cart_horse` |
+| `prods_prediction` | `/prods/predict` | `prob_oro`, `prob_plata`, `prob_bronce`, `products_viewed`, `ratio_cart_prods` |
+| `recommender_recommendation` | `/recommender/recommend` | `breed`, `color`, `price`, `top1_distance`, `top1_index` |
+
+Consultables desde **Cloud Logging** con queries estructuradas para detectar anomalías en producción:
+
+```
+# Usuarios con alta probabilidad de conversión (leads Oro)
+jsonPayload.event="horse_prediction" AND jsonPayload.prob_oro > 0.8
+
+# Fallos de inferencia
+jsonPayload.status_code=500
+
+# Requests lentos (posible degradación del modelo)
+jsonPayload.latency_ms > 1000
+```
+
+---
+
 ### Despliegue
 ```bash
 make test-api    # Build y run local (puerto 8080)
