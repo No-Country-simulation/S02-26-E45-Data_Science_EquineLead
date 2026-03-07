@@ -27,6 +27,10 @@
 
 **EquineLead** es un sistema de inteligencia comercial diseñado para el mercado ecuestre, un nicho de alto ticket, altamente fragmentado, donde identificar a un comprador real entre miles de visitantes casuales es el principal cuello de botella del equipo de ventas.
 
+La industria ecuestre mueve más de $300B anuales globalmente, pero la mayoría de los e-commerce del sector siguen calificando leads a mano.
+
+EquineLead lo automatiza.
+
 El sistema analiza el comportamiento de navegación de cada usuario en tiempo real y lo clasifica automáticamente como Lead Bronce, Plata u Oro, sin formularios ni intervención manual. Complementado por un motor de recomendación que mantiene al usuario explorando productos de alto valor, y una API REST lista para integrarse con cualquier CRM o frontend existente.
 
 Todo el pipeline, desde el scraping hasta el deploy, está orquestado, versionado y monitorado en producción.
@@ -442,8 +446,6 @@ make deploy-api  # Build + push DockerHub + deploy Cloud Run
 
 **[→ Ver Reporte](https://equinelead-reports.netlify.app)**
 
-![report](./assets/report.png)
-
 El sistema de monitoreo detecta automáticamente degradación en los modelos desplegados comparando la distribución de datos de producción contra el dataset de entrenamiento.
 
 ### Flujo de Monitoreo
@@ -453,10 +455,18 @@ Datos de producción
         ▼
 [Evidently] Análisis de Data Drift
         │
-        ├── Sin drift → Reporte publicado en Netlify
+        ├── Sin drift → Reporte HTML publicado automáticamente en Netlify
         │
-        └── Drift detectado → Alerta automática en Slack + Reporte en Netlify
+        └── Drift detectado → Alerta automática en Slack + Reporte HTML en Netlify
 ```
+
+![report](./assets/report.png)
+
+**Netlify** actúa como hosting estático del reporte HTML generado por Evidently — cada ejecución del pipeline sobreescribe el reporte publicado, dejando siempre visible el estado más reciente en una URL pública sin infraestructura adicional.
+
+![alerts](./assets/alerts.png)
+
+**Slack** recibe una alerta automática únicamente cuando se detecta drift significativo, con el detalle de qué features cambiaron su distribución respecto al dataset de entrenamiento. Esto permite actuar rápido sin revisar el reporte manualmente.
 
 ### ¿Qué se monitorea?
 
