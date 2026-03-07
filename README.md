@@ -47,8 +47,6 @@ Todo el pipeline, desde el scraping hasta el deploy, está orquestado, versionad
 
 ## 📖 Tabla de Contenidos
 
-## 📖 Tabla de Contenidos
-
 - [Definición del Problema](#-definición-del-problema)
 - [Arquitectura y Stack](#️-arquitectura-del-sistema)
 - [Pipeline de Datos](#-pipeline-de-datos-etlelt)
@@ -338,6 +336,8 @@ streamlit run app/app.py
 
 → [Acceder a la API](equinelead-api) · [Docs interactivos `/docs`](equinelead-api/docs)
 
+![api](./assets/api.png)
+
 REST API construida con **FastAPI**, desplegada como servicio serverless en **Google Cloud Run** y containerizada con **Docker**.
 
 ### Endpoints
@@ -415,6 +415,8 @@ make deploy-api  # Build + push DockerHub + deploy Cloud Run
 ## 📡 Monitoreo de Modelos en Producción
 
 **[→ Ver Reporte](https://equinelead-reports.netlify.app)**
+
+![report](./assets/report.png)
 
 El sistema de monitoreo detecta automáticamente degradación en los modelos desplegados comparando la distribución de datos de producción contra el dataset de entrenamiento.
 
@@ -556,6 +558,7 @@ DAGSHUB_USER_TOKEN=your_dagshub_token
 
 # Docker
 DOCKER_USERNAME=your_dockerhub_username
+DOCKER_PASSWORD=your_dockerhub_password
 
 # Monitoring
 SLACK_WEBHOOK_URL=your_slack_webhook_url
@@ -568,6 +571,7 @@ NETLIFY_SITE_ID=your_netlify_site_id
 > - `PREFECT_API_KEY`: [Prefect Cloud](https://app.prefect.cloud/) → Settings → API Keys
 > - `DAGSHUB_USER_TOKEN`: [DagsHub](https://dagshub.com/) → Settings → Access Tokens
 > - `DOCKER_USERNAME`: tu usuario de [Docker Hub](https://hub.docker.com/)
+> - `DOCKER_PASSWORD`: tu PAT en [Docker Hub](https://hub.docker.com/) → Account Settings → Personal Access Token
 > - `SLACK_WEBHOOK_URL`: Slack → Apps → Incoming Webhooks
 > - `NETLIFY_TOKEN`: [Netlify](https://app.netlify.com/) → User Settings → Applications → Personal access tokens
 
