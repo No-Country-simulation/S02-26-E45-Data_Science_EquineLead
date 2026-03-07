@@ -55,7 +55,7 @@ Todo el pipeline, desde el scraping hasta el deploy, está orquestado, versionad
   - [Motor de Recomendación KNN](#motor-de-recomendación-knn)
 - [Executive Dashboard](#-executive-dashboard)
 - [API de Inferencia](#-api-de-inferencia)
-  - [POST /horse/predict · /prods/predict](#post-horsepredict--prodspredict)
+  - [POST /horse/predict y POST /prods/predict](#post-horsepredict-y-post-prodspredict)
   - [POST /recommender/recommend](#post-recommenderrecommend)
 - [Monitoreo](#-monitoreo-de-modelos-en-producción)
 - [Demo Interactivo](#-demo-interactivo-huggingface)
@@ -351,7 +351,7 @@ REST API construida con **FastAPI**, desplegada como servicio serverless en **Go
 
 ---
 
-### `POST /horse/predict` · `POST /prods/predict`
+### `POST /horse/predict y POST /prods/predict`
 
 Clasifica al usuario en **Lead Bronce / Plata / Oro** mediante el pipeline en cascada.
 
