@@ -101,6 +101,9 @@ jobs:
           name: production-models
           path: models/
 
+      - name: Check models
+        run: ls -la models/
+
       - name: Set image tag
         id: tag
         run: echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
