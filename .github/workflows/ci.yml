@@ -32,6 +32,42 @@ jobs:
       - name: Run pre-commit
         uses: pre-commit/action@v3.0.1
 
+  download-models:
+    name: Download Production Models
+    runs-on: ubuntu-latest
+    needs: lint
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Cache uv
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/uv
+          key: ${{ runner.os }}-uv-${{ hashFiles('uv.lock') }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: uv sync --group dev --group ml_platform
+
+      - name: Download production models
+        env:
+          DAGSHUB_USER_TOKEN: ${{ secrets.DAGSHUB_USER_TOKEN }}
+          DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
+        run: uv run python src/registry/download_production_models.py
+
+      - name: Upload models artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-models
+          path: models/
+
   build-and-push:
     name: Build & Push Docker
     runs-on: ubuntu-latest
