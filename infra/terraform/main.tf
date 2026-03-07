@@ -84,9 +84,9 @@ resource "google_project_iam_member" "pipeline_sa_cloudbuild_editor" {
   member  = "serviceAccount:${data.google_service_account.pipeline_sa.email}"
 }
 
-resource "google_project_iam_member" "pipeline_sa_logs_viewer" {
+resource "google_project_iam_member" "pipeline_sa_viewer" {
   project = var.project_id
-  role    = "roles/logging.viewer"
+  role    = "roles/viewer"
   member  = "serviceAccount:${data.google_service_account.pipeline_sa.email}"
 }
 
