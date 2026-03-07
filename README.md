@@ -1,23 +1,44 @@
 ![banner](./assets/equinelead_logo_github.jpg)
 
 # EquineLead: Data-Driven Growth Engine for the Horse Industry
-
+<div align="center">
+<!-- Lenguajes & Entorno -->
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![Prefect](https://img.shields.io/badge/Prefect-ffffff?style=for-the-badge&logo=prefect&logoColor=070E10)
 ![UV](https://img.shields.io/badge/UV-000000?style=for-the-badge&logo=astral&logoColor=white)
-![Google Cloud](https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
-![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)
-![BeautifulSoup](https://img.shields.io/badge/BeautifulSoup-4E9A06?style=for-the-badge&logo=python&logoColor=white)
+<!-- Data & ML -->
 ![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
 ![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white)
+![Scikit-learn](https://img.shields.io/badge/Scikit--learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
 ![XGBoost](https://img.shields.io/badge/XGBoost-FF6600?style=for-the-badge&logo=python&logoColor=white)
-![MLflow](https://img.shields.io/badge/MLflow-0194E2?style=for-the-badge&logo=mlflow&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
-![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
 ![Apache Parquet](https://img.shields.io/badge/Apache_Parquet-6070AD?style=for-the-badge&logo=apache&logoColor=white)
+<!-- Experiment Tracking & Registry -->
+![MLflow](https://img.shields.io/badge/MLflow-0194E2?style=for-the-badge&logo=mlflow&logoColor=white)
+![DagsHub](https://img.shields.io/badge/DagsHub-F05033?style=for-the-badge&logo=dagshub&logoColor=white)
+![Evidently](https://img.shields.io/badge/Evidently-6E44FF?style=for-the-badge&logo=python&logoColor=white)
+<!-- Scraping -->
+![Playwright](https://img.shields.io/badge/Playwright-2EAD33?style=for-the-badge&logo=playwright&logoColor=white)
+![BeautifulSoup](https://img.shields.io/badge/BeautifulSoup-4E9A06?style=for-the-badge&logo=python&logoColor=white)
+<!-- API & Backend -->
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![Uvicorn](https://img.shields.io/badge/Uvicorn-499848?style=for-the-badge&logo=gunicorn&logoColor=white)
+<!-- Frontend & Visualización -->
+![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
+![Gradio](https://img.shields.io/badge/Gradio-FF7C00?style=for-the-badge&logo=gradio&logoColor=white)
+<!-- Orquestación & Contenedores -->
+![Prefect](https://img.shields.io/badge/Prefect-ffffff?style=for-the-badge&logo=prefect&logoColor=070E10)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+<!-- Infraestructura & Cloud -->
+![Google Cloud](https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)
+![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=for-the-badge&logo=terraform&logoColor=white)
+![Netlify](https://img.shields.io/badge/Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)
+<!-- Comunicación & Gestión -->
+![Slack](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)
+![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white)
+</div>
 
-**EquineLead** es un motor de crecimiento basado en datos diseñado para resolver la fragmentación del mercado ecuestre. Este sistema transforma la navegación casual en leads calificados mediante la integración de scrapers inteligentes, embudos automatizados y modelos de propensión de compra.
+**EquineLead** es un sistema de inteligencia comercial diseñado para el mercado ecuestre, un nicho de alto ticket, altamente fragmentado, donde identificar a un comprador real entre miles de visitantes casuales es el principal cuello de botella del equipo de ventas.
+El sistema analiza el comportamiento de navegación de cada usuario en tiempo real y lo clasifica automáticamente como Lead Bronce, Plata u Oro, sin formularios ni intervención manual. Complementado por un motor de recomendación que mantiene al usuario explorando productos de alto valor, y una API REST lista para integrarse con cualquier CRM o frontend existente.
+Todo el pipeline — desde el scraping hasta el deploy — está orquestado, versionado y monitorado en producción.
 
 ---
 
@@ -35,18 +56,24 @@
 
 ## 📖 Tabla de Contenidos
 
+## 📖 Tabla de Contenidos
+
 - [Definición del Problema](#-definición-del-problema)
-- [Arquitectura y Stack](#%EF%B8%8F-arquitectura-del-sistema)
-- [Pipeline de Datos (ETL/ELT)](#-pipeline-de-datos-etlelt)
-- [Modelos de Machine Learning](#-modelos-de-machine-learning)
+- [Arquitectura y Stack](#️-arquitectura-del-sistema)
+- [Pipeline de Datos](#-pipeline-de-datos-etlelt)
+- [Modelos de ML](#-modelos-de-machine-learning)
   - [Lead Scoring en Cascada](#lead-scoring-en-cascada)
   - [Motor de Recomendación KNN](#motor-de-recomendación-knn)
 - [Executive Dashboard](#-executive-dashboard)
 - [API de Inferencia](#-api-de-inferencia)
-- [Infraestructura como Código (IaC)](#-infraestructura-como-código-iac)
-- [Guía de Ejecución Rápida](#-guía-de-ejecución-quick-start)
+  - [POST /horse/predict · /prods/predict](#post-horsepredict--prodspredict)
+  - [POST /recommender/recommend](#post-recommenderrecommend)
+- [Monitoreo](#-monitoreo-de-modelos-en-producción)
+- [Demo Interactivo](#-demo-interactivo-huggingface)
+- [Infraestructura (IaC)](#️-infraestructura-como-código-iac)
+- [Quick Start](#-guía-de-ejecución-quick-start)
 - [Estructura del Proyecto](#-estructura-del-proyecto)
-- [Equipo y Contribuciones](#-equipo-y-contribuciones)
+- [Equipo](#-equipo-y-contribuciones)
 
 ---
 
@@ -89,10 +116,27 @@ El proyecto está diseñado bajo principios de **Modern Data Stack**, priorizand
 | **Versionado de Datos** | DVC + DagsHub | Trazabilidad de datasets |
 | **ML Training** | XGBoost, LightGBM, CatBoost, scikit-learn | Modelado predictivo |
 | **MLOps** | MLflow + DagsHub | Tracking de experimentos y artefactos |
+| **Monitoring** | Evidently + Netlify + Slack Alerts | Monitoreo de modelos en produccion |
 | **Serving** | FastAPI + Cloud Run | API REST de inferencia en producción |
 | **Visualización** | Streamlit + Plotly | Dashboard ejecutivo |
 | **IaC** | Terraform | Infraestructura reproducible en GCP |
 | **Data Synthesis** | Faker + proyecciones Rees46 | Generación de comportamiento simulado |
+
+---
+
+## 🗺️ Diagrama de Flujo del Proyecto
+
+![workflow](./assets/workflow.svg)
+
+El sistema integra siete etapas principales versionadas con **Git** y **DVC**:
+
+1. **Ingest Data**: scraping, limpieza y síntesis de datos con Python/pandas/Faker.
+2. **Data Control**: versionado de datasets con **DVC** para reproducibilidad total.
+3. **Infrastructure**: recursos en GCP provisionados con **Terraform** (buckets, IAM, Cloud Run).
+4. **EDA & Feature Engineering**: análisis exploratorio e ingeniería de variables con pandas, NumPy y scikit-learn.
+5. **Training & Evaluation**: entrenamiento con XGBoost, LightGBM y optimización con **Optuna**. Tracking con **MLflow + DagsHub**.
+6. **Deployment**: modelo containerizado con **Docker**, expuesto vía **FastAPI** en Cloud Run, con frontend en **Gradio/Streamlit**.
+7. **Monitoring**: calidad del modelo con **Evidently AI**, alertas por **Slack** y reportes publicados en **Netlify**.
 
 ---
 
@@ -301,47 +345,116 @@ streamlit run app/app.py
 
 ## ⚡ API de Inferencia
 
-**[→ Acceder a la API](https://equinelead-api-516367992092.us-east1.run.app/)**
+→ [Acceder a la API](equinelead-api) · [Docs interactivos `/docs`](equinelead-api/docs)
 
-![api](./assets/api.png)
+REST API construida con **FastAPI**, desplegada como servicio serverless en **Google Cloud Run** y containerizada con **Docker**.
 
-REST API construida con FastAPI y desplegada en **Google Cloud Run**. Expone el pipeline de Lead Scoring en cascada.
+### Endpoints
 
-### Ejemplo de Request
+| Endpoint | Descripción | Features |
+|---|---|---|
+| `POST /horse/predict` | Lead scoring vertical caballos | 27 features conductuales |
+| `POST /prods/predict` | Lead scoring vertical productos | 22 features conductuales |
+| `POST /recommender/recommend` | Recomendación KNN coseno | raza, color, precio |
 
-```bash
-POST /predict
-Content-Type: application/json
+---
 
-{
-  "user_id": "abc-123",
-  "horses_viewed": 42,
-  "max_horse_price_viewed": 75000,
-  "user_prestige_score": 8,
-  ...
-}
-```
+### `POST /horse/predict` · `POST /prods/predict`
 
-### Ejemplo de Response
+Clasifica al usuario en **Lead Bronce / Plata / Oro** mediante el pipeline en cascada.
 
+**Request** `/horse/predict`
 ```json
 {
-  "horse_lead": "Lead Oro",
-  "prods_lead": "Lead Plata",
-  "horse_p1_proba": 0.91,
-  "prods_p1_proba": 0.74
+  "features": {
+    "horses_viewed": 42,
+    "max_horse_price_viewed": 75000.0,
+    "horses_added_to_cart": 3,
+    "ratio_recurrencia_horse": 0.72,
+    "user_prestige_score": 8,
+    ...
+  }
 }
 ```
 
-### Despliegue con Docker
-
-```bash
-# Build y run local
-make test-api
-
-# Deploy a Cloud Run
-make deploy-api
+**Response**
+```json
+{
+  "paso1": { "prob_bronce": 0.30, "prob_plata_oro": 0.70 },
+  "paso2": { "prob_plata": 0.40, "prob_oro": 0.60 }
+}
 ```
+
+---
+
+### `POST /recommender/recommend`
+
+Devuelve los 5 caballos más similares. La distancia coseno va de **0** (idéntico) a **1** (completamente distinto).
+
+**Request**
+```json
+{
+  "breed": "andalusian",
+  "color": "bay",
+  "price": 22000.0
+}
+```
+
+**Response**
+```json
+{
+  "neighbors": [
+    { "index": 142, "distance": 0.0 },
+    { "index": 87,  "distance": 0.1423 },
+    { "index": 210, "distance": 0.2105 }
+  ]
+}
+```
+
+---
+
+### Despliegue
+```bash
+make test-api    # Build y run local (puerto 8080)
+make deploy-api  # Build + push DockerHub + deploy Cloud Run
+```
+
+---
+
+## 📡 Monitoreo de Modelos en Producción
+
+**[→ Ver Reporte](https://equinelead-reports.netlify.app)**
+
+El sistema de monitoreo detecta automáticamente degradación en los modelos desplegados comparando la distribución de datos de producción contra el dataset de entrenamiento.
+
+### Flujo de Monitoreo
+```
+Datos de producción
+        │
+        ▼
+[Evidently] Análisis de Data Drift
+        │
+        ├── Sin drift → Reporte publicado en Netlify
+        │
+        └── Drift detectado → Alerta automática en Slack + Reporte en Netlify
+```
+
+### ¿Qué se monitorea?
+
+| Métrica | Descripción |
+|---------|-------------|
+| **Data Drift** | Cambios en la distribución de features clave vs. datos de entrenamiento |
+| **Dataset Drift** | Proporción de features con drift significativo |
+| **Class Balance** | Distribución de clases Lead Bronce / Plata / Oro |
+| **Model Performance** | Accuracy y matriz de confusión sobre datos recientes |
+
+### Ejecución Manual
+```bash
+# Correr reporte de monitoreo
+uv run python src/monitoring/flow.py
+```
+
+El reporte se publica automáticamente en Netlify y si se detecta drift, se envía una alerta al canal de Slack del equipo.
 
 ---
 
@@ -357,29 +470,70 @@ Interfaz Gradio alojada en HuggingFace Spaces que permite explorar el motor de r
 
 ## 🏗️ Infraestructura como Código (IaC)
 
-Para garantizar la reproducibilidad total, la infraestructura de la nube se gestiona mediante **Terraform**.
+Para garantizar la reproducibilidad total, la infraestructura de la nube se gestiona mediante **Terraform**. Todo el entorno GCP se crea y destruye con un solo comando, sin configuración manual.
 
-### Configuración
+### Recursos Provisionados
 
+| Recurso | Descripción |
+|---------|-------------|
+| `google_storage_bucket` | Data Lake en GCS para datasets y artefactos |
+| `google_service_account` | Cuenta de servicio con permisos de Storage Admin |
+| `google_service_account_key` | Key JSON para autenticación desde el pipeline |
+| `google_cloud_run_v2_service` | API FastAPI desplegada como servicio serverless |
+| `google_cloud_run_v2_service_iam_member` | Acceso público al endpoint de Cloud Run |
+
+### Configuración Inicial
 ```bash
-# 1. Autenticarse
+# 1. Autenticarse en GCP
 gcloud auth application-default login
 
-# 2. Crear infra/terraform/terraform.tfvars
+# 2. Verificar y setear el proyecto activo
+gcloud config get-value project
+gcloud config set project TU_PROJECT_ID
+
+# 3. Habilitar las APIs necesarias
+gcloud services enable iam.googleapis.com
+gcloud services enable storage-api.googleapis.com
+gcloud services enable run.googleapis.com
+
+# 4. Crear infra/terraform/terraform.tfvars
 project_id           = "tu-id-de-proyecto"
 region               = "us-east1"
 bucket_name          = "equinelead-datalake"
 storage_class        = "STANDARD"
-service_account_name = "your-admin"
+service_account_name = "your-service-account-name"
 image                = "docker.io/usuario/equinelead-api:latest"
+```
 
-# 3. Desplegar
+### Despliegue
+```bash
+# Desplegar toda la infraestructura
 make terraform-deploy
 
-# 4. Extraer Service Account Key
+# Desplegar solo el bucket de GCS
+make terraform-datalake
+
+# Desplegar solo el servicio de Cloud Run
+make terraform-api
+
+# ⚠️ Destruir toda la infraestructura
+make terraform-destroy
+```
+
+### Extraer Service Account Key
+
+Después del deploy, exportá la key para usarla en el pipeline y en GitHub Actions:
+```powershell
+# PowerShell
 $rawKey = terraform -chdir=infra/terraform output -raw service_account_key
 [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($rawKey)) | Out-File -FilePath "./secrets/gcp-sa-key.json" -Encoding ascii
 ```
+```bash
+# Bash / Linux / Mac
+terraform -chdir=infra/terraform output -raw service_account_key | base64 --decode > ./secrets/gcp-sa-key.json
+```
+
+> ⚠️ El archivo `gcp-sa-key.json` contiene credenciales sensibles. Nunca lo subas al repositorio — está incluido en `.gitignore`.
 
 ---
 
@@ -388,32 +542,51 @@ $rawKey = terraform -chdir=infra/terraform output -raw service_account_key
 > **Requisitos:** Docker, gcloud CLI, y cuenta en Prefect Cloud (opcional).
 
 ### 1. Clonar el repositorio
-
 ```bash
 git clone https://github.com/No-Country-simulation/S02-26-E45-Data_Science_EquineLead
 cd S02-26-E45-Data_Science_EquineLead
 ```
 
 ### 2. Configurar variables de entorno
-
 ```bash
 # Crear .env con credenciales
+
+# Google Cloud
+GCP_PROJECT_ID=tu_id_proyecto
+GCP_BUCKET_NAME=tu_nombre_bucket
+GOOGLE_APPLICATION_CREDENTIALS=path_to_credentials.json
+
+# Prefect
 PREFECT_API_URL="https://api.prefect.cloud/api/accounts/[ID]/workspaces/[ID]"
-PREFECT_API_KEY="[API-KEY]"
-GCP_PROJECT_ID="tu_id_proyecto"
-GCP_BUCKET_NAME="tu_nombre_bucket"
-GOOGLE_APPLICATION_CREDENTIALS="path_to_credentials.json"
+PREFECT_API_KEY=your_prefect_api_key
+
+# DagsHub / MLflow
+DAGSHUB_USER_TOKEN=your_dagshub_token
+
+# Docker
+DOCKER_USERNAME=your_dockerhub_username
+
+# Monitoring
+SLACK_WEBHOOK_URL=your_slack_webhook_url
+NETLIFY_TOKEN=your_netlify_token
+NETLIFY_SITE_ID=your_netlify_site_id
 ```
 
-### 3. Instalar dependencias (UV)
+> 💡 **Dónde obtener cada credencial:**
+> - `GCP`: [Google Cloud Console](https://console.cloud.google.com/)
+> - `PREFECT_API_KEY`: [Prefect Cloud](https://app.prefect.cloud/) → Settings → API Keys
+> - `DAGSHUB_USER_TOKEN`: [DagsHub](https://dagshub.com/) → Settings → Access Tokens
+> - `DOCKER_USERNAME`: tu usuario de [Docker Hub](https://hub.docker.com/)
+> - `SLACK_WEBHOOK_URL`: Slack → Apps → Incoming Webhooks
+> - `NETLIFY_TOKEN`: [Netlify](https://app.netlify.com/) → User Settings → Applications → Personal access tokens
 
+### 3. Instalar dependencias (UV)
 ```bash
 pip install uv
 uv sync --all-groups
 ```
 
 ### 4. Descargar los datos
-
 ```bash
 gcloud auth application-default login
 dvc pull
@@ -421,59 +594,119 @@ dvc pull
 
 ### 5. Opciones de ejecución
 
-```bash
-# Ejecutar pipeline de datos completo (Docker)
-make run-data-pipeline
-
-# Levantar solo servidor Prefect
-make run-prefect
-
-# Levantar dashboard
-make run-app
-
-# Test local de la API
-make test-api
-```
+| Comando | Descripción |
+|---------|-------------|
+| **📦 Entorno** | |
+| `make install-all` | Instala todas las dependencias con UV |
+| `make lint` | Corre black + ruff sobre todo el repo via pre-commit |
+| **📊 App & Servicios** | |
+| `make run-app` | Levanta el dashboard de Streamlit en puerto 8520 |
+| `make run-prefect` | Levanta el servidor de Prefect via Docker Compose |
+| **🔄 Data Pipeline** | |
+| `make run-data-pipeline` | Pipeline completo de ingesta en Docker (scraping → limpieza → síntesis) |
+| `make run-etl` | Pipeline ETL directamente con Python, sin Docker |
+| `make dvc-pull` | Descarga los datasets versionados desde GCS |
+| `make dvc-push` | Sube los datasets locales a GCS |
+| **🧠 Training** | |
+| `make train-leads` | Entrena el modelo de Lead Scoring en cascada (XGBoost) |
+| `make train-engine` | Entrena el motor de recomendación KNN coseno |
+| **📋 Model Registry** | |
+| `make download-models` | Descarga los modelos con alias `@production` desde DagsHub |
+| `make register-models` | Registra los modelos entrenados en MLflow Model Registry |
+| `make promote-models` | Promueve un modelo al alias `@production` |
+| **📡 Monitoring** | |
+| `make run-monitoring` | Genera reporte de drift con Evidently, publica en Netlify y alerta en Slack |
+| **🚀 API** | |
+| `make test-api` | Buildea y corre la API localmente en puerto 8080 |
+| `make deploy-api` | Build + push a DockerHub + deploy en Cloud Run via Cloud Build |
+| **🏗️ Infraestructura** | |
+| `make terraform-deploy` | Despliega toda la infraestructura GCP (init + validate + plan + apply) |
+| `make terraform-datalake` | Despliega solo el bucket de GCS |
+| `make terraform-api` | Despliega solo el servicio de Cloud Run |
+| `make terraform-destroy` | ⚠️ Destruye toda la infraestructura GCP |
 
 ---
 
 ## 📁 Estructura del Proyecto
-
 ```
 S02-26-E45-Data_Science_EquineLead/
+├── .github/workflows/ci.yml        # Pipeline de CI: linting y tests automáticos en cada push
+├── .pre-commit-config.yaml         # Hooks de pre-commit (black, ruff) para mantener calidad de código
+├── Makefile                        # Comandos útiles: levantar servicios, correr pipelines, etc.
+├── pyproject.toml                  # Configuración del proyecto y dependencias (uv)
+├── uv.lock                         # Lockfile de dependencias para reproducibilidad
 │
-├── app/                        # Executive Dashboard (Streamlit)
-│   ├── app.py                  # Router principal
-│   ├── modules/                # Páginas del dashboard
-│   ├── components/             # Componentes UI reutilizables
-│   └── utils/                  # Data loaders y estilos
+├── app/                            # Dashboard interactivo en Streamlit
+│   ├── app.py                      # Entry point del dashboard
+│   ├── components/                 # Componentes reutilizables de UI (charts, cards, filtros)
+│   ├── modules/                    # Páginas del dashboard (audiencia, conversión, caballos, etc.)
+│   ├── utils/                      # Carga de datos y estilos
+│   └── requirements.txt            # Dependencias específicas para Streamlit Cloud
 │
-├── src/
-│   ├── api/                    # FastAPI — servicio de inferencia
-│   ├── experiments/
-│   │   ├── engine/             # Motor de recomendación KNN
-│   │   └── leads/              # Lead Scoring (features, train, model)
-│   ├── flows/                  # Flujos Prefect (ETL)
-│   └── scrapers/               # Scrapers (Playwright + BS4)
+├── assets/                         # Imágenes y recursos visuales del proyecto
 │
-├── data/
-│   ├── raw/                    # Datos originales (DVC)
-│   ├── clean/                  # Datos procesados (DVC)
-│   └── tracking/               # Archivos auxiliares (Git)
+├── data/                           # Punteros DVC a los datasets en GCS
+│   ├── clean.dvc                   # Dataset limpio versionado
+│   ├── raw.dvc                     # Dataset crudo versionado
+│   ├── production.dvc              # Dataset de producción versionado
+│   └── tracking/                   # Archivos auxiliares para generación de datos sintéticos
 │
-├── docs/                       # Documentación técnica
-├── infra/terraform/            # IaC — GCP Storage + Cloud Run
-├── deployment/                 # Dockerfiles, docker-compose, cloudbuild
-├── models/                     # Artefactos serializados del campeón
-├── assets/                     # Imágenes y recursos visuales
-├── pyproject.toml              # Dependencias por grupo (UV)
-├── Makefile                    # Comandos de ejecución
-└── .pre-commit-config.yaml     # Linters y hooks (ruff, gitleaks)
+├── deployment/                     # Todo lo necesario para containerizar y deployar
+│   ├── Dockerfile.api              # Imagen Docker de la API FastAPI
+│   ├── Dockerfile.data_pipeline    # Imagen Docker del pipeline de datos
+│   ├── docker-compose.yml          # Orquestación local de servicios
+│   └── entrypoints/                # Scripts de entrada para los containers
+│
+├── docs/                           # Documentación técnica y de negocio del proyecto
+│
+├── infra/terraform/                # Infraestructura como código (IaC)
+│   ├── main.tf                     # Recursos GCP: Storage, IAM, Cloud Run
+│   ├── variables.tf                # Variables de configuración
+│   └── providers.tf                # Provider de Google Cloud
+│
+└── src/                            # Código fuente principal
+    ├── api/                        # API REST con FastAPI
+    │   ├── main.py                 # Entry point de la API
+    │   ├── routers/                # Endpoints: /horse/predict, /prods/predict, /recommender/recommend
+    │   ├── schemas.py              # Modelos Pydantic para validación de requests
+    │   ├── docs/                   # Documentación interactiva de cada endpoint
+    │   └── utils.py                # Funciones auxiliares de la API
+    │
+    ├── cleaning/                   # Scripts de limpieza de datos por fuente
+    │
+    ├── experiments/                # Código de entrenamiento de modelos
+    │   ├── engine/                 # Motor de recomendación (KNN coseno)
+    │   └── leads/                  # Modelo de scoring de leads (XGBoost en cascada)
+    │
+    ├── flows/etl/                  # Pipeline de ingesta orquestado con Prefect
+    │
+    ├── misc/                       # Configuración global y utilidades compartidas
+    │
+    ├── monitoring/                 # Monitoreo de modelos en producción con Evidently
+    │   ├── flow.py                 # Orquestación del reporte de drift
+    │   ├── slack_alerts.py         # Alertas automáticas a Slack si se detecta drift
+    │   └── netlify_deploy.py       # Publicación automática del reporte en Netlify
+    │
+    ├── notebooks/                  # Experimentación y análisis exploratorio
+    │   ├── cleaning/               # Notebooks de limpieza por fuente de datos
+    │   ├── engine/                 # Notebooks del motor de recomendación
+    │   ├── leads/                  # Notebooks de lead scoring
+    │   └── synthetizing/           # Notebooks de generación de datos sintéticos
+    │
+    ├── registry/                   # Scripts para gestión del MLflow Model Registry
+    │   ├── download_production_models.py  # Descarga modelos con alias @production
+    │   └── promote_to_production.py       # Promueve un modelo al registry
+    │
+    ├── scraping/                   # Scrapers por fuente (EquineNow, DoverSaddlery, HorseDeals)
+    │
+    └── synthetizing/               # Generación de datos sintéticos de comportamiento de usuarios
 ```
 
 ---
 
 ## 📚 Documentación Adicional
+
+### Docs
 
 | Documento | Descripción |
 |---|---|
@@ -485,9 +718,19 @@ S02-26-E45-Data_Science_EquineLead/
 | [how-can-i-use-MLFlow-Tracking.md](./docs/how-can-i-use-MLFlow-Tracking-Experiment-on-Dagshub.md) | Tutorial de tracking de experimentos con MLflow y DagsHub |
 | [PipelineInferenciaCascada.html](./docs/PipelineInferenciaCascada.html) | Diagrama visual del pipeline de inferencia |
 
+### Video del demo Day
+[![EquineLead Demo](https://img.youtube.com/vi/EMtkNVQexdI/maxresdefault.jpg)](https://www.youtube.com/watch?v=EMtkNVQexdI)
+
 ---
 
 ## 👥 Equipo y Contribuciones
+
+| Nombre | Rol | LinkedIn |
+|--------|-----|----------|
+| **Alexander Rios** | Data Scientist & ML Engineer | [linkedin.com/in/alexander-daniel-rios](https://www.linkedin.com/in/alexander-daniel-rios/) |
+| **Daisy Quinteros** | Data Engineer & Data Scientist | [linkedin.com/in/daisy-quinteros-silva-5b0450a5](https://www.linkedin.com/in/daisy-quinteros-silva-5b0450a5) |
+| **Iñaki Rosello** | Data Scientist & ML Engineer | [linkedin.com/in/iñakirosellosignoris](https://www.linkedin.com/in/iñakirosellosignoris) |
+| **Dody Dueñas** | Data Analyst | [linkedin.com/in/dody-dueñas-remache-079164296](https://www.linkedin.com/in/dody-dueñas-remache-079164296/) |
 
 Este proyecto fue desarrollado en el marco de la simulación laboral **No Country — S02-26-E45** por un equipo multidisciplinario de Data Science.
 
