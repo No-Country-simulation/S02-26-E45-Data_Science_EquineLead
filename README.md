@@ -62,6 +62,7 @@ Todo el pipeline, desde el scraping hasta el deploy, está orquestado, versionad
 - [Infraestructura (IaC)](#️-infraestructura-como-código-iac)
 - [Quick Start](#-guía-de-ejecución-quick-start)
 - [Estructura del Proyecto](#-estructura-del-proyecto)
+- [Documentacion Adicional](#-documentacion-adicional)
 - [Equipo](#-equipo-y-contribuciones)
 
 ---
@@ -699,7 +700,7 @@ S02-26-E45-Data_Science_EquineLead/
 
 ---
 
-## 📚 Documentación Adicional
+## 📚 Documentacion Adicional
 
 ### Docs
 
@@ -715,6 +716,7 @@ S02-26-E45-Data_Science_EquineLead/
 
 ### Video del demo Day
 
+[![EquineLead Demo](./assets/Presentacion.png)](https://www.youtube.com/watch?v=EMtkNVQexdI)
 
 ---
 
