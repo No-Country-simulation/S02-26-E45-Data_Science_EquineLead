@@ -714,7 +714,7 @@ S02-26-E45-Data_Science_EquineLead/
 | [PipelineInferenciaCascada.html](./docs/PipelineInferenciaCascada.html) | Diagrama visual del pipeline de inferencia |
 
 ### Video del demo Day
-[![EquineLead Demo](https://img.youtube.com/vi/EMtkNVQexdI/maxresdefault.jpg)](https://www.youtube.com/watch?v=EMtkNVQexdI)
+
 
 ---
 
