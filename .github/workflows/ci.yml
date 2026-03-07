@@ -102,7 +102,7 @@ jobs:
           path: models/
 
       - name: Check models
-        run: ls -la models/
+        run: ls -laR models/
 
       - name: Set image tag
         id: tag
