@@ -464,10 +464,7 @@ El pipeline de integración y despliegue continuo está configurado en `.github/
 
 ### Flujo de Jobs
 
-```
-lint ──┬── download-models ──── build-and-push ──── deploy ──── smoke-test
-       └───────────────────────────────────────────────────────────────────
-```
+![github actions](./assets/ci.png)
 
 | Job | Trigger | Descripción |
 |---|---|---|
